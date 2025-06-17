@@ -34,9 +34,9 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 | Output Name                  | Description |
 |-----------------------------|-------------|
 | `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
-| `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
 | `positive_prompt`            | Standard positive tag string |
 | `negative_prompt`            | Standard negative tag string |
+| `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
 
 ---
 
@@ -47,8 +47,7 @@ All examples are in the `Examples/` folder of this repository.
 ### 🧠 Standard Prompt Examples
 
 **Node Setup:**  
-![Standard Prompt Nodes](Examples/RPG_Standard.png)
-
+![Standard Prompt Nodes](Examples/RPG_Standard.png)  
 **Workflow File:**  
 [`RPG_Nodes_Normal.json`](Examples/RPG_Nodes_Normal.json)
 
@@ -57,8 +56,7 @@ All examples are in the `Examples/` folder of this repository.
 ### 🧠 Ollama-Driven Prompt Examples
 
 **Node Setup:**  
-![Ollama Prompt Nodes](Examples/RPG_Ollama.png)
-
+![Ollama Prompt Nodes](Examples/RPG_Ollama.png)  
 **Workflow File:**  
 [`RPG_Nodes_Ollama.json`](Examples/RPG_Nodes_Ollama.json)
 
@@ -67,22 +65,37 @@ All examples are in the `Examples/` folder of this repository.
 ### ⚔️ Comparison: Standard vs Ollama
 
 **Side-by-Side Visual:**  
-![Standard vs Ollama](Examples/RPG_Standard_Vs_Ollama.png)
-
+![Standard vs Ollama](Examples/RPG_Standard_Vs_Ollama.png)  
 **Workflow File:**  
 [`RPG_Nodes_Normal_Vs_Ollama.json`](Examples/RPG_Nodes_Normal_Vs_Ollama.json)
 
 ---
 
+### 🔁 Prompt Switcher Example
+
+**Prompt Switch Node Example:**  
+![Switch Example](Examples/RPG_Nodes_Normal_and_Ollama_With_Switch.png)  
+**Workflow File:**  
+[`RPG_Nodes_Normal_and_Ollama_With_Switch.json`](Examples/RPG_Nodes_Normal_and_Ollama_With_Switch.json)
+
+---
+
+### 🧩 Full Node Collection
+
+A visual reference of the full node layout.  
+![Full Node Collection](Examples/Nodes_Collection.png)
+
+---
+
 ## 📦 Installation
 
-1. Clone or download this repo into your ComfyUI custom nodes folder:
+Clone this repo into your ComfyUI `custom_nodes` folder:
 
 ```bash
 git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
 ```
 
-2. Restart ComfyUI.
+Restart ComfyUI after installation.
 
 ---
 
@@ -101,8 +114,8 @@ git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
 To use the **Ollama-driven prompt generation** features in this node, you need to:
 
 - Install the [**Ollama server**](https://ollama.com/) on your desired host.
-- Download for [macOS](https://ollama.com/download/mac) or [Windows](https://ollama.com/download/windows).
-- Install the [**ComfyUI-Ollama node**](https://github.com/stavsap/comfyui-ollama) by Stav Sapir ([stavsap](https://github.com/stavsap)).
+  - Download for [macOS](https://ollama.com/download/mac) or [Windows](https://ollama.com/download/windows)
+- Install the [**ComfyUI-Ollama node**](https://github.com/stavsap/comfyui-ollama) by Stav Sapir
 
 > Without these installed and running, the Ollama prompt outputs in this node will not function.
 
@@ -114,9 +127,9 @@ Credit for the [ComfyUI-Ollama node](https://github.com/stavsap/comfyui-ollama) 
 
 ## 🔮 Future Plans
 
-- Dynamic LLM integration for auto-generating character prompts.  
-- Additional art styles (e.g., pixel art, steampunk, noir).  
-- Visual dropdowns for selecting features (e.g., races, classes, emotions).
+- Dynamic LLM integration for auto-generating character prompts  
+- Additional art styles (e.g., pixel art, steampunk, noir)  
+- Visual dropdowns for selecting features (e.g., races, classes, emotions)
 
 ---
 
