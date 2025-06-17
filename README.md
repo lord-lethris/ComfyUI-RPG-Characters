@@ -29,6 +29,20 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 
 ---
 
+## 📦 Install via ComfyUI Manager (Recommended 🎉)
+
+The node is now officially listed in **ComfyUI Manager**!
+
+To install:
+
+1. Launch **ComfyUI** and open **Manager** (via sidebar or `custom_nodes` menu).
+2. Go to the **Install Custom Nodes** tab.
+3. Search for: `RPG-Characters`
+4. Click **Install**
+5. Restart ComfyUI — you're ready to go!
+
+---
+
 ## 🧱 Node Outputs
 
 | Output Name                  | Description |
@@ -88,7 +102,7 @@ A visual reference of the full node layout.
 
 ---
 
-## 📦 Installation
+## 🛠️ Manual Installation (if needed)
 
 Clone this repo into your ComfyUI `custom_nodes` folder:
 
@@ -100,7 +114,7 @@ Restart ComfyUI after installation.
 
 ---
 
-## 🛠️ Usage
+## 🧠 Usage
 
 1. Add the **RPG Art Style Selector** node from the "RPG" category.  
 2. Select an Art Style from the dropdown.  
