@@ -1,6 +1,9 @@
 # ComfyUI-RPG-Characters - Extended Node for Character Race, Gender, and more
 # Author: Lord Lethris
 
+import re
+import random
+
 from .rpg_character_data.rpg_race_data import RACE_DATA
 from .rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
 from .rpg_character_data.rpg_gender_data import GENDER_DATA
@@ -13,6 +16,21 @@ from .rpg_character_data.rpg_beard_colour_data import BEARD_COLOUR_DATA
 from .rpg_character_data.rpg_clothes_style_data import CLOTHES_STYLE_DATA
 from .rpg_character_data.rpg_emotion_data import EMOTION_DATA
 from .rpg_character_data.rpg_scene_data import SCENE_DATA
+
+
+def resolve_prompt_variants_with_trace(text):
+    pattern = r"\{([^{}]+)\}"
+    selections = []
+
+    def replacer(match):
+        options = match.group(1).split("|")
+        choice = random.choice(options)
+        selections.append(choice)
+        return choice
+
+    resolved = re.sub(pattern, replacer, text)
+    return resolved, selections
+
 
 class RPGCharacterSelector:
     @classmethod
@@ -35,7 +53,7 @@ class RPGCharacterSelector:
         }
 
     RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("prompt", "negative_prompt", "Ollama_Generate_V2_Textbox_2", "selection_summary")
+    RETURN_NAMES = ("positive_prompt", "negative_prompt", "Ollama_Generate_V2_Textbox_2", "selection_summary")
     FUNCTION = "generate_prompt"
     CATEGORY = "RPG"
 
@@ -69,8 +87,22 @@ class RPGCharacterSelector:
             SCENE_DATA[scene],
         ]
 
-        combined_prompt = ", ".join([entry["prompt"] for entry in selected_data if entry["prompt"]])
-        combined_negative_prompt = ", ".join([entry["negative_prompt"] for entry in selected_data if entry["negative_prompt"]])
+        resolved_prompts = []
+        resolved_negatives = []
+        all_selections = []
+
+        for entry in selected_data:
+            if entry["prompt"]:
+                resolved, selections = resolve_prompt_variants_with_trace(entry["prompt"])
+                resolved_prompts.append(resolved)
+                all_selections.extend(selections)
+            if entry["negative_prompt"]:
+                resolved, selections = resolve_prompt_variants_with_trace(entry["negative_prompt"])
+                resolved_negatives.append(resolved)
+                all_selections.extend(selections)
+
+        combined_prompt = "Create an extreme close-up portrait of " + ", ".join(resolved_prompts)
+        combined_negative_prompt = ", ".join(resolved_negatives)
 
         # Enhanced plain scene handling
         if scene.lower().startswith("plain") or "chroma key" in scene.lower() or "solid" in scene.lower():
@@ -78,8 +110,7 @@ class RPGCharacterSelector:
         else:
             scene_description = f"Scene: {scene}"
 
-        # Ollama Textbox 2 format
-        ollama_description = "\n".join([
+        selection_summary = "\n".join([
             f"Race: {race}",
             f"Ethnicity: {ethnicity}",
             f"Gender: {gender}",
@@ -94,7 +125,10 @@ class RPGCharacterSelector:
             scene_description
         ])
 
-        selection_summary = ollama_description
+        ollama_description = "Create an extreme close-up portrait of " + ", ".join(resolved_prompts) + ", Include Art Style."
+
+        if all_selections:
+            selection_summary += "\nRandomized Choices Used: " + ", ".join(all_selections)
 
         return (combined_prompt, combined_negative_prompt, ollama_description, selection_summary)
 

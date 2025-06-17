@@ -1,40 +1,5 @@
 # rpg_art_style_node.py
 
-ART_STYLE_DATA = {
-    "Fantasy Illustration": {
-        "prompt": "fantasy illustration, digital painting, epic composition",
-        "negative_prompt": ""
-    },
-    "Realistic": {
-        "prompt": "realistic, highly detailed, lifelike rendering, dramatic lighting",
-        "negative_prompt": "cartoon, anime, sketch, low detail"
-    },
-    "Painterly": {
-        "prompt": "oil painting, painterly brushwork, classical portrait",
-        "negative_prompt": "digital look, photo"
-    },
-    "Concept Art": {
-        "prompt": "concept art, character design sheet, artistic rendering",
-        "negative_prompt": "comic, anime, unfinished"
-    },
-    "Dark Fantasy": {
-        "prompt": "dark fantasy, moody atmosphere, gothic shadows, dramatic lighting",
-        "negative_prompt": "bright, cheerful, cartoon"
-    },
-    "Anime Style": {
-       "prompt": "anime style, 2D illustration, cel shading, vibrant colors, sharp lines, big eyes, expressive face, studio ghibli, makoto shinkai, anime screencap",
-       "negative_prompt": "photorealistic, realistic, 3D, Pixar, Unreal Engine, CG, rendering, hyperrealistic, uncanny, doll-like, semi-realistic"
-    },
-    "Comic Book": {
-        "prompt": "comic book, inked lines, bold shading, western comic style",
-        "negative_prompt": "realistic, anime, painterly"
-    },
-    "Watercolor": {
-        "prompt": "watercolor painting, soft gradients, light textures",
-        "negative_prompt": "bold ink, high contrast"
-    }
-}
-
 class RPGArtStyleSelector:
     @classmethod
     def INPUT_TYPES(cls):
@@ -47,17 +12,21 @@ class RPGArtStyleSelector:
                     "Fantasy Illustration",
                     "Digital Painting",
                     "Pixar Animation",
-                    # add more styles as needed
                 ],)
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING")
-    RETURN_NAMES = ("Ollama_Generate_V2_Textbox_1", "positive_prompt", "negative_prompt")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = (
+        "Ollama_Posative_Textbox_1",
+        "positive_prompt",
+        "negative_prompt",
+        "Ollama_Negative_Textbox_1",
+    )
+
     FUNCTION = "generate_prompt"
     CATEGORY = "RPG"
 
-    # Example prompts for styles - fill these with your actual prompts
     STYLE_PROMPTS = {
         "Anime Style": {
             "positive": "anime style, 2D cel shading, vibrant colors, sharp lines, expressive eyes",
@@ -86,49 +55,89 @@ class RPGArtStyleSelector:
     }
 
     def generate_prompt(self, art_style):
-        base_prompt = (
-            "You are an RPG Solo Character extreme close-up portrait prompt generator. "
-            "1024x1024. Do not explain your answers. Be sure to Include Race, Ethnicity, Gender, "
-            "Age, Class, Hair Style, Hair Colour, Beard Style, Beard Colour, Clothes Style, Emotion, and Scene. "
-            "Return a richly detailed SDXL prompt in natural descriptive language. No extra commentary."
-        )
-
         style_prompts_text = {
             "Anime Style": (
-                "You are an RPG Solo Character extreme close-up portrait prompt generator in anime style, "
-                "featuring 2D illustration, cel shading, vibrant colors, sharp lines, and expressive eyes. "
-                + base_prompt +
-                " Emphasize anime aesthetics."
+                "Use anime style: cel shading, vibrant color, expressive eyes and sharp lines.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "The face of the character is central, rendered in vivid anime detail with expressive eyes and colorful features. Hair flows in stylized strands, and outlines are clean and dynamic.\n\n"
+                "**Eyes**: Large, sparkling, and brimming with emotion.\n\n"
+                "**Hair**: Colorful and animated, capturing motion and shine.\n\n"
+                "**Upper Chest/Clothing**: Stylized clothing with bold patterns or accessories.\n\n"
+                "**Soft Background**: Gentle gradients or painterly background relevant to the scene.\n\n"
+                "All visual emphasis is on the facial features, hair, and upper chest."
             ),
             "Dark Fantasy": (
-                base_prompt + 
-                " Emphasize dark fantasy aesthetics: moody lighting, gothic elements, cinematic shadows."
+                "Use dark fantasy style: moody lighting, gothic atmosphere, dramatic shading.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "The character's face emerges from shadow, lit by eerie glow. Their expression carries weight and mystery.\n\n"
+                "**Eyes**: Piercing or haunted, with high shadow contrast.\n\n"
+                "**Hair**: Windswept or unkempt, in deep tones.\n\n"
+                "**Upper Chest/Clothing**: Gothic armor, leather, or mystical robes with sigils.\n\n"
+                "**Soft Background**: Blurred cathedrals, foggy crypts, or dying embers."
             ),
             "Realistic": (
-                base_prompt + 
-                " Emphasize realistic aesthetics: photographic detail, natural lighting, high realism."
+                "Use realistic style: photographic precision, natural lighting, high realism.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "Highly detailed character face in true-to-life proportions. Skin texture, pores, and light interaction are all depicted authentically.\n\n"
+                "**Eyes**: Realistic reflections, depth, and moisture.\n\n"
+                "**Hair**: Individually rendered strands, natural movement.\n\n"
+                "**Upper Chest/Clothing**: Textiles with natural folds and stitch detail.\n\n"
+                "**Soft Background**: Subtle bokeh, faded landscape elements."
             ),
             "Fantasy Illustration": (
-                base_prompt +
-                " Emphasize fantasy illustration style: painterly strokes, vibrant colors, epic atmosphere."
+                "Use fantasy illustration style: vibrant colors, painterly texture, epic composition.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "Character glows with heroic light. Soft edges blend into a fantasy environment.\n\n"
+                "**Eyes**: Mythic gleam, vibrant irises, imbued with magic.\n\n"
+                "**Hair**: Flowing, dramatic, full of color and motion.\n\n"
+                "**Upper Chest/Clothing**: Armor or robes, enchanted detail, magical symbols.\n\n"
+                "**Soft Background**: Clouds, magical auras, glowing cliffs or ruins."
             ),
             "Digital Painting": (
-                base_prompt +
-                " Emphasize digital painting style: smooth brushwork, rich textures, detailed lighting."
+                "Use digital painting style: rich texture, brushstrokes, dynamic lighting.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "Painted detail with soft blend transitions and visible brush techniques.\n\n"
+                "**Eyes**: Reflective, highlighted with strokes.\n\n"
+                "**Hair**: Painterly motion with rich shading.\n\n"
+                "**Upper Chest/Clothing**: Stylized materials with visual brushwork.\n\n"
+                "**Soft Background**: Smudged gradients and digital bloom."
             ),
             "Pixar Animation": (
-                base_prompt +
-                " Emphasize Pixar style: soft lighting, stylized characters, warm colors, and 3D rendering feel."
+                "Use Pixar style: soft lighting, stylized 3D, warm colors.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "Expressive, rounded facial features with soft edges and cheerful ambiance.\n\n"
+                "**Eyes**: Large, glossy, and full of life.\n\n"
+                "**Hair**: Volumetric and stylized.\n\n"
+                "**Upper Chest/Clothing**: Colorful outfits with clean 3D shaders.\n\n"
+                "**Soft Background**: Bright sky, subtle gradients, or cozy environments."
             ),
         }
 
-        Ollama_Generate_V2_Textbox_1 = style_prompts_text.get(art_style, base_prompt + f" Emphasize {art_style} aesthetics.")
-        
+        Ollama_Posative_Textbox_1 = style_prompts_text.get(art_style, "**1024x1024 Extreme Close-Up Portrait**\n\nCharacter with vivid detail and atmospheric background.")
         positive_prompt = self.STYLE_PROMPTS.get(art_style, {}).get("positive", "")
         negative_prompt = self.STYLE_PROMPTS.get(art_style, {}).get("negative", "")
 
-        return (Ollama_Generate_V2_Textbox_1, positive_prompt, negative_prompt)
+        ollama_negative_prompt_instruction = (
+            "You are an AI art Generator. You are a visual design assistant generating a **negative prompt** for a SDXL prompt.\n\n"
+            "Use the following positive prompt as reference. Your task is to identify unwanted visual artifacts, styles, or elements that should be **excluded** to preserve the artistic and thematic integrity of the original.\n\n"
+            "Format the output as a clean, comma-separated list of negative prompt tags and descriptors.\n\n"
+            "Avoid redundancy. Do **not** repeat anything that's already desirable in the positive prompt.\n\n"
+            "Keep it realistic, but include common issues in AI generation such as:\n"
+            "- anatomy errors\n"
+            "- texture distortions\n"
+            "- uncanny facial features\n"
+            "- unwanted artifacts or styles\n"
+            "- bad lighting or awkward angles\n"
+            "- overexaggeration or surreal effects\n\n"
+            "Only return the negative prompt list in clean Markdown format with no extra commentary, no extra text or formatting. Do not include any introductions or explanations. Begin immediately."
+        )
 
+        return (
+            Ollama_Posative_Textbox_1,
+            positive_prompt,
+            negative_prompt,
+            ollama_negative_prompt_instruction
+        )
 
 
 NODE_CLASS_MAPPINGS = {
