@@ -1,4 +1,3 @@
-```markdown
 # ComfyUI-RPG-Characters
 
 A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that generates stylized SDXL prompts for RPG characters. This node can output both **standard prompt formats** and enhanced **Ollama-driven prompts** for extreme close-up portraits with vivid detail.
@@ -106,4 +105,3 @@ git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
 ## 🐾 Made by Lord Lethris
 
 Featuring Belle the cat, who disapproves of bad prompts. 🐱
-```
