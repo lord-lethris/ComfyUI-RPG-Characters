@@ -48,10 +48,6 @@ class RPGArtStyleSelector:
             "positive": "digital painting, smooth brushwork, rich textures, detailed lighting",
             "negative": "pixelated, noisy, flat lighting"
         },
-        "Pixar Animation": {
-            "positive": "Pixar style, stylized 3D, soft lighting, warm colors, expressive characters",
-            "negative": "dark, realistic, harsh lighting"
-        },
     }
 
     def generate_prompt(self, art_style):
@@ -101,15 +97,6 @@ class RPGArtStyleSelector:
                 "**Hair**: Painterly motion with rich shading.\n\n"
                 "**Upper Chest/Clothing**: Stylized materials with visual brushwork.\n\n"
                 "**Soft Background**: Smudged gradients and digital bloom."
-            ),
-            "Pixar Animation": (
-                "Use Pixar style: soft lighting, stylized 3D, warm colors.\n\n"
-                "**1024x1024 Extreme Close-Up Portrait**\n\n"
-                "Expressive, rounded facial features with soft edges and cheerful ambiance.\n\n"
-                "**Eyes**: Large, glossy, and full of life.\n\n"
-                "**Hair**: Volumetric and stylized.\n\n"
-                "**Upper Chest/Clothing**: Colorful outfits with clean 3D shaders.\n\n"
-                "**Soft Background**: Bright sky, subtle gradients, or cozy environments."
             ),
         }
 
