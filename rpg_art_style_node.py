@@ -11,7 +11,6 @@ class RPGArtStyleSelector:
                     "Realistic",
                     "Fantasy Illustration",
                     "Digital Painting",
-                    "Pixar Animation",
                 ],)
             }
         }
