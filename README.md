@@ -33,10 +33,11 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 
 | Output Name                  | Description |
 |-----------------------------|-------------|
-| `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
 | `positive_prompt`            | Standard positive tag string |
 | `negative_prompt`            | Standard negative tag string |
+| `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
 | `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
+| `Ollama_Posative_Textbox_2` | Extra Prompt Food for LLMs or advanced generators that have a second Text Input|
 
 ---
 
