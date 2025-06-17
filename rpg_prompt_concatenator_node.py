@@ -24,8 +24,8 @@ class PromptConcatenatorNode:
     CATEGORY = "RPG"
 
     def concatenate_prompts(self, clip, art_positive, char_positive, art_negative, char_negative):
-        positive = f"{char_positive.strip()}, {art_positive.strip()}"
-        negative = f"{char_negative.strip()}, {art_negative.strip()}"
+        positive = f"{art_positive.strip()}, {char_positive.strip()}"
+        negative = f"{art_negative.strip()}, {char_negative.strip()}"
 
         # Encode prompts
         encoded_positive = CLIPTextEncode().encode(clip, positive)[0]
