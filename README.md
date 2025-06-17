@@ -1,49 +1,109 @@
+```markdown
 # ComfyUI-RPG-Characters
 
-A collection of custom nodes for ComfyUI that generate richly detailed RPG character portrait prompts with various art style options. Designed to work seamlessly with SDXL and Ollama for RPG-themed AI character image generation.
+A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that generates stylized SDXL prompts for RPG characters. This node can output both **standard prompt formats** and enhanced **Ollama-driven prompts** for extreme close-up portraits with vivid detail.
 
 ---
 
-## Features
+## ✨ Features
 
-- Select from multiple art styles: Anime, Dark Fantasy, Realistic, Fantasy Illustration, Pixar Animation, and more.
-- Generate descriptive, detailed portrait prompts including race, ethnicity, gender, class, emotion, and scene.
-- Separate node to choose between standard or Ollama-style positive and negative prompts.
-- Easily extendable for new styles or prompt customization.
+- 🎨 Choose from a variety of art styles:
+  - Anime Style
+  - Dark Fantasy
+  - Realistic
+  - Fantasy Illustration
+  - Digital Painting
+  - Pixar Animation
 
----
+- 🧠 Generates:
+  - Standard Positive & Negative Prompts (for ComfyUI/SDXL use)
+  - Ollama-specific Descriptive Prompt (text-to-text guidance)
+  - Ollama-style Negative Prompt Instruction
 
-## Installation
-
-1. Clone this repository into your ComfyUI `custom_nodes` folder:
-
-    cd path/to/ComfyUI/custom_nodes
-    git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
-
-2. Restart ComfyUI to load the new nodes.
-
----
-
-## Usage
-
-- Use the RPG Art Style Selector node to generate base prompts and positive/negative prompt pairs.
-- Use the Prompt Selector node to switch between standard and Ollama prompt versions.
-- Connect outputs to your text-to-image or SDXL pipeline as needed.
+- 📸 Designed for **1024x1024 extreme close-up portraits**
+- 📄 Fully structured to support character features:
+  - Race, Ethnicity, Gender, Age, Class
+  - Hair & Beard Styles and Colours
+  - Clothing Style, Emotion, and Scene
 
 ---
 
-## Example
+## 🧱 Node Outputs
 
-Select `Anime Style` in the Art Style Selector and connect its outputs to the Prompt Selector to toggle prompt sets based on your preference.
+| Output Name                  | Description |
+|-----------------------------|-------------|
+| `Ollama_Posative_Textbox_1` | Detailed textual prompt for AI input (e.g., LLMs or advanced generation logic) |
+| `positive_prompt`           | Basic positive tag list for SDXL |
+| `negative_prompt`           | Basic negative tag list for SDXL |
+| `Ollama_Negative_Textbox_1` | Instructional template to help LLMs generate clean negative prompts |
 
 ---
 
-## Contributing
+## 📂 Example Files
 
-Feel free to submit issues or pull requests to add new art styles, improve prompts, or fix bugs. Open to collaboration!
+All examples are in the `Examples/` folder of this repository.
+
+### 🧠 Standard Prompt Examples
+
+**Node Setup:**  
+![Standard Prompt Nodes](Examples/RPG_Standard.png)
+
+**Workflow File:**  
+[`RPG_Nodes_Normal.json`](Examples/RPG_Nodes_Normal.json)
 
 ---
 
-## License
+### 🧠 Ollama-Driven Prompt Examples
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+**Node Setup:**  
+![Ollama Prompt Nodes](Examples/RPG_Ollama.png)
+
+**Workflow File:**  
+[`RPG_Nodes_Ollama.json`](Examples/RPG_Nodes_Ollama.json)
+
+---
+
+### ⚔️ Comparison: Standard vs Ollama
+
+**Side-by-Side Visual:**  
+![Standard vs Ollama](Examples/RPG_Standard_Vs_Ollama.png)
+
+**Workflow File:**  
+[`RPG_Nodes_Normal_Vs_Ollama.json`](Examples/RPG_Nodes_Normal_Vs_Ollama.json)
+
+---
+
+## 📦 Installation
+
+1. Clone or download this repo into your ComfyUI custom nodes folder:
+
+```bash
+git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
+```
+
+2. Restart ComfyUI.
+
+---
+
+## 🛠️ Usage
+
+1. Add the **RPG Art Style Selector** node from the "RPG" category.
+2. Select an Art Style from the dropdown.
+3. Connect outputs as needed:
+   - `positive_prompt` / `negative_prompt` → SDXL node
+   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM integration or text generation
+
+---
+
+## 🔮 Future Plans
+
+- Dynamic LLM integration for character prompt generation.
+- Additional art styles (e.g., pixel art, steampunk, noir).
+- Drag-and-drop interface for race/class/emotion selection.
+
+---
+
+## 🐾 Made by Lord Lethris
+
+Featuring Belle the cat, who disapproves of bad prompts. 🐱
+```
