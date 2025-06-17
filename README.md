@@ -34,8 +34,8 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 | Output Name                  | Description |
 |-----------------------------|-------------|
 | `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
-| `positive_prompt`           | Standard positive tag string |
-| `negative_prompt`           | Standard negative tag string |
+| `positive_prompt`            | Standard positive tag string |
+| `negative_prompt`            | Standard negative tag string |
 | `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
 
 ---
@@ -88,18 +88,34 @@ git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
 
 ## 🛠️ Usage
 
-1. Add the **RPG Art Style Selector** node from the "RPG" category.
-2. Select an Art Style from the dropdown.
-3. Connect outputs as needed:
-   - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node
+1. Add the **RPG Art Style Selector** node from the "RPG" category.  
+2. Select an Art Style from the dropdown.  
+3. Connect outputs as needed:  
+   - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node  
    - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools
+
+---
+
+## ⚠️ Optional Ollama Support Requirements
+
+To use the **Ollama-driven prompt generation** features in this node, you need to:
+
+- Install the [**Ollama server**](https://ollama.com/) on your desired host.
+- Download for [macOS](https://ollama.com/download/mac) or [Windows](https://ollama.com/download/windows).
+- Install the [**ComfyUI-Ollama node**](https://github.com/stavsap/comfyui-ollama) by Stav Sapir ([stavsap](https://github.com/stavsap)).
+
+> Without these installed and running, the Ollama prompt outputs in this node will not function.
+
+---
+
+Credit for the [ComfyUI-Ollama node](https://github.com/stavsap/comfyui-ollama) goes to Stav Sapir ([stavsap](https://github.com/stavsap)).
 
 ---
 
 ## 🔮 Future Plans
 
-- Dynamic LLM integration for auto-generating character prompts.
-- Additional art styles (e.g., pixel art, steampunk, noir).
+- Dynamic LLM integration for auto-generating character prompts.  
+- Additional art styles (e.g., pixel art, steampunk, noir).  
 - Visual dropdowns for selecting features (e.g., races, classes, emotions).
 
 ---
