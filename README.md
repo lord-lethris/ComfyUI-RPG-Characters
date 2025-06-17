@@ -1,6 +1,8 @@
 # ComfyUI-RPG-Characters
 
-A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that generates stylized SDXL prompts for RPG characters. This node can output both **standard prompt formats** and enhanced **Ollama-driven prompts** for extreme close-up portraits with vivid detail.
+A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that generates stylized prompts for RPG characters. This node outputs both **standard prompt formats** and enhanced **Ollama-style descriptive prompts** ideal for **extreme close-up portraits**.
+
+✅ Compatible with **Stable Diffusion**, **SDXL**, **Flux**, and any model that uses structured prompts.
 
 ---
 
@@ -15,8 +17,8 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
   - Pixar Animation
 
 - 🧠 Generates:
-  - Standard Positive & Negative Prompts (for ComfyUI/SDXL use)
-  - Ollama-specific Descriptive Prompt (text-to-text guidance)
+  - Standard Positive & Negative Prompts (for SD, SDXL, Flux)
+  - Ollama-style Descriptive Prompt (text-to-text guidance)
   - Ollama-style Negative Prompt Instruction
 
 - 📸 Designed for **1024x1024 extreme close-up portraits**
@@ -31,10 +33,10 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 
 | Output Name                  | Description |
 |-----------------------------|-------------|
-| `Ollama_Posative_Textbox_1` | Detailed textual prompt for AI input (e.g., LLMs or advanced generation logic) |
-| `positive_prompt`           | Basic positive tag list for SDXL |
-| `negative_prompt`           | Basic negative tag list for SDXL |
-| `Ollama_Negative_Textbox_1` | Instructional template to help LLMs generate clean negative prompts |
+| `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
+| `positive_prompt`           | Standard positive tag string |
+| `negative_prompt`           | Standard negative tag string |
+| `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
 
 ---
 
@@ -89,16 +91,16 @@ git clone https://github.com/lord-lethris/ComfyUI-RPG-Characters.git
 1. Add the **RPG Art Style Selector** node from the "RPG" category.
 2. Select an Art Style from the dropdown.
 3. Connect outputs as needed:
-   - `positive_prompt` / `negative_prompt` → SDXL node
-   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM integration or text generation
+   - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node
+   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools
 
 ---
 
 ## 🔮 Future Plans
 
-- Dynamic LLM integration for character prompt generation.
+- Dynamic LLM integration for auto-generating character prompts.
 - Additional art styles (e.g., pixel art, steampunk, noir).
-- Drag-and-drop interface for race/class/emotion selection.
+- Visual dropdowns for selecting features (e.g., races, classes, emotions).
 
 ---
 
