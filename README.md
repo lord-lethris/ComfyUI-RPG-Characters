@@ -14,7 +14,6 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
   - Realistic
   - Fantasy Illustration
   - Digital Painting
-  - Pixar Animation
 
 - 🧠 Generates:
   - Standard Positive & Negative Prompts (for SD, SDXL, Flux)
