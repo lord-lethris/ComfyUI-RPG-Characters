@@ -4,6 +4,7 @@ from .prompt_selector_node import NODE_CLASS_MAPPINGS as PROMPT_SELECTOR_MAPPING
 from .rpg_prompt_concatenator_node import NODE_CLASS_MAPPINGS as CONCATENATOR_NODE_MAPPINGS
 from .rpg_prompt_concatenator_node import NODE_DISPLAY_NAME_MAPPINGS as CONCATENATOR_DISPLAY
 from .prompt_conditioning_converter_node import NODE_CLASS_MAPPINGS as CONDITIONING_NODE_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS as CONDITIONING_NODE_DISPLAY
+from .model_likeness_switch import ModelLikenessSwitch
 
 
 NODE_CLASS_MAPPINGS = {}
@@ -22,3 +23,9 @@ NODE_DISPLAY_NAME_MAPPINGS.update(CONCATENATOR_DISPLAY)
 
 NODE_CLASS_MAPPINGS.update(CONDITIONING_NODE_MAPPINGS)
 NODE_DISPLAY_NAME_MAPPINGS.update(CONDITIONING_NODE_DISPLAY)
+
+NODE_CLASS_MAPPINGS["ModelLikenessSwitch"] = ModelLikenessSwitch
+NODE_DISPLAY_NAME_MAPPINGS["ModelLikenessSwitch"] = "Model Selector (Use Likeness)"
+
+NODE_CLASS_MAPPINGS["prompt_selector_node"] = prompt_selector_node
+NODE_DISPLAY_NAME_MAPPINGS["prompt_selector_node"] = "Prompt Selector"
