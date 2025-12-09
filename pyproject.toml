@@ -28,7 +28,7 @@ Documentation = "https://github.com/lord-lethris/ComfyUI-RPG-Characters/wiki"
 "Bug Tracker" = "https://github.com/lord-lethris/ComfyUI-RPG-Characters/issues"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "lord-lethris"
 DisplayName = "ComfyUI-RPG-Characters"
 Icon = ""
 includes = [] 
