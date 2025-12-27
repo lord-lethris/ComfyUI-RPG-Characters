@@ -4,6 +4,8 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 
 ✅ Compatible with **Stable Diffusion**, **SDXL**, **Flux**, and any model that uses structured prompts.
 
+This update expands the node to include **Sci-Fi / Cyberpunk character generation**, adding new dropdowns for **Augmentations** and additional Sci-Fi features while retaining all classic RPG options.
+
 ---
 
 ## ✨ Features
@@ -14,6 +16,7 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
   - Realistic
   - Fantasy Illustration
   - Digital Painting
+  - Sci-Fi / Cyberpunk
 
 - 🧠 Generates:
   - Standard Positive & Negative Prompts (for SD, SDXL, Flux)
@@ -24,7 +27,7 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 - 📄 Fully structured to support character features:
   - Race, Ethnicity, Gender, Age, Class
   - Hair & Beard Styles and Colours
-  - Clothing Style, Emotion, and Scene
+  - Clothing Style, Emotion, Scene, and Augmentations
 
 ---
 
@@ -45,7 +48,7 @@ To install:
 ## 🧱 Node Outputs
 
 | Output Name                  | Description |
-|-----------------------------|-------------|
+|-------------------------------|-------------|
 | `positive_prompt`            | Standard positive tag string |
 | `negative_prompt`            | Standard negative tag string |
 | `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
@@ -119,7 +122,7 @@ Restart ComfyUI after installation.
 2. Select an Art Style from the dropdown.  
 3. Connect outputs as needed:  
    - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node  
-   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools
+   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools  
 
 ---
 
@@ -143,7 +146,7 @@ Credit for the [ComfyUI-Ollama node](https://github.com/stavsap/comfyui-ollama) 
 
 - Dynamic LLM integration for auto-generating character prompts  
 - Additional art styles (e.g., pixel art, steampunk, noir)  
-- Visual dropdowns for selecting features (e.g., races, classes, emotions)
+- Visual dropdowns for selecting features (e.g., races, classes, emotions, augmentations)
 
 ---
 

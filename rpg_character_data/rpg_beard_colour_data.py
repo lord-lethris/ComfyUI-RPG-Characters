@@ -1,4 +1,7 @@
 BEARD_COLOUR_DATA = {
+# =========================
+# AD&D / Base Beard Colour
+# =========================
     "No Beard": {"prompt": "", "negative_prompt": ""},
     "Ash Blonde": {"prompt": "which is Ash Blonde Colored", "negative_prompt": ""},
     "Auburn": {"prompt": "which is Auburn Colored", "negative_prompt": ""},
@@ -50,4 +53,18 @@ BEARD_COLOUR_DATA = {
     "Unnatural Colors": {"prompt": "which is Unnatural Colors Colored", "negative_prompt": ""},
     "Violet": {"prompt": "which is Violet Colored", "negative_prompt": ""},
     "White": {"prompt": "which is White Colored", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Cyberpunk / Fantasy Variants
+# =========================
+    "Neon Pink": {"prompt": "which is Neon Pink Colored with glowing accents", "negative_prompt": ""},
+    "Neon Blue": {"prompt": "which is Neon Blue Colored with glowing accents", "negative_prompt": ""},
+    "Cyber Silver": {"prompt": "which is Cyber Silver Colored with metallic sheen", "negative_prompt": ""},
+    "Chrome": {"prompt": "which is Chrome Colored with reflective metallic highlights", "negative_prompt": ""},
+    "Holographic": {"prompt": "which is Holographic Colored with shifting colors", "negative_prompt": ""},
+    "Iridescent": {"prompt": "which is Iridescent Colored with shimmering rainbow highlights", "negative_prompt": ""},
+    "Glowing Red": {"prompt": "which is Glowing Red Colored with neon accents", "negative_prompt": ""},
+    "Glowing Green": {"prompt": "which is Glowing Green Colored with neon accents", "negative_prompt": ""},
+    "Bioluminescent": {"prompt": "which is Bioluminescent Colored and softly glowing", "negative_prompt": ""},
+    "Cyberpunk Gradient": {"prompt": "which is Cyberpunk Gradient Colored blending two or more neon shades", "negative_prompt": ""},
 }

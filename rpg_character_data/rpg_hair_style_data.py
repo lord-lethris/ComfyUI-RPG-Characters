@@ -1,4 +1,7 @@
 HAIR_STYLE_DATA = {
+# =========================
+# AD&D / Base Hair
+# =========================
     "Bald": {"prompt": "with a bald head", "negative_prompt": "hair on head"},
     "Afro": {"prompt": "with Afro Hair", "negative_prompt": ""},
     "Beehive haircut": {"prompt": "with Beehive haircut", "negative_prompt": ""},
@@ -44,4 +47,23 @@ HAIR_STYLE_DATA = {
     "Updo": {"prompt": "with Updo hair", "negative_prompt": ""},
     "Very long wave": {"prompt": "with Very long wave hair", "negative_prompt": ""},
     "Wavy": {"prompt": "with Wavy hair", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Futuristic Hairstyles
+# =========================
+
+    "Asymmetrical Cut": {"prompt": "with Asymmetrical haircut, futuristic style", "negative_prompt": ""},
+    "Undercut": {"prompt": "with Undercut hairstyle, cyberpunk style", "negative_prompt": ""},
+    "Shaved Sides": {"prompt": "with Shaved Sides, futuristic cyberpunk haircut", "negative_prompt": ""},
+    "Neon Streaks": {"prompt": "with hair featuring Neon Streaks, cyberpunk style", "negative_prompt": ""},
+    "LED Hair": {"prompt": "with hair illuminated with subtle LED strands, cyberpunk aesthetic", "negative_prompt": ""},
+    "Hawk Fade": {"prompt": "with Hawk Fade hairstyle, cyberpunk futuristic look", "negative_prompt": ""},
+    "Synthetic Braids": {"prompt": "with Synthetic braids, futuristic cyberpunk style", "negative_prompt": ""},
+    "Dreadhawk": {"prompt": "with Dreadhawk hairstyle, cyberpunk twist on Mohawk", "negative_prompt": ""},
+    "Chrome Hair": {"prompt": "with Chrome-colored hair, metallic cyberpunk aesthetic", "negative_prompt": ""},
+    "Iridescent Hair": {"prompt": "with Iridescent or Holographic hair, futuristic cyberpunk style", "negative_prompt": ""},
+    "Tech Topknot": {"prompt": "with Tech Topknot, cyberpunk-inspired hairstyle", "negative_prompt": ""},
+    "Shaved Pattern": {"prompt": "with Shaved Pattern designs on head, cyberpunk style", "negative_prompt": ""},
+    "Spiked Mohawk": {"prompt": "with Spiked Mohawk, cyberpunk variant", "negative_prompt": ""},
+    "Layered Neon Bob": {"prompt": "with Layered Bob haircut with Neon highlights, cyberpunk style", "negative_prompt": ""},
 }

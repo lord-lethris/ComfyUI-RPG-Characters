@@ -11,6 +11,7 @@ class RPGArtStyleSelector:
                     "Realistic",
                     "Fantasy Illustration",
                     "Digital Painting",
+                    "Sci-Fi / Cyberpunk",  # NEW
                 ],)
             }
         }
@@ -46,6 +47,10 @@ class RPGArtStyleSelector:
         "Digital Painting": {
             "positive": "digital painting, smooth brushwork, rich textures, detailed lighting",
             "negative": "pixelated, noisy, flat lighting"
+        },
+        "Sci-Fi / Cyberpunk": {  # NEW
+            "positive": "sci-fi, cyberpunk, neon lights, futuristic tech, detailed cybernetic elements, vibrant neon colors",
+            "negative": "medieval, fantasy, dull colors, low-tech, blurry, unrealistic proportions"
         },
     }
 
@@ -97,9 +102,21 @@ class RPGArtStyleSelector:
                 "**Upper Chest/Clothing**: Stylized materials with visual brushwork.\n\n"
                 "**Soft Background**: Smudged gradients and digital bloom."
             ),
+            "Sci-Fi / Cyberpunk": (  # NEW
+                "Use sci-fi / cyberpunk style: neon lights, futuristic city, cybernetic implants, high-tech fashion.\n\n"
+                "**1024x1024 Extreme Close-Up Portrait**\n\n"
+                "The character's face shows technological augmentation, glowing interfaces, and neon reflections.\n\n"
+                "**Eyes**: Enhanced with digital overlays or neon glows.\n\n"
+                "**Hair**: Futuristic styles with vibrant neon highlights.\n\n"
+                "**Upper Chest/Clothing**: Cyberpunk armor, holographic fabrics, tech accessories.\n\n"
+                "**Soft Background**: Futuristic cityscape, neon signs, misty night lights."
+            ),
         }
 
-        Ollama_Posative_Textbox_1 = style_prompts_text.get(art_style, "**1024x1024 Extreme Close-Up Portrait**\n\nCharacter with vivid detail and atmospheric background.")
+        Ollama_Posative_Textbox_1 = style_prompts_text.get(
+            art_style,
+            "**1024x1024 Extreme Close-Up Portrait**\n\nCharacter with vivid detail and atmospheric background."
+        )
         positive_prompt = self.STYLE_PROMPTS.get(art_style, {}).get("positive", "")
         negative_prompt = self.STYLE_PROMPTS.get(art_style, {}).get("negative", "")
 

@@ -1,4 +1,7 @@
 RACE_DATA = {
+# =========================
+# AD&D / Base Fantasy Races
+# =========================
     "Human": {"prompt": "(Solo) 1Human", "negative_prompt": ""},
     "Elf": {"prompt": "(Solo) 1Elf", "negative_prompt": ""},
     "High Elf": {"prompt": "(Solo) 1High Elf", "negative_prompt": ""},
@@ -29,8 +32,28 @@ RACE_DATA = {
     "Lizardfolk": {"prompt": "(Solo) 1Lizardfolk, Reptilian like", "negative_prompt": ""},
     "Dragonkin": {"prompt": "(Solo) 1dragonkin who is part (human:0.6) and part (dragon:0.4)", "negative_prompt": ""},
     "Dragon": {"prompt": "(Solo) 1(dragon:1.5)", "negative_prompt": ""},
-    "Sword": {"prompt": "(Solo) 1 magical talking sword with a detailed face carved into the hilt. The sword's blade is made of shining enchanted metal, glowing with faint blue runes. The hilt is ornately designed, with the face either looking wise or menacing. A mystical aura surrounds the sword, giving it a magical presence. The setting has a fantasy medieval style, and the face on the hilt is expressive, blending into the intricate metalwork", "negative_prompt": ""},
     "Undead": {"prompt": "(Solo) 1undead", "negative_prompt": ""},
-    "Ghoul": {"prompt": "(Solo) 1Ghoul, (skeletal:0.5), rotting corps that has been animated by dark necromantic force", "negative_prompt": ""},
-    "Hippo": {"prompt": "(Solo) 1Hippo-Human hybrid, (Human:0.6) (Hippo:0.4), head of a Hippo", "negative_prompt": ""}
+    "Ghoul": {"prompt": "(Solo) 1Ghoul, (skeletal:0.5), rotting corpse animated by dark necromantic force", "negative_prompt": ""},
+
+# =========================
+# Animal / Hybrid Races
+# =========================
+    "Hippo": {"prompt": "(Solo) 1Hippo-Human hybrid, (Human:0.6) (Hippo:0.4), head of a Hippo", "negative_prompt": ""},
+    "Wolffolk": {"prompt": "(Solo) 1Wolf-Human hybrid, (Human:0.6) (Wolf:0.4)", "negative_prompt": ""},
+    "Catfolk": {"prompt": "(Solo) 1Cat-Human hybrid, (Human:0.6) (Cat:0.4)", "negative_prompt": ""},
+    "Lupin": {"prompt": "(Solo) 1Lupin hybrid, humanoid wolf-like features", "negative_prompt": ""},
+    "Birdfolk": {"prompt": "(Solo) 1Avian humanoid, wings and beak, birdlike features", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Cyberpunk / Futuristic Races
+# =========================
+    "Android": {"prompt": "(Solo) 1Android, synthetic humanoid, futuristic sci-fi", "negative_prompt": ""},
+    "Cyborg": {"prompt": "(Solo) 1Cyborg, human with cybernetic augmentations, sci-fi style", "negative_prompt": ""},
+    "Synthetic Human": {"prompt": "(Solo) 1Synthetic Human, fully artificial, sci-fi aesthetic", "negative_prompt": ""},
+    "Mutant": {"prompt": "(Solo) 1Mutant human, genetically altered, sci-fi style", "negative_prompt": ""},
+    "Alien Humanoid": {"prompt": "(Solo) 1Alien humanoid, sci-fi style, humanoid with exotic skin/eyes", "negative_prompt": ""},
+    "Reptilian Alien": {"prompt": "(Solo) 1Reptilian alien humanoid, sci-fi style", "negative_prompt": ""},
+    "Martian": {"prompt": "(Solo) 1Martian humanoid, sci-fi style, red-skinned alien", "negative_prompt": ""},
+    "Holographic Entity": {"prompt": "(Solo) 1Holographic entity, glowing translucent humanoid, sci-fi aesthetic", "negative_prompt": ""},
+    "Artificial Intelligence": {"prompt": "(Solo) 1AI humanoid avatar, futuristic sci-fi style", "negative_prompt": ""},
 }

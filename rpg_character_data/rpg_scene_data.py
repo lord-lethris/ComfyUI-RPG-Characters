@@ -1,4 +1,7 @@
 SCENE_DATA = {
+# =========================
+# AD&D Scenes
+# =========================
     "Plain White": {"prompt": "(Plain Simple Background, (White Background))", "negative_prompt": ""},
     "Plain Black": {"prompt": "(Plain Black Background)", "negative_prompt": ""},
     "Plain Red": {"prompt": "(Plain Simple Background, (Red Background))", "negative_prompt": ""},
@@ -29,4 +32,17 @@ SCENE_DATA = {
     "Waterfall": {"prompt": "Waterfall In Background", "negative_prompt": ""},
     "Wildflower Meadow": {"prompt": "Wildflower Meadow In Background", "negative_prompt": ""},
     "Dutch countryside": {"prompt": "The background is A serene Dutch landscape featuring flat, open fields with vibrant green grass, winding canals reflecting the sky, and a scattering of traditional windmills under a vast, soft, cloudy sky", "negative_prompt": ""},
+# =========================
+# Sci-Fi Scenes
+# =========================
+    "Neon Alley": {"prompt": "(Cyberpunk City Alley, Neon Signs, Rain-soaked Streets, Futuristic Urban Background)", "negative_prompt": ""},
+    "High-Tech Skyline": {"prompt": "(Futuristic City Skyline at Night, Neon Lights, Skyscrapers, Holograms, Cyberpunk Style)", "negative_prompt": ""},
+    "Corporate Tower": {"prompt": "(Massive Futuristic Corporate Tower, Neon Accents, Night Cityscape, High-Tech Architecture)", "negative_prompt": ""},
+    "Underground Market": {"prompt": "(Cyberpunk Underground Market, Neon Lights, Crowded Stalls, Futuristic Urban Environment)", "negative_prompt": ""},
+    "Cyber Street": {"prompt": "(Busy Futuristic Street, Flying Vehicles, Neon Signs, Rain, Cyberpunk Aesthetic)", "negative_prompt": ""},
+    "Tech Lab Interior": {"prompt": "(Futuristic Laboratory, Holographic Screens, Advanced Technology, Cyberpunk Interior Background)", "negative_prompt": ""},
+    "Neon Rooftops": {"prompt": "(City Rooftops at Night, Neon Glow, Futuristic Skyscrapers, Cyberpunk Vibe)", "negative_prompt": ""},
+    "Abandoned Factory": {"prompt": "(Abandoned Industrial Factory, Futuristic Dystopia, Rusted Metal, Neon Lights, Cyberpunk Background)", "negative_prompt": ""},
+    "Virtual Reality Hub": {"prompt": "(Futuristic VR Arcade, Neon Lights, Holographic Interfaces, Cyberpunk Style Interior)", "negative_prompt": ""},
+    "Rainy Night Street": {"prompt": "(Rainy Futuristic Street, Neon Reflections on Wet Pavement, Cyberpunk Cityscape at Night)", "negative_prompt": ""},
 }

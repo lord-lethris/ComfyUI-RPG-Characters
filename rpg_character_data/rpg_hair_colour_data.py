@@ -1,4 +1,7 @@
 HAIR_COLOUR_DATA = {
+# =========================
+# AD&D / Base Hair Colour
+# =========================
     "No hair": {"prompt": "", "negative_prompt": ""},
     "Ash Blonde": {"prompt": "and Ash Blonde colored hair", "negative_prompt": ""},
     "Auburn": {"prompt": "and Auburn colored hair", "negative_prompt": ""},
@@ -50,4 +53,18 @@ HAIR_COLOUR_DATA = {
     "Unnatural Colors": {"prompt": "and Unnatural Colors colored hair", "negative_prompt": ""},
     "Violet": {"prompt": "and Violet colored hair", "negative_prompt": ""},
     "White": {"prompt": "and White colored hair", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Cyberpunk / Fantasy Variants
+# =========================
+    "Neon Pink": {"prompt": "and Neon Pink colored hair with glowing accents", "negative_prompt": ""},
+    "Neon Blue": {"prompt": "and Neon Blue colored hair with glowing accents", "negative_prompt": ""},
+    "Cyber Silver": {"prompt": "and Cyber Silver colored hair with metallic sheen", "negative_prompt": ""},
+    "Chrome": {"prompt": "and Chrome colored hair with reflective metallic highlights", "negative_prompt": ""},
+    "Holographic": {"prompt": "and Holographic colored hair with shifting colors", "negative_prompt": ""},
+    "Iridescent": {"prompt": "and Iridescent colored hair with shimmering rainbow highlights", "negative_prompt": ""},
+    "Glowing Red": {"prompt": "and Glowing Red colored hair with neon accents", "negative_prompt": ""},
+    "Glowing Green": {"prompt": "and Glowing Green colored hair with neon accents", "negative_prompt": ""},
+    "Bioluminescent": {"prompt": "and Bioluminescent colored hair that glows softly", "negative_prompt": ""},
+    "Cyberpunk Gradient": {"prompt": "and Cyberpunk Gradient colored hair blending two or more neon shades", "negative_prompt": ""},
 }

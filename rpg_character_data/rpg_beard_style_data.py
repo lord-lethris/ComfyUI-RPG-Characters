@@ -1,4 +1,7 @@
 BEARD_STYLE_DATA = {
+# =========================
+# AD&D / Base Beard
+# =========================
     "No Beard": {"prompt": "No Beard", "negative_prompt": "Beard"},
     "Anchor": {"prompt": "Medium Anchor style Wavy beard", "negative_prompt": ""},
     "Balbo": {"prompt": "Short Balbo style Straight beard", "negative_prompt": ""},
@@ -41,4 +44,19 @@ BEARD_STYLE_DATA = {
     "Viking Long": {"prompt": "Viking Long style beard", "negative_prompt": ""},
     "Yeard": {"prompt": "Long Yeard style Straight beard", "negative_prompt": ""},
     "Zappa": {"prompt": "Zappa style beard", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Cyberpunk Beards
+# =========================
+
+    "Neon Goatee": {"prompt": "Goatee style beard with Neon highlights, Cyberpunk style", "negative_prompt": ""},
+    "Cyberpunk Stubble": {"prompt": "Short Stubble with subtle tech/glow accents, futuristic style", "negative_prompt": ""},
+    "Shaved Pattern Beard": {"prompt": "Medium beard with shaved geometric patterns, cyberpunk aesthetic", "negative_prompt": ""},
+    "Holographic Beard": {"prompt": "Short to medium beard with holographic color effect, Sci-Fi style", "negative_prompt": ""},
+    "Tech Beard": {"prompt": "Scruffy beard integrated with cybernetic implants, cyberpunk style", "negative_prompt": ""},
+    "Wire-Lined Beard": {"prompt": "Beard with fine metallic wire accents, futuristic Cyberpunk look", "negative_prompt": ""},
+    "Viral Patch": {"prompt": "Small patchy beard with neon or glowing tips, Sci-Fi aesthetic", "negative_prompt": ""},
+    "Chrome Beard": {"prompt": "Medium to long beard with metallic chrome sheen, Cyberpunk style", "negative_prompt": ""},
+    "LED Stubble": {"prompt": "Very short stubble with tiny embedded LED strands, futuristic look", "negative_prompt": ""},
+    "Augmented Soul Patch": {"prompt": "Soul Patch with tech enhancements or glowing accents, Cyberpunk style", "negative_prompt": ""},
 }

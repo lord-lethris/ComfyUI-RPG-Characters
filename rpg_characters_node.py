@@ -14,6 +14,7 @@ from .rpg_character_data.rpg_hair_colour_data import HAIR_COLOUR_DATA
 from .rpg_character_data.rpg_beard_style_data import BEARD_STYLE_DATA
 from .rpg_character_data.rpg_beard_colour_data import BEARD_COLOUR_DATA
 from .rpg_character_data.rpg_clothes_style_data import CLOTHES_STYLE_DATA
+from .rpg_character_data.rpg_augment_data import AUGMENT_DATA
 from .rpg_character_data.rpg_emotion_data import EMOTION_DATA
 from .rpg_character_data.rpg_scene_data import SCENE_DATA
 
@@ -47,6 +48,7 @@ class RPGCharacterSelector:
                 "beard_style": (list(BEARD_STYLE_DATA.keys()),),
                 "beard_colour": (list(BEARD_COLOUR_DATA.keys()),),
                 "clothes_style": (list(CLOTHES_STYLE_DATA.keys()),),
+                "Augmentations": (list(AUGMENT_DATA.keys()),),
                 "emotion": (list(EMOTION_DATA.keys()),),
                 "scene": (list(SCENE_DATA.keys()),),
             }
@@ -69,6 +71,7 @@ class RPGCharacterSelector:
         beard_style,
         beard_colour,
         clothes_style,
+        Augmentations,
         emotion,
         scene,
     ):
@@ -83,6 +86,7 @@ class RPGCharacterSelector:
             BEARD_STYLE_DATA[beard_style],
             BEARD_COLOUR_DATA[beard_colour],
             CLOTHES_STYLE_DATA[clothes_style],
+            AUGMENT_DATA[Augmentations],
             EMOTION_DATA[emotion],
             SCENE_DATA[scene],
         ]
@@ -121,6 +125,7 @@ class RPGCharacterSelector:
             f"Beard Style: {beard_style}",
             f"Beard Colour: {beard_colour}",
             f"Clothes Style: {clothes_style}",
+			f"Augmentations: {Augmentations}",
             f"Emotion: {emotion}",
             scene_description
         ])

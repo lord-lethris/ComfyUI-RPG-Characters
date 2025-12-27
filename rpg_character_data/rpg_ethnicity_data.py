@@ -1,4 +1,7 @@
 ETHNICITY_DATA = {
+# =========================
+# Real-World / AD&D Ethnicities
+# =========================
     "None": {"prompt": "", "negative_prompt": ""},
     "Aboriginal Australian": {"prompt": "(Ethnicity is Aboriginal Australian) and they have Deep skin tones, broad nosed, and dark brown eyes", "negative_prompt": ""},
     "Ancient Gauls": {"prompt": "(Ethnicity is Ancient Gauls) and they have fair to medium skin tones, strong facial features, high cheekbones, and a variety of eye colors, often blue or green.", "negative_prompt": ""},
@@ -70,5 +73,17 @@ ETHNICITY_DATA = {
     "Vietnamese": {"prompt": "(Ethnicity is Vietnamese) and they have Dark brown eyes, warm to medium skin tones, with soft delicate facial features and a slender face shape", "negative_prompt": ""},
     "Welsh": {"prompt": "(Ethnicity is Welsh) and they have Light {blue|green|grey} eyes, fair skin, with a variety of facial structures{|, with a strong jawline|, with a strong jawline}", "negative_prompt": ""},
     "Yoruba": {"prompt": "(Ethnicity is Yoruba) and they have Dark brown eyes, deep skin tones, prominent cheekbones, and well-defined facial features", "negative_prompt": ""},
-    "Zulu": {"prompt": "(Ethnicity is Zulu) and they have Dark brown eyes, deep skin tones, high cheekbones, and strong pronounced facial features", "negative_prompt": ""}
+    "Zulu": {"prompt": "(Ethnicity is Zulu) and they have Dark brown eyes, deep skin tones, high cheekbones, and strong pronounced facial features", "negative_prompt": ""},
+
+# =========================
+# Sci-Fi / Cyberpunk / Futuristic Ethnicities
+# =========================
+    "Synthetic Human": {"prompt": "(Ethnicity is Synthetic Human) with flawless synthetic skin, variable eye color, and uniform facial symmetry", "negative_prompt": ""},
+    "Augmented Human": {"prompt": "(Ethnicity is Augmented Human) with cybernetic implants integrated into facial features, glowing or metallic accents", "negative_prompt": ""},
+    "Mutant": {"prompt": "(Ethnicity is Mutant) with unusual skin tones, enhanced facial structure, and optional heterochromatic eyes", "negative_prompt": ""},
+    "Alien Humanoid": {"prompt": "(Ethnicity is Alien Humanoid) with non-human skin color, elongated or modified facial features, and glowing eyes", "negative_prompt": ""},
+    "Reptilian Alien": {"prompt": "(Ethnicity is Reptilian Alien) with scaled skin tones, slit pupils, and angular facial structure", "negative_prompt": ""},
+    "Martian": {"prompt": "(Ethnicity is Martian) with reddish skin, large eyes, high cheekbones, and slender facial structure", "negative_prompt": ""},
+    "Holographic Entity": {"prompt": "(Ethnicity is Holographic Entity) with glowing translucent skin and abstract humanoid facial features", "negative_prompt": ""},
+    "Artificial Intelligence": {"prompt": "(Ethnicity is AI Humanoid Avatar) with futuristic synthetic features and variable glowing accents", "negative_prompt": ""}
 }
