@@ -4,7 +4,7 @@ A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that gene
 
 ✅ Compatible with **Stable Diffusion**, **SDXL**, **Flux**, and any model that uses structured prompts.
 
-This update expands the node to include **Sci-Fi / Cyberpunk character generation**, adding new dropdowns for **Augmentations** and additional Sci-Fi features while retaining all classic RPG options.
+The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk** character creation, with expanded classes, clothing styles, scenes, and art styles. Sci-Fi characters can be created **without augmentations**, allowing fully augment-free characters as well as cybernetic ones.
 
 ---
 
@@ -27,7 +27,30 @@ This update expands the node to include **Sci-Fi / Cyberpunk character generatio
 - 📄 Fully structured to support character features:
   - Race, Ethnicity, Gender, Age, Class
   - Hair & Beard Styles and Colours
-  - Clothing Style, Emotion, Scene, and Augmentations
+  - Clothing Style, Emotion, and Scene
+  - Fantasy and Sci-Fi / Cyberpunk classes and clothing
+  - General / Neutral, Fantasy, and Sci-Fi / Cyberpunk scenes
+
+---
+
+## 🆕 V2.3 Workflow Highlights
+
+The **AD&D Character Portrait Generator V2.3** workflow builds on the RPG character prompt system with several workflow improvements:
+
+- 🧩 Updated upscale stages to use the newer **ComfyUI Subgraph** system
+- 🎨 Added an **Anime Prep** stage to improve results when using likeness images with Anime-style generation
+- 🧙 Expanded **AD&D / Fantasy** character classes
+- 🤖 Added **Sci-Fi / Cyberpunk** character classes
+- 👕 Expanded Fantasy and Sci-Fi / Cyberpunk clothing styles
+- 🌍 Expanded scene selection with:
+  - General / Neutral environments
+  - AD&D / Fantasy environments and interiors
+  - Sci-Fi / Cyberpunk environments and interiors
+- 🍺 Added fantasy tavern and inn environments, including **Pub/Tavern Interior**
+- 🧪 Added scientist, laboratory, corporate and research environments
+- 🧬 Sci-Fi characters are **not required to have augmentations** — augment-free characters are fully supported
+
+The workflow remains designed for straightforward character creation while allowing the individual character, clothing, scene, and visual style to be mixed and matched.
 
 ---
 
@@ -51,9 +74,9 @@ To install:
 |-------------------------------|-------------|
 | `positive_prompt`            | Standard positive tag string |
 | `negative_prompt`            | Standard negative tag string |
-| `Ollama_Posative_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
+| `Ollama_Positive_Textbox_1` | Detailed descriptive prompt for LLMs or advanced generators |
 | `Ollama_Negative_Textbox_1` | Instructional template to guide LLMs on what to exclude |
-| `Ollama_Posative_Textbox_2` | Extra Prompt Food for LLMs or advanced generators that have a second Text Input|
+| `Ollama_Positive_Textbox_2` | Extra prompt input for LLMs or advanced generators that have a second Text Input|
 
 ---
 
@@ -118,11 +141,12 @@ Restart ComfyUI after installation.
 
 ## 🧠 Usage
 
-1. Add the **RPG Art Style Selector** node from the "RPG" category.  
-2. Select an Art Style from the dropdown.  
-3. Connect outputs as needed:  
+1. Add the **RPG Art Style Selector** and RPG character nodes from the "RPG" category.  
+2. Select the character traits, clothing style, scene, and art style you want.  
+3. Mix Fantasy, Sci-Fi / Cyberpunk, and General / Neutral options as required.  
+4. Connect outputs as needed:  
    - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node  
-   - `Ollama_Posative_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools  
+   - `Ollama_Positive_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools  
 
 ---
 
@@ -144,9 +168,10 @@ Credit for the [ComfyUI-Ollama node](https://github.com/stavsap/comfyui-ollama) 
 
 ## 🔮 Future Plans
 
-- Dynamic LLM integration for auto-generating character prompts  
-- Additional art styles (e.g., pixel art, steampunk, noir)  
-- Visual dropdowns for selecting features (e.g., races, classes, emotions, augmentations)
+- Dynamic LLM integration for auto-generating character prompts
+- Additional art styles (e.g., pixel art, steampunk, noir)
+- Further expansion of character classes, clothing styles, and environments
+- Additional workflow improvements and generation presets
 
 ---
 

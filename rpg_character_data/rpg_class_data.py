@@ -14,39 +14,44 @@ CLASS_DATA = {
         "negative_prompt": "cyberpunk technology, firearms, modern science"
     },
 
-    "AD&D - Anti-Paladin": {
-        "prompt": "is a fantasy class of Anti-Paladin, dark champion, corrupted knight",
-        "negative_prompt": "holy paladin, angelic themes, cyberpunk technology"
-    },
-
-    "AD&D - Assassin": {
-        "prompt": "is a fantasy class of Assassin, stealthy killer, shadow operative",
-        "negative_prompt": "heavy armor, paladin, cleric, cyberpunk gear"
-    },
-
-    "AD&D - Barbarian": {
-        "prompt": "is a fantasy class of Barbarian, savage warrior, primal strength",
-        "negative_prompt": "robes, refined armor, cyberpunk weapons"
-    },
-
-    "AD&D - Bard": {
-        "prompt": "is a fantasy class of Bard, traveling performer, magical musician",
-        "negative_prompt": "heavy armor, cyberpunk technology"
-    },
-
-    "AD&D - Beastmaster": {
-        "prompt": "is a fantasy class of Beastmaster, animal companion, wilderness bond",
-        "negative_prompt": "robots, drones, cybernetic pets"
-    },
-
     "AD&D - Butler": {
         "prompt": "is a fantasy class of Butler, refined servant, disciplined attendant",
         "negative_prompt": "combat armor, cyberpunk implants"
     },
 
-    "AD&D - Cavalier": {
-        "prompt": "is a fantasy class of Cavalier, mounted knight, sworn code of honor",
-        "negative_prompt": "guns, cyberpunk vehicles"
+    "AD&D - Innkeeper": {
+        "prompt": "is a fantasy class of Innkeeper, hospitable tavern proprietor, experienced host and manager",
+        "negative_prompt": "cyberpunk technology, futuristic clothing, combat armor"
+    },
+
+    "AD&D - Barman": {
+        "prompt": "is a fantasy class of Barman, skilled tavern worker, drink server and conversationalist",
+        "negative_prompt": "cyberpunk technology, futuristic equipment, heavy armor"
+    },
+
+    "AD&D - Tavern Wench": {
+        "prompt": "is a fantasy class of Tavern Wench, tavern server, hospitable and charismatic attendant",
+        "negative_prompt": "cyberpunk technology, futuristic clothing, heavy armor"
+    },
+
+    "AD&D - Tavern Server": {
+        "prompt": "is a fantasy class of Tavern Server, skilled tavern attendant, food and drink server",
+        "negative_prompt": "cyberpunk technology, futuristic clothing, heavy armor"
+    },
+
+    "AD&D - Merchant": {
+        "prompt": "is a fantasy class of Merchant, skilled trader, negotiator and traveling dealer",
+        "negative_prompt": "cyberpunk technology, futuristic equipment, heavy armor"
+    },
+
+    "AD&D - Professor": {
+        "prompt": "is a fantasy class of Professor, learned scholar, academic expert",
+        "negative_prompt": "battle armor, cyberpunk tech"
+    },
+
+    "AD&D - Bard": {
+        "prompt": "is a fantasy class of Bard, traveling performer, magical musician",
+        "negative_prompt": "heavy armor, cyberpunk technology"
     },
 
     "AD&D - Cleric": {
@@ -64,11 +69,6 @@ CLASS_DATA = {
         "negative_prompt": "technology, firearms"
     },
 
-    "AD&D - Fighter": {
-        "prompt": "is a fantasy class of Fighter, trained warrior, battlefield veteran",
-        "negative_prompt": "magic robes, cyberpunk weapons"
-    },
-
     "AD&D - Illusionist": {
         "prompt": "is a fantasy class of Illusionist, master of deceptive magic",
         "negative_prompt": "technology, firearms"
@@ -79,24 +79,54 @@ CLASS_DATA = {
         "negative_prompt": "cyberpunk technology"
     },
 
-    "AD&D - Monk": {
-        "prompt": "is a fantasy class of Monk, disciplined martial artist, inner focus",
-        "negative_prompt": "heavy armor, cyberpunk implants"
-    },
-
     "AD&D - Necromancer": {
         "prompt": "is a fantasy class of Necromancer, death magic, undead mastery",
         "negative_prompt": "holy magic, cyberpunk tech"
     },
 
+    "AD&D - Sorcerer": {
+        "prompt": "is a fantasy class of Sorcerer, innate magic, raw arcane power",
+        "negative_prompt": "technology"
+    },
+
+    "AD&D - Witch": {
+        "prompt": "is a fantasy class of Witch, occult magic, arcane rituals",
+        "negative_prompt": "technology"
+    },
+
+    "AD&D - Wizard": {
+        "prompt": "is a fantasy class of Wizard, scholarly spellcaster, arcane mastery",
+        "negative_prompt": "cyberpunk technology"
+    },
+
+    "AD&D - Anti-Paladin": {
+        "prompt": "is a fantasy class of Anti-Paladin, dark champion, corrupted knight",
+        "negative_prompt": "holy paladin, angelic themes, cyberpunk technology"
+    },
+
+    "AD&D - Barbarian": {
+        "prompt": "is a fantasy class of Barbarian, savage warrior, primal strength",
+        "negative_prompt": "robes, refined armor, cyberpunk weapons"
+    },
+
+    "AD&D - Cavalier": {
+        "prompt": "is a fantasy class of Cavalier, mounted knight, sworn code of honor",
+        "negative_prompt": "guns, cyberpunk vehicles"
+    },
+
+    "AD&D - Fighter": {
+        "prompt": "is a fantasy class of Fighter, trained warrior, battlefield veteran",
+        "negative_prompt": "magic robes, cyberpunk weapons"
+    },
+
+    "AD&D - Monk": {
+        "prompt": "is a fantasy class of Monk, disciplined martial artist, inner focus",
+        "negative_prompt": "heavy armor, cyberpunk implants"
+    },
+
     "AD&D - Paladin": {
         "prompt": "is a fantasy class of Paladin, holy knight, divine warrior",
         "negative_prompt": "dark magic, cyberpunk weapons"
-    },
-
-    "AD&D - Professor": {
-        "prompt": "is a fantasy class of Professor, learned scholar, academic expert",
-        "negative_prompt": "battle armor, cyberpunk tech"
     },
 
     "AD&D - Ranger": {
@@ -124,11 +154,6 @@ CLASS_DATA = {
         "negative_prompt": "technology, firearms"
     },
 
-    "AD&D - Sorcerer": {
-        "prompt": "is a fantasy class of Sorcerer, innate magic, raw arcane power",
-        "negative_prompt": "technology"
-    },
-
     "AD&D - Stalker": {
         "prompt": "is a fantasy class of Stalker, hunter, silent tracker",
         "negative_prompt": "cyberpunk surveillance tech"
@@ -144,61 +169,61 @@ CLASS_DATA = {
         "negative_prompt": "heavy armor, cyberpunk tech"
     },
 
-    "AD&D - Witch": {
-        "prompt": "is a fantasy class of Witch, occult magic, arcane rituals",
-        "negative_prompt": "technology"
+    "AD&D - Assassin": {
+        "prompt": "is a fantasy class of Assassin, stealthy killer, shadow operative",
+        "negative_prompt": "heavy armor, paladin, cleric, cyberpunk gear"
     },
 
-    "AD&D - Wizard": {
-        "prompt": "is a fantasy class of Wizard, scholarly spellcaster, arcane mastery",
-        "negative_prompt": "cyberpunk technology"
+    "AD&D - Beastmaster": {
+        "prompt": "is a fantasy class of Beastmaster, animal companion, wilderness bond",
+        "negative_prompt": "robots, drones, cybernetic pets"
     },
 
 # =========================
-# Sci-Fi / Sci-Fi Classes
+# Sci-Fi / Cyberpunk Classes
 # =========================
 
-    "Sci-Fi -  Netrunner": {
+    "Sci-Fi - Netrunner": {
         "prompt": "is a cyberpunk class of Netrunner, elite hacker, digital infiltration specialist",
         "negative_prompt": "fantasy magic, medieval armor"
     },
 
-    "Sci-Fi -  Street Samurai": {
+    "Sci-Fi - Street Samurai": {
         "prompt": "is a cyberpunk class of Street Samurai, combat specialist, urban warrior",
         "negative_prompt": "fantasy knight, medieval weapons"
     },
 
-    "Sci-Fi -  Techie": {
+    "Sci-Fi - Techie": {
         "prompt": "is a cyberpunk class of Techie, engineer, mechanic, futuristic problem solver",
         "negative_prompt": "fantasy magic"
     },
 
-    "Sci-Fi -  Corporate Agent": {
+    "Sci-Fi - Corporate Agent": {
         "prompt": "is a cyberpunk class of Corporate Agent, corporate operative, high-tech espionage",
         "negative_prompt": "fantasy nobility"
     },
 
-    "Sci-Fi -  Fixer": {
+    "Sci-Fi - Fixer": {
         "prompt": "is a cyberpunk class of Fixer, black market broker, underworld negotiator",
         "negative_prompt": "fantasy merchant"
     },
 
-    "Sci-Fi -  Solo Mercenary": {
+    "Sci-Fi - Solo Mercenary": {
         "prompt": "is a cyberpunk class of Solo Mercenary, independent combat operative",
         "negative_prompt": "fantasy armor"
     },
 
-    "Sci-Fi -  Ripperdoc": {
+    "Sci-Fi - Ripperdoc": {
         "prompt": "is a cyberpunk class of Ripperdoc, underground medic, cybernetic surgeon",
         "negative_prompt": "fantasy cleric"
     },
 
-    "Sci-Fi -  Drone Operator": {
+    "Sci-Fi - Drone Operator": {
         "prompt": "is a cyberpunk class of Drone Operator, remote surveillance specialist",
         "negative_prompt": "fantasy familiars"
     },
 
-    "Sci-Fi -  Android Operative": {
+    "Sci-Fi - Android Operative": {
         "prompt": "is a cyberpunk class of Android Operative, synthetic humanoid, artificial intelligence",
         "negative_prompt": "fantasy races"
     },

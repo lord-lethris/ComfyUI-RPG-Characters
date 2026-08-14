@@ -1,4 +1,5 @@
 CLOTHES_STYLE_DATA = {
+
     "Naked": {
         "prompt": "is fully nude",
         "negative_prompt": "SFW, safe for work, clothing"
@@ -128,63 +129,106 @@ CLOTHES_STYLE_DATA = {
         "negative_prompt": "futuristic materials, cyberpunk armor"
     },
 
+# =========================
+# AD&D / Tavern & Service Clothing
+# =========================
+
+    "AD&D - Innkeeper": {
+        "prompt": "wearing traditional fantasy innkeeper’s clothing, practical rustic attire, waistcoat, apron",
+        "negative_prompt": "modern clothing, futuristic clothing, cyberpunk fashion"
+    },
+
+    "AD&D - Barman": {
+        "prompt": "wearing traditional fantasy tavern barman’s clothing, rustic shirt, waistcoat, apron",
+        "negative_prompt": "modern bartender, futuristic clothing, cyberpunk fashion"
+    },
+
+    "AD&D - Tavern Wench": {
+        "prompt": "wearing traditional fantasy tavern wench attire, rustic tavern dress, apron",
+        "negative_prompt": "modern clothing, futuristic clothing, cyberpunk fashion"
+    },
+
+    "AD&D - Tavern Server": {
+        "prompt": "wearing traditional fantasy tavern server clothing, rustic service attire, simple shirt, waistcoat, apron",
+        "negative_prompt": "modern clothing, futuristic clothing, cyberpunk fashion"
+    },
+
+# =========================
+# AD&D / Minimal Clothing
+# =========================
+
     "AD&D - Topless": {
         "prompt": "is topless, wearing minimal lower garments",
         "negative_prompt": "SFW, safe for work, full clothing"
     },
 
 # =========================
-# Sci-Fi / Sci-Fi Clothing
+# Sci-Fi / Cyberpunk Clothing
 # =========================
 
-    "Sci-Fi Streetwear": {
+    "Sci-Fi - Streetwear": {
         "prompt": "wearing cyberpunk streetwear, neon accents, futuristic urban fashion",
         "negative_prompt": "medieval clothing, fantasy robes"
     },
 
-    "Sci-Fi Tactical Gear": {
+    "Sci-Fi - Tactical Gear": {
         "prompt": "wearing cyberpunk tactical gear, armored clothing, urban combat outfit",
         "negative_prompt": "fantasy plate armor, medieval shields"
     },
 
-    "Sci-Fi Corpo Suit": {
+    "Sci-Fi - Corpo Suit": {
         "prompt": "wearing cyberpunk corporate suit, sleek futuristic business attire",
         "negative_prompt": "fantasy noble robes, medieval clothing"
     },
 
-    "Sci-Fi Leather Jacket": {
+    "Sci-Fi - Leather Jacket": {
         "prompt": "wearing cyberpunk leather jacket, neon trim, dystopian street style",
         "negative_prompt": "medieval leather armor"
     },
 
-    "Sci-Fi Long Trench Coat": {
+    "Sci-Fi - Long Trench Coat": {
         "prompt": "wearing long cyberpunk trench coat, dystopian noir fashion",
         "negative_prompt": "fantasy cloaks, medieval coats"
     },
 
-    "Sci-Fi Combat Armor": {
+    "Sci-Fi - Combat Armor": {
         "prompt": "wearing cyberpunk combat armor, lightweight futuristic plating",
         "negative_prompt": "knight armor, medieval plate"
     },
 
-    "Sci-Fi Techwear": {
+    "Sci-Fi - Techwear": {
         "prompt": "wearing cyberpunk techwear, modular clothing, utility-focused fashion",
         "negative_prompt": "fantasy robes, medieval belts"
     },
 
-    "Sci-Fi Nomad Gear": {
+    "Sci-Fi - Nomad Gear": {
         "prompt": "wearing cyberpunk nomad gear, rugged futuristic clothing",
         "negative_prompt": "fantasy ranger outfit"
     },
 
-    "Sci-Fi Nightclub Outfit": {
+    "Sci-Fi - Nightclub Outfit": {
         "prompt": "wearing cyberpunk nightclub outfit, neon fabrics, futuristic fashion",
         "negative_prompt": "medieval dress, fantasy costume"
     },
 
-    "Sci-Fi Android Shell": {
+    "Sci-Fi - Android Shell": {
         "prompt": "wearing android synthetic shell, futuristic materials, artificial body design",
         "negative_prompt": "fantasy races, medieval clothing"
+    },
+
+    "Sci-Fi - Scientist Lab Coat": {
+        "prompt": "wearing cyberpunk scientist lab coat, futuristic laboratory attire, high-tech research clothing, sleek materials, neon-lit lab environment",
+        "negative_prompt": "medieval robes, fantasy wizard clothing, knight armor, dirty rags, primitive tools"
+    },
+
+    "Sci-Fi - Corporate Scientist": {
+        "prompt": "wearing cyberpunk corporate lab coat, clean futuristic research uniform, corporate laboratory environment",
+        "negative_prompt": "fantasy robes, medieval clothing"
+    },
+
+    "Sci-Fi - Underground Scientist": {
+        "prompt": "wearing worn cyberpunk lab coat, underground scientist, black market research lab, dystopian atmosphere",
+        "negative_prompt": "fantasy magic robes, medieval setting"
     },
 
 }
