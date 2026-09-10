@@ -26,7 +26,7 @@ RACE_DATA = {
     "Half-Orc": {"prompt": "(Solo) 1Half-Orc, (Human:0.6) (Orc:0.4)", "negative_prompt": ""},
     "Aarakocra": {"prompt": "(Solo) 1Aarakocra", "negative_prompt": ""},
     "Tiefling": {"prompt": "(Solo) 1Tiefling, ({brick red|ruddy tan|human} Skin tone:1.3)", "negative_prompt": ""},
-    "Aasimar": {"prompt": "(Solo) 1Aasimar, ({Pale|Pale Brown|dark brown|tanned|emerald|gold|silver} Skin tone:1.3) with (Pupil-less:1.8) {pale white|gold|gray|topaz} eyes:1.3)", "negative_prompt": ""},
+    "Aasimar": {"prompt": "(Solo) 1Aasimar, celestial humanoid, divine heritage, ({Pale|Pale Brown|dark brown|tanned|emerald|gold|silver} Skin tone:1.15), with luminous {pale white|gold|gray|topaz} eyes:1.15, subtle celestial features", "negative_prompt": "giant eyes, oversized eyes, single giant eye, cyclops, malformed eyes, distorted eyes"},
     "Goblin": {"prompt": "(Solo) 1Goblin, ({Deep Red|Orange|Yellow|Green} Skin tone:1.3)", "negative_prompt": ""},
     "Kobold": {"prompt": "(Solo) 1Kobold, ({Reddish Brown|Rusty Black|Blue|White|Green} Squamous Skin tone:1.3) with Burnt {Orange|Red} eyes", "negative_prompt": ""},
     "Lizardfolk": {"prompt": "(Solo) 1Lizardfolk, Reptilian like", "negative_prompt": ""},
