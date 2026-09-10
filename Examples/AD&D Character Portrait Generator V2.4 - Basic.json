@@ -1,0 +1,1715 @@
+{
+  "id": "ffe25d5c-f433-4bcd-8e2a-0350bfe2ef20",
+  "revision": 0,
+  "last_node_id": 153,
+  "last_link_id": 266,
+  "nodes": [
+    {
+      "id": 73,
+      "type": "PromptConcatenatorNode",
+      "pos": [
+        180,
+        210
+      ],
+      "size": [
+        320,
+        110
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 217
+        },
+        {
+          "name": "art_positive",
+          "type": "STRING",
+          "link": 92
+        },
+        {
+          "name": "char_positive",
+          "type": "STRING",
+          "link": 166
+        },
+        {
+          "name": "art_negative",
+          "type": "STRING",
+          "link": 93
+        },
+        {
+          "name": "char_negative",
+          "type": "STRING",
+          "link": 167
+        }
+      ],
+      "outputs": [
+        {
+          "name": "concatenate_positive_string",
+          "type": "STRING",
+          "links": [
+            164
+          ]
+        },
+        {
+          "name": "concatenate_negative_string",
+          "type": "STRING",
+          "links": [
+            165
+          ]
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            135,
+            137
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            136,
+            138
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PromptConcatenatorNode"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": "box"
+    },
+    {
+      "id": 104,
+      "type": "PreviewAny",
+      "pos": [
+        180,
+        370
+      ],
+      "size": [
+        320,
+        440
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 168
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Selection Summary",
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": "box"
+    },
+    {
+      "id": 105,
+      "type": "PreviewAny",
+      "pos": [
+        540,
+        210
+      ],
+      "size": [
+        420,
+        300
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 164
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Positive Prompt Summary",
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": "box"
+    },
+    {
+      "id": 106,
+      "type": "PreviewAny",
+      "pos": [
+        540,
+        560
+      ],
+      "size": [
+        420,
+        290
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 165
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Negative Prompt Summary",
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": "box"
+    },
+    {
+      "id": 95,
+      "type": "VAEDecode",
+      "pos": [
+        960,
+        920
+      ],
+      "size": [
+        230,
+        100
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 134
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 218
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            147
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.64",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": "box"
+    },
+    {
+      "id": 74,
+      "type": "PreviewImage",
+      "pos": [
+        540,
+        900
+      ],
+      "size": [
+        1000,
+        1010
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 147
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 117,
+      "type": "Seed Generator",
+      "pos": [
+        980,
+        210
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            202,
+            203
+          ]
+        }
+      ],
+      "title": "🟪 Seed Generator",
+      "properties": {
+        "Node name for S&R": "Seed Generator",
+        "cnr_id": "image-saver",
+        "ver": "65e6903eff274a50f8b5cd768f0f96baf37baea1",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        729307984775754,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "seed": 729307984775754,
+        "control_after_generate": "fixed"
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": "box"
+    },
+    {
+      "id": 122,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        980,
+        370
+      ],
+      "size": [
+        560,
+        100
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            215,
+            216
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            217
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            218
+          ]
+        }
+      ],
+      "title": "🟪 Load Checkpoint",
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "1-SDXL\\XL-TRAINED\\ProteusV0.3.safetensors"
+      ],
+      "widgets_values_named": {
+        "ckpt_name": "1-SDXL\\XL-TRAINED\\ProteusV0.3.safetensors"
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": "box"
+    },
+    {
+      "id": 93,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        1070,
+        820
+      ],
+      "size": [
+        270,
+        340
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 215
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 135
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 136
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 219
+        },
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "widget": {
+            "name": "noise_seed"
+          },
+          "link": 202
+        },
+        {
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": 263
+        },
+        {
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          },
+          "link": 251
+        },
+        {
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          },
+          "link": 253
+        },
+        {
+          "name": "end_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "end_at_step"
+          },
+          "link": 264
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            132
+          ]
+        }
+      ],
+      "title": "Stage 1",
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.39",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "enable",
+        510624041166983,
+        "randomize",
+        40,
+        9,
+        "dpmpp_2m_sde",
+        "exponential",
+        0,
+        20,
+        "enable"
+      ],
+      "widgets_values_named": {
+        "add_noise": "enable",
+        "noise_seed": 510624041166983,
+        "control_after_generate": "randomize",
+        "steps": 40,
+        "cfg": 9,
+        "sampler_name": "dpmpp_2m_sde",
+        "scheduler": "exponential",
+        "start_at_step": 0,
+        "end_at_step": 20,
+        "return_with_leftover_noise": "enable"
+      },
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 94,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        1330,
+        820
+      ],
+      "size": [
+        270,
+        340
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 216
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 137
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 138
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 132
+        },
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "widget": {
+            "name": "noise_seed"
+          },
+          "link": 203
+        },
+        {
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": 265
+        },
+        {
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          },
+          "link": 252
+        },
+        {
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          },
+          "link": 254
+        },
+        {
+          "name": "start_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "start_at_step"
+          },
+          "link": 266
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            134
+          ]
+        }
+      ],
+      "title": "Stage 2",
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.39",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "enable",
+        274280309924354,
+        "randomize",
+        40,
+        9,
+        "dpmpp_2m_sde",
+        "exponential",
+        14,
+        1000,
+        "disable"
+      ],
+      "widgets_values_named": {
+        "add_noise": "enable",
+        "noise_seed": 274280309924354,
+        "control_after_generate": "randomize",
+        "steps": 40,
+        "cfg": 9,
+        "sampler_name": "dpmpp_2m_sde",
+        "scheduler": "exponential",
+        "start_at_step": 14,
+        "end_at_step": 1000,
+        "return_with_leftover_noise": "disable"
+      },
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 151,
+      "type": "21249f3c-88af-4b29-9f65-272bfbb3886e",
+      "pos": [
+        980,
+        520
+      ],
+      "size": [
+        560,
+        190
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Steps",
+          "name": "int",
+          "type": "INT",
+          "widget": {
+            "name": "int"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "sampler_name",
+          "type": "COMBO",
+          "links": [
+            251,
+            252
+          ]
+        },
+        {
+          "name": "scheduler",
+          "type": "COMBO",
+          "links": [
+            253,
+            254
+          ]
+        },
+        {
+          "label": "Steps",
+          "name": "INT_1",
+          "type": "INT",
+          "links": [
+            263,
+            265
+          ]
+        },
+        {
+          "label": "Stage 1 - End At",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            264
+          ]
+        },
+        {
+          "label": "Stage 2 - Start At",
+          "name": "INT_2",
+          "type": "INT",
+          "links": [
+            266
+          ]
+        }
+      ],
+      "properties": {
+        "previewExposures": []
+      },
+      "widgets_values": [
+        "dpmpp_2m_sde",
+        "exponential",
+        30
+      ],
+      "widgets_values_named": {
+        "sampler_name": "dpmpp_2m_sde",
+        "scheduler": "exponential",
+        "int": 30
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 123,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        1270,
+        210
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            219
+          ]
+        }
+      ],
+      "title": "🟪 Empty Latent Image",
+      "properties": {
+        "Node name for S&R": "EmptySD3LatentImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.64",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ],
+      "widgets_values_named": {
+        "width": 1024,
+        "height": 1024,
+        "batch_size": 1
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": "box"
+    },
+    {
+      "id": 77,
+      "type": "RPGArtStyleSelector",
+      "pos": [
+        -170,
+        210
+      ],
+      "size": [
+        330,
+        120
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "Ollama_Posative_Textbox_1",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "positive_prompt",
+          "type": "STRING",
+          "links": [
+            92
+          ]
+        },
+        {
+          "name": "negative_prompt",
+          "type": "STRING",
+          "links": [
+            93
+          ]
+        },
+        {
+          "name": "Ollama_Negative_Textbox_1",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "⬜ RPG Art Style Selector",
+      "properties": {
+        "Node name for S&R": "RPGArtStyleSelector"
+      },
+      "widgets_values": [
+        "Fantasy Illustration"
+      ],
+      "widgets_values_named": {
+        "art_style": "Fantasy Illustration"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": "box"
+    },
+    {
+      "id": 126,
+      "type": "Note",
+      "pos": [
+        -180,
+        860
+      ],
+      "size": [
+        690,
+        1060
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "AD&D Character Portrait Generator V2.4 - Basic Workflow",
+      "properties": {
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109) — but feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  Default should be ok, but pick whats best for your Checkpoint.\n  Steps end/start are calculated for optimal results based on steps input.\n  Depending on your model and setup - don't go lower than 8\n\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
+      ],
+      "widgets_values_named": {
+        "text": "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109) — but feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  Default should be ok, but pick whats best for your Checkpoint.\n  Steps end/start are calculated for optimal results based on steps input.\n  Depending on your model and setup - don't go lower than 8\n\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
+      },
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 107,
+      "type": "RPGCharacterSelector",
+      "pos": [
+        -170,
+        380
+      ],
+      "size": [
+        330,
+        430
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive_prompt",
+          "type": "STRING",
+          "links": [
+            166
+          ]
+        },
+        {
+          "name": "negative_prompt",
+          "type": "STRING",
+          "links": [
+            167
+          ]
+        },
+        {
+          "name": "Ollama_Generate_V2_Textbox_2",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "selection_summary",
+          "type": "STRING",
+          "links": [
+            168
+          ]
+        }
+      ],
+      "title": "⬜ RPG Character Builder",
+      "properties": {
+        "Node name for S&R": "RPGCharacterSelector"
+      },
+      "widgets_values": [
+        null,
+        "Aasimar",
+        "None",
+        "Feminine",
+        "Mid Adult",
+        "AD&D - Necromancer",
+        "Bald",
+        "No hair",
+        "No Beard",
+        "No Beard",
+        "AD&D - Mage Robes",
+        "No Augmentations",
+        "Anger",
+        "Plain White",
+        3117436956,
+        5,
+        "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}}",
+        "{}",
+        "{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}"
+      ],
+      "widgets_values_named": {
+        "🧬 DNA Locker": null,
+        "race": "Aasimar",
+        "ethnicity": "None",
+        "gender": "Feminine",
+        "age": "Mid Adult",
+        "character_class": "AD&D - Necromancer",
+        "hair_style": "Bald",
+        "hair_colour": "No hair",
+        "beard_style": "No Beard",
+        "beard_colour": "No Beard",
+        "clothes_style": "AD&D - Mage Robes",
+        "Augmentations": "No Augmentations",
+        "emotion": "Anger",
+        "scene": "Plain White",
+        "dna_seed": 3117436956,
+        "dna_revision": 5,
+        "dna_locks": "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}}",
+        "dna_weights": "{}",
+        "dna_rerolls": "{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": "box"
+    }
+  ],
+  "links": [
+    [
+      92,
+      77,
+      1,
+      73,
+      1,
+      "STRING"
+    ],
+    [
+      93,
+      77,
+      2,
+      73,
+      3,
+      "STRING"
+    ],
+    [
+      132,
+      93,
+      0,
+      94,
+      3,
+      "LATENT"
+    ],
+    [
+      134,
+      94,
+      0,
+      95,
+      0,
+      "LATENT"
+    ],
+    [
+      135,
+      73,
+      2,
+      93,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      136,
+      73,
+      3,
+      93,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      137,
+      73,
+      2,
+      94,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      138,
+      73,
+      3,
+      94,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      147,
+      95,
+      0,
+      74,
+      0,
+      "IMAGE"
+    ],
+    [
+      164,
+      73,
+      0,
+      105,
+      0,
+      "STRING"
+    ],
+    [
+      165,
+      73,
+      1,
+      106,
+      0,
+      "STRING"
+    ],
+    [
+      166,
+      107,
+      0,
+      73,
+      2,
+      "STRING"
+    ],
+    [
+      167,
+      107,
+      1,
+      73,
+      4,
+      "STRING"
+    ],
+    [
+      168,
+      107,
+      3,
+      104,
+      0,
+      "STRING"
+    ],
+    [
+      202,
+      117,
+      0,
+      93,
+      4,
+      "INT"
+    ],
+    [
+      203,
+      117,
+      0,
+      94,
+      4,
+      "INT"
+    ],
+    [
+      215,
+      122,
+      0,
+      93,
+      0,
+      "MODEL"
+    ],
+    [
+      216,
+      122,
+      0,
+      94,
+      0,
+      "MODEL"
+    ],
+    [
+      217,
+      122,
+      1,
+      73,
+      0,
+      "CLIP"
+    ],
+    [
+      218,
+      122,
+      2,
+      95,
+      1,
+      "VAE"
+    ],
+    [
+      219,
+      123,
+      0,
+      93,
+      3,
+      "LATENT"
+    ],
+    [
+      251,
+      151,
+      0,
+      93,
+      6,
+      "COMBO"
+    ],
+    [
+      252,
+      151,
+      0,
+      94,
+      6,
+      "COMBO"
+    ],
+    [
+      253,
+      151,
+      1,
+      93,
+      7,
+      "COMBO"
+    ],
+    [
+      254,
+      151,
+      1,
+      94,
+      7,
+      "COMBO"
+    ],
+    [
+      263,
+      151,
+      2,
+      93,
+      5,
+      "INT"
+    ],
+    [
+      264,
+      151,
+      3,
+      93,
+      8,
+      "INT"
+    ],
+    [
+      265,
+      151,
+      2,
+      94,
+      5,
+      "INT"
+    ],
+    [
+      266,
+      151,
+      4,
+      94,
+      8,
+      "INT"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "🟦 RPG Character Configuration 🟦",
+      "bounding": [
+        -180,
+        140,
+        690,
+        680
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "🟨 Build Process 🟨",
+      "bounding": [
+        530,
+        140,
+        1020,
+        1780
+      ],
+      "color": "#b58b2a",
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "2 Stage Build Process (It Helps With Illustrations - trust me)",
+      "bounding": [
+        980,
+        730,
+        560,
+        120
+      ],
+      "color": "#a1309b",
+      "flags": {}
+    }
+  ],
+  "definitions": {
+    "subgraphs": [
+      {
+        "id": "21249f3c-88af-4b29-9f65-272bfbb3886e",
+        "version": 1,
+        "state": {
+          "lastGroupId": 3,
+          "lastNodeId": 153,
+          "lastLinkId": 266,
+          "lastRerouteId": 0
+        },
+        "revision": 0,
+        "config": {},
+        "name": "🟪 Sampler + Scheduler + Steps",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            1052,
+            -234,
+            130.564453125,
+            108
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            1620,
+            -264,
+            146.138671875,
+            148
+          ]
+        },
+        "inputs": [
+          {
+            "id": "0510979b-4ac7-4213-924e-732cfb793cfe",
+            "name": "sampler_name",
+            "type": "COMBO",
+            "linkIds": [
+              255
+            ],
+            "pos": [
+              1158.564453125,
+              -210
+            ]
+          },
+          {
+            "id": "d54dbe10-e79d-4fd0-b780-990c11b116b0",
+            "name": "scheduler",
+            "type": "COMBO",
+            "linkIds": [
+              256
+            ],
+            "pos": [
+              1158.564453125,
+              -190
+            ]
+          },
+          {
+            "id": "f5f8b3ff-7df9-409c-9f83-e963fb85fb6d",
+            "name": "int",
+            "type": "INT",
+            "linkIds": [
+              257
+            ],
+            "label": "Steps",
+            "pos": [
+              1158.564453125,
+              -170
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "9978586d-ea9c-4d00-8e49-77d0ddaf5a1a",
+            "name": "sampler_name",
+            "type": "COMBO",
+            "linkIds": [
+              244,
+              244
+            ],
+            "localized_name": "sampler_name",
+            "pos": [
+              1644,
+              -240
+            ]
+          },
+          {
+            "id": "6617bf5f-4076-4150-89c4-44c384b44731",
+            "name": "scheduler",
+            "type": "COMBO",
+            "linkIds": [
+              246,
+              246
+            ],
+            "localized_name": "scheduler",
+            "pos": [
+              1644,
+              -220
+            ]
+          },
+          {
+            "id": "a411935c-afaf-4b80-aac4-9189e428220c",
+            "name": "INT_1",
+            "type": "INT",
+            "linkIds": [
+              258
+            ],
+            "label": "Steps",
+            "pos": [
+              1644,
+              -200
+            ]
+          },
+          {
+            "id": "491dba02-4c0f-4db3-bded-893f75928b40",
+            "name": "INT",
+            "type": "INT",
+            "linkIds": [
+              261
+            ],
+            "label": "Stage 1 - End At",
+            "pos": [
+              1644,
+              -180
+            ]
+          },
+          {
+            "id": "e98d89e4-2538-4401-889b-e1642ff21af9",
+            "name": "INT_2",
+            "type": "INT",
+            "linkIds": [
+              262
+            ],
+            "label": "Stage 2 - Start At",
+            "pos": [
+              1644,
+              -160
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 137,
+            "type": "Sampler Scheduler Settings (JPS)",
+            "pos": [
+              1240,
+              -310
+            ],
+            "size": [
+              320,
+              110
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "sampler_name",
+                "name": "sampler_name",
+                "type": "COMBO",
+                "widget": {
+                  "name": "sampler_name"
+                },
+                "link": 255
+              },
+              {
+                "localized_name": "scheduler",
+                "name": "scheduler",
+                "type": "COMBO",
+                "widget": {
+                  "name": "scheduler"
+                },
+                "link": 256
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "sampler_name",
+                "name": "sampler_name",
+                "type": "COMBO",
+                "links": [
+                  244
+                ]
+              },
+              {
+                "localized_name": "scheduler",
+                "name": "scheduler",
+                "type": "COMBO",
+                "links": [
+                  246
+                ]
+              }
+            ],
+            "title": "🟪 Sampler + Scheduler Settings",
+            "properties": {
+              "Node name for S&R": "Sampler Scheduler Settings (JPS)",
+              "cnr_id": "jps-nodes",
+              "ver": "0e2a9aca02b17dde91577bfe4b65861df622dcaf",
+              "widget_ue_connectable": {}
+            },
+            "widgets_values": [
+              "dpmpp_2m_sde",
+              "exponential"
+            ],
+            "widgets_values_named": {
+              "sampler_name": "dpmpp_2m_sde",
+              "scheduler": "exponential"
+            },
+            "color": "#323",
+            "bgcolor": "#535",
+            "shape": 1
+          },
+          {
+            "id": 128,
+            "type": "Int Literal",
+            "pos": [
+              1260,
+              -140
+            ],
+            "size": [
+              270,
+              60
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "int",
+                "name": "int",
+                "type": "INT",
+                "widget": {
+                  "name": "int"
+                },
+                "link": 257
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  258,
+                  259,
+                  260
+                ]
+              }
+            ],
+            "title": "Steps",
+            "properties": {
+              "Node name for S&R": "Int Literal"
+            },
+            "widgets_values": [
+              30
+            ],
+            "widgets_values_named": {
+              "int": 30
+            }
+          },
+          {
+            "id": 152,
+            "type": "ComfyMathExpression",
+            "pos": [
+              1330,
+              10
+            ],
+            "size": [
+              400,
+              130
+            ],
+            "flags": {
+              "collapsed": true
+            },
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 260
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": []
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  262
+                ]
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": []
+              }
+            ],
+            "title": "START STEPS",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "a / 2.857142857142857"
+            ],
+            "widgets_values_named": {
+              "expression": "a / 2.857142857142857"
+            }
+          },
+          {
+            "id": 153,
+            "type": "ComfyMathExpression",
+            "pos": [
+              1330,
+              -30
+            ],
+            "size": [
+              400,
+              130
+            ],
+            "flags": {
+              "collapsed": true
+            },
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "a",
+                "name": "values.a",
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": 259
+              },
+              {
+                "localized_name": "b",
+                "name": "values.b",
+                "shape": 7,
+                "type": "FLOAT,INT,BOOLEAN",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": []
+              },
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  261
+                ]
+              },
+              {
+                "localized_name": "BOOL",
+                "name": "BOOL",
+                "type": "BOOLEAN",
+                "links": []
+              }
+            ],
+            "title": "END STEPS",
+            "properties": {
+              "Node name for S&R": "ComfyMathExpression"
+            },
+            "widgets_values": [
+              "a / 2"
+            ],
+            "widgets_values_named": {
+              "expression": "a / 2"
+            }
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 244,
+            "origin_id": 137,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": -1,
+            "type": "COMBO"
+          },
+          {
+            "id": 246,
+            "origin_id": 137,
+            "origin_slot": 1,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 255,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 137,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 256,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 137,
+            "target_slot": 1,
+            "type": "COMBO"
+          },
+          {
+            "id": 257,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 128,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 258,
+            "origin_id": 128,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 2,
+            "type": "INT"
+          },
+          {
+            "id": 259,
+            "origin_id": 128,
+            "origin_slot": 0,
+            "target_id": 153,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 260,
+            "origin_id": 128,
+            "origin_slot": 0,
+            "target_id": 152,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 261,
+            "origin_id": 153,
+            "origin_slot": 1,
+            "target_id": -20,
+            "target_slot": 3,
+            "type": "INT"
+          },
+          {
+            "id": 262,
+            "origin_id": 152,
+            "origin_slot": 1,
+            "target_id": -20,
+            "target_slot": 4,
+            "type": "INT"
+          }
+        ],
+        "extra": {}
+      }
+    ]
+  },
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7513148009015777,
+      "offset": [
+        354.97500562522185,
+        216.36047762552792
+      ]
+    },
+    "frontendVersion": "1.52.7",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

@@ -31,6 +31,43 @@ The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk*
   - Fantasy and Sci-Fi / Cyberpunk classes and clothing
   - General / Neutral, Fantasy, and Sci-Fi / Cyberpunk scenes
 
+- 🧬 **DNA Locker (V2.4)**
+  — Deterministic character DNA with per-locus re-rolls, Master Seed control, and a 2D DNA Sculptor for blending the nearest three variants. Preview changes live, apply or cancel sculpting, and reproduce character variations from the same seed.
+
+---
+
+## 🆕 V2.4 Workflow Highlights — DNA Locker
+
+The **AD&D Character Portrait Generator V2.4** introduces the **🧬 DNA Locker**, a deterministic character-variation system that lets you experiment with a character's visual traits without losing combinations you like.
+
+### 🧬 DNA Locker
+
+The DNA Locker gives each generated character a reproducible set of DNA loci — such as skin tone, eye colour, hair colour, and other supported visual traits.
+
+- 🎲 **Re-roll individual traits** — keep rolling a specific locus until you find a combination you like.
+- 🎲 **Re-roll the Master Seed** — generate a completely new DNA combination across all visible loci.
+- 🧬 **DNA Sculptor** — blend the nearest three variants in 2D DNA space for finer control than simple random selection.
+- 👁️ **Live feedback** — DNA changes are reflected immediately in the Locker while experimenting.
+- ✓ **Apply / ✕ Cancel** — sculpt changes can be previewed live and either committed or discarded.
+- 🔢 **Reproducible** — the Master Seed allows the same DNA combination to be recreated.
+
+The DNA Locker is designed to sit alongside the normal character-selection workflow: roll the dice, find a combination you like, sculpt it if you want more control, then run the workflow.
+
+> ⚠️ **DNA is deterministic. Genetics are not.**  
+> Diffusion models can occasionally interpret traits creatively, so the final image won't always perfectly match the DNA Locker. **DNA is fragile. Handle with care.** 🧬😏
+
+**Your character. Your DNA. Your dice.**
+
+### 🖼️ V2.4 Example Workflow
+
+The repository includes a complete **AD&D Character Portrait Generator V2.4 - Basic** example showing the DNA Locker in use.
+
+**DNA Locker Highlight:**  
+![AD&D Character Portrait Generator V2.4 - DNA Locker](Examples/AD&D_Character_Portrait_Generator_V2_4_Basic.png)
+
+**Workflow File:**  
+[`AD&D Character Portrait Generator V2.4 - Basic.json`](Examples/AD%26D%20Character%20Portrait%20Generator%20V2.4%20-%20Basic.json)
+
 ---
 
 ## 🆕 V2.3 Workflow Highlights
@@ -144,7 +181,8 @@ Restart ComfyUI after installation.
 1. Add the **RPG Art Style Selector** and RPG character nodes from the "RPG" category.  
 2. Select the character traits, clothing style, scene, and art style you want.  
 3. Mix Fantasy, Sci-Fi / Cyberpunk, and General / Neutral options as required.  
-4. Connect outputs as needed:  
+4. If using V2.4, use the **🧬 DNA Locker** to re-roll individual traits or the Master Seed, then optionally sculpt the DNA for finer control.  
+5. Connect outputs as needed:  
    - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node  
    - `Ollama_Positive_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools  
 
