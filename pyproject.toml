@@ -1,7 +1,7 @@
 [project]
 name = "rpg-characters"
 description = "Stylized RPG character prompt generator for ComfyUI. Supports standard and Ollama-based prompts, works with SD, SDXL, Flux, and more."
-version = "2.4.0"
+version = "2.4.1"
 license = {file = "LICENSE"}
 
 [project.urls]
