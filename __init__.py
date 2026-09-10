@@ -6,6 +6,7 @@ from .rpg_prompt_concatenator_node import NODE_DISPLAY_NAME_MAPPINGS as CONCATEN
 from .prompt_conditioning_converter_node import NODE_CLASS_MAPPINGS as CONDITIONING_NODE_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS as CONDITIONING_NODE_DISPLAY
 from .model_likeness_switch import ModelLikenessSwitch
 
+WEB_DIRECTORY = "./web"
 
 NODE_CLASS_MAPPINGS = {}
 NODE_CLASS_MAPPINGS.update(CHARACTER_MAPPINGS)
