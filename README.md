@@ -1,10 +1,12 @@
 # ComfyUI-RPG-Characters
 
+**Current release: V2.5**
+
 A custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that generates stylized prompts for RPG characters. This node outputs both **standard prompt formats** and enhanced **Ollama-style descriptive prompts** ideal for **extreme close-up portraits**.
 
 ✅ Compatible with **Stable Diffusion**, **SDXL**, **Flux**, and any model that uses structured prompts.
 
-The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk** character creation, with expanded classes, clothing styles, scenes, and art styles. Sci-Fi characters can be created **without augmentations**, allowing fully augment-free characters as well as cybernetic ones.
+The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk** character creation, with expanded classes, clothing styles, scenes, and art styles. V2.5 adds richer deterministic variation inside existing character choices and introduces a dedicated Pixel Art style. Sci-Fi characters can be created **without augmentations**, allowing fully augment-free characters as well as cybernetic ones.
 
 ---
 
@@ -15,7 +17,7 @@ The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk*
   - Dark Fantasy
   - Realistic
   - Fantasy Illustration
-  - Digital Painting
+  - Pixel Art
   - Sci-Fi / Cyberpunk
 
 - 🧠 Generates:
@@ -33,8 +35,41 @@ The generator supports both classic **AD&D / Fantasy** and **Sci-Fi / Cyberpunk*
 
 - 🧬 **DNA Locker (V2.4)**
   — Deterministic character DNA with per-locus re-rolls, Master Seed control, and a 2D DNA Sculptor for blending the nearest three variants. Preview changes live, apply or cancel sculpting, and reproduce character variations from the same seed.
+- 🧬 **Richer Character Variants (V2.5)**
+  — Existing character choices now contain more deterministic internal variation, including richer beard and hair-style descriptions plus colour, trim, material, and detail variants inside existing clothing styles.
+- 🖼️ **Expanded Art Styles (V2.5)**
+  — Refined Fantasy Illustration prompting for a more classic tabletop RPG illustration look and replaced the overlapping Digital Painting style with dedicated Pixel Art prompting.
 
 ---
+
+## 🆕 V2.5 Data & Art Style Refinements
+
+**V2.5** is a focused refinement release. It keeps the existing character-selection system and DNA Locker mechanics intact while making the underlying character data more visually varied and improving the art-style prompts.
+
+### 🧬 Character Data Refinement
+
+Existing user-facing choices have been enriched with deterministic internal prompt variants rather than adding large numbers of new dropdown options.
+
+- 🧔 **Beard styles** — richer variation in length, texture, grooming, and shape while preserving the existing beard-style choices.
+- 💇 **Hair styles** — restrained variation for generic styles, adding differences in length, texture, volume, and arrangement without changing distinctive named styles.
+- 👘 **Clothing styles** — existing Fantasy, tavern/service, and Sci-Fi clothing choices now include appropriate internal colour, trim, material, and accent variations.
+- 🧬 **Tiefling pigmentation** — expanded red-family skin-pigmentation variants and removed the human-skin fallback.
+- 🎲 **Deterministic by design** — these internal `{A|B|C}` variants are resolved through the existing character DNA system, so the variation remains reproducible.
+
+The goal is simple: **the dropdown describes the character choice; the DNA quietly determines the visual flavour.**
+
+> ⚠️ **DNA is deterministic. Genetics are not.**  
+> Diffusion models can still interpret traits creatively, so deterministic prompt data does not guarantee an identical visual result across every model or checkpoint.
+
+### 🎨 Art Style Refinement
+
+V2.5 also refines the style prompts used by the **RPG Art Style Selector**:
+
+- 🏰 **Fantasy Illustration** — now explicitly targets classic tabletop fantasy RPG artwork, hand-painted illustration, expressive linework, visible brushwork, stylised heroic forms, and pulp-fantasy aesthetics rather than photographic realism.
+- 🕹️ **Pixel Art** — replaces the previous Digital Painting style with a genuinely different visual language: classic fantasy RPG pixel art, crisp hard-edged pixels, deliberate pixel clusters, limited palettes, dithering, sprite-art forms, and block-based shading.
+- 🎨 **Digital Painting removed** — Fantasy Illustration already covered the painterly/illustrated territory, so the overlapping style was replaced with Pixel Art.
+
+V2.5 deliberately does **not** introduce new DNA mechanics, segmentation, regional conditioning, or a custom sampler. Those remain potential future architectural work.
 
 ## 🆕 V2.4 Workflow Highlights — DNA Locker
 
@@ -181,7 +216,7 @@ Restart ComfyUI after installation.
 1. Add the **RPG Art Style Selector** and RPG character nodes from the "RPG" category.  
 2. Select the character traits, clothing style, scene, and art style you want.  
 3. Mix Fantasy, Sci-Fi / Cyberpunk, and General / Neutral options as required.  
-4. If using V2.4, use the **🧬 DNA Locker** to re-roll individual traits or the Master Seed, then optionally sculpt the DNA for finer control.  
+4. If using V2.4 or later, use the **🧬 DNA Locker** to re-roll individual traits or the Master Seed, then optionally sculpt the DNA for finer control.  
 5. Connect outputs as needed:  
    - `positive_prompt` / `negative_prompt` → your SD/SDXL/Flux prompt node  
    - `Ollama_Positive_Textbox_1` / `Ollama_Negative_Textbox_1` → LLM or prompt analysis/feedback tools  
@@ -207,7 +242,7 @@ Credit for the [ComfyUI-Ollama node](https://github.com/stavsap/comfyui-ollama) 
 ## 🔮 Future Plans
 
 - Dynamic LLM integration for auto-generating character prompts
-- Additional art styles (e.g., pixel art, steampunk, noir)
+- Additional art styles (e.g., steampunk, noir, and other distinct visual styles)
 - Further expansion of character classes, clothing styles, and environments
 - Additional workflow improvements and generation presets
 

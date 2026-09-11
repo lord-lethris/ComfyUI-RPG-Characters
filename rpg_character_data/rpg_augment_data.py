@@ -7,23 +7,23 @@ AUGMENT_DATA = {
 # AD&D / Fantasy Augments
 # =========================
     "Magic Tattoo": {
-        "prompt": "(Glowing Arcane Tattoo on Arm, Mystical Runes, Fantasy Magic Enhancement)",
+        "prompt": "({Glowing arcane tattoo|Mystical rune tattoo|Enchanted sigil} on the {arm|shoulder|neck}, {blue|violet|cyan|gold} magical glow, fantasy magic enhancement)",
         "negative_prompt": ""
     },
     "Enchanted Eye": {
-        "prompt": "(Mystical Eye Implant, Glowing Iris, Magical Enhancement, Fantasy Style)",
+        "prompt": "({Mystical|Enchanted|Arcane} eye enhancement, {gold|blue|violet|green} glowing iris, magical fantasy enhancement)",
         "negative_prompt": ""
     },
     "Runed Armor": {
-        "prompt": "(Armor Inscribed with Glowing Runes, Magical Protection, Fantasy Style)",
+        "prompt": "(Armor inscribed with {glowing|faintly glowing|luminous} {arcane|holy|protective} runes, magical protection, fantasy style)",
         "negative_prompt": ""
     },
     "Winged Boots": {
-        "prompt": "(Leather Boots with Magical Wings, Floating Effect, Fantasy Enchantment)",
+        "prompt": "(Leather boots with {small feathered|ornate magical|ethereal} wings, {subtle|visible} floating effect, fantasy enchantment)",
         "negative_prompt": ""
     },
     "Arcane Gauntlet": {
-        "prompt": "(Glowing Gauntlet with Arcane Symbols, Fantasy Magic Enhancement)",
+        "prompt": "({Glowing|Luminous|Rune-inscribed} gauntlet with {arcane symbols|mystical runes|magical glyphs}, {blue|violet|gold|cyan} magical glow, fantasy enhancement)",
         "negative_prompt": ""
     },
 
@@ -31,7 +31,7 @@ AUGMENT_DATA = {
 # Sci-Fi Augments
 # =========================
     "Cybernetic Eye": {
-        "prompt": "(Futuristic Cybernetic Eye Implant, Glowing Red or Blue, Augmented Vision, Cyberpunk Style)",
+        "prompt": "(Futuristic cybernetic eye implant, glowing {red|blue|cyan|amber} iris, augmented vision, cyberpunk style)",
         "negative_prompt": ""
     },
     "Neural Uplink": {
@@ -47,7 +47,7 @@ AUGMENT_DATA = {
         "negative_prompt": ""
     },
     "Holographic Tattoo": {
-        "prompt": "(Holographic Tattoo on Skin, Neon Glowing Lines, Futuristic Cyberpunk Aesthetic)",
+        "prompt": "(Holographic tattoo on {arm|shoulder|neck}, {cyan|magenta|blue|violet} neon glowing lines, futuristic cyberpunk aesthetic)",
         "negative_prompt": ""
     },
     "Subdermal Armor": {
@@ -59,11 +59,11 @@ AUGMENT_DATA = {
         "negative_prompt": ""
     },
     "Optical HUD": {
-        "prompt": "(Augmented Reality HUD in Eye Implant, Cyberpunk Style, Neon Interface)",
+        "prompt": "(Augmented reality HUD in eye implant, {cyan|green|blue|amber} holographic interface, cyberpunk style)",
         "negative_prompt": ""
     },
     "Voice Modulator": {
-        "prompt": "(Cyberpunk Voice Modulator Implant, Futuristic Tech, Holographic Effects)",
+        "prompt": "(Cyberpunk voice modulator implant with {cyan|blue|violet|red} holographic effects, futuristic tech)",
         "negative_prompt": ""
     },
     "Nano Injector": {

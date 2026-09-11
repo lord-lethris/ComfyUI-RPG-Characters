@@ -1,9 +1,63 @@
 {
   "id": "ffe25d5c-f433-4bcd-8e2a-0350bfe2ef20",
   "revision": 0,
-  "last_node_id": 153,
-  "last_link_id": 266,
+  "last_node_id": 826,
+  "last_link_id": 1925,
   "nodes": [
+    {
+      "id": 123,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        1270,
+        210
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            219
+          ]
+        }
+      ],
+      "title": "🟪 Empty Latent Image",
+      "properties": {
+        "Node name for S&R": "EmptySD3LatentImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.64",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ],
+      "widgets_values_named": {
+        "width": 1024,
+        "height": 1024,
+        "batch_size": 1
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": "box"
+    },
     {
       "id": 73,
       "type": "PromptConcatenatorNode",
@@ -16,13 +70,13 @@
         110
       ],
       "flags": {},
-      "order": 7,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
           "name": "clip",
           "type": "CLIP",
-          "link": 217
+          "link": 1882
         },
         {
           "name": "art_positive",
@@ -64,16 +118,16 @@
           "name": "positive",
           "type": "CONDITIONING",
           "links": [
-            135,
-            137
+            1767,
+            1867
           ]
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
           "links": [
-            136,
-            138
+            1768,
+            1865
           ]
         }
       ],
@@ -85,56 +139,97 @@
       "shape": "box"
     },
     {
-      "id": 104,
-      "type": "PreviewAny",
+      "id": 122,
+      "type": "CheckpointLoaderSimple",
       "pos": [
-        180,
+        980,
         370
       ],
       "size": [
-        320,
-        440
+        560,
+        100
       ],
       "flags": {},
-      "order": 8,
+      "order": 1,
       "mode": 0,
-      "inputs": [
-        {
-          "name": "source",
-          "type": "*",
-          "link": 168
-        }
-      ],
+      "inputs": [],
       "outputs": [
         {
-          "name": "STRING",
-          "type": "STRING",
-          "links": null
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1872
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1873
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            1869
+          ]
         }
       ],
-      "title": "Selection Summary",
+      "title": "🟪 Load SD / SDXL Checkpoint",
       "properties": {
-        "Node name for S&R": "PreviewAny"
+        "Node name for S&R": "CheckpointLoaderSimple"
       },
-      "widgets_values": [],
-      "widgets_values_named": {},
-      "color": "#2a363b",
-      "bgcolor": "#3f5159",
+      "widgets_values": [
+        "1-SDXL\\XL-MERGED\\juggernautXL_juggXIByRundiffusion.safetensors"
+      ],
+      "widgets_values_named": {
+        "ckpt_name": "1-SDXL\\XL-MERGED\\juggernautXL_juggXIByRundiffusion.safetensors"
+      },
+      "color": "#323",
+      "bgcolor": "#535",
       "shape": "box"
+    },
+    {
+      "id": 805,
+      "type": "MarkdownNote",
+      "pos": [
+        540,
+        210
+      ],
+      "size": [
+        210,
+        90
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Flux Switch Note",
+      "properties": {},
+      "widgets_values": [
+        "<br>\nTrue - FLUX Workflow<br>\nFalse - SD / SDXL Workflow"
+      ],
+      "widgets_values_named": {
+        "text": "<br>\nTrue - FLUX Workflow<br>\nFalse - SD / SDXL Workflow"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
     },
     {
       "id": 105,
       "type": "PreviewAny",
       "pos": [
         540,
-        210
+        350
       ],
       "size": [
         420,
-        300
+        320
       ],
       "flags": {},
-      "order": 9,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -165,14 +260,14 @@
       "type": "PreviewAny",
       "pos": [
         540,
-        560
+        720
       ],
       "size": [
         420,
-        290
+        310
       ],
       "flags": {},
-      "order": 10,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -199,199 +294,49 @@
       "shape": "box"
     },
     {
-      "id": 95,
-      "type": "VAEDecode",
+      "id": 104,
+      "type": "PreviewAny",
       "pos": [
-        960,
-        920
-      ],
-      "size": [
-        230,
-        100
-      ],
-      "flags": {
-        "collapsed": true
-      },
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 134
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 218
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            147
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode",
-        "cnr_id": "comfy-core",
-        "ver": "0.3.64",
-        "enableTabs": false,
-        "tabWidth": 65,
-        "tabXOffset": 10,
-        "hasSecondTab": false,
-        "secondTabText": "Send Back",
-        "secondTabOffset": 80,
-        "secondTabWidth": 65
-      },
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": "box"
-    },
-    {
-      "id": 74,
-      "type": "PreviewImage",
-      "pos": [
-        540,
-        900
-      ],
-      "size": [
-        1000,
-        1010
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 147
-        }
-      ],
-      "outputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": [],
-      "widgets_values_named": {},
-      "color": "#432",
-      "bgcolor": "#653",
-      "shape": "box"
-    },
-    {
-      "id": 117,
-      "type": "Seed Generator",
-      "pos": [
-        980,
-        210
-      ],
-      "size": [
-        270,
-        110
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            202,
-            203
-          ]
-        }
-      ],
-      "title": "🟪 Seed Generator",
-      "properties": {
-        "Node name for S&R": "Seed Generator",
-        "cnr_id": "image-saver",
-        "ver": "65e6903eff274a50f8b5cd768f0f96baf37baea1",
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        729307984775754,
-        "fixed"
-      ],
-      "widgets_values_named": {
-        "seed": 729307984775754,
-        "control_after_generate": "fixed"
-      },
-      "color": "#323",
-      "bgcolor": "#535",
-      "shape": "box"
-    },
-    {
-      "id": 122,
-      "type": "CheckpointLoaderSimple",
-      "pos": [
-        980,
+        180,
         370
       ],
       "size": [
-        560,
-        100
+        320,
+        470
       ],
       "flags": {},
-      "order": 1,
+      "order": 9,
       "mode": 0,
-      "inputs": [],
-      "outputs": [
+      "inputs": [
         {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            215,
-            216
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            217
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            218
-          ]
+          "name": "source",
+          "type": "*",
+          "link": 168
         }
       ],
-      "title": "🟪 Load Checkpoint",
-      "properties": {
-        "Node name for S&R": "CheckpointLoaderSimple"
-      },
-      "widgets_values": [
-        "1-SDXL\\XL-TRAINED\\ProteusV0.3.safetensors"
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
       ],
-      "widgets_values_named": {
-        "ckpt_name": "1-SDXL\\XL-TRAINED\\ProteusV0.3.safetensors"
+      "title": "Selection Summary",
+      "properties": {
+        "Node name for S&R": "PreviewAny"
       },
-      "color": "#323",
-      "bgcolor": "#535",
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
       "shape": "box"
     },
     {
       "id": 93,
       "type": "KSamplerAdvanced",
       "pos": [
-        1070,
-        820
+        560,
+        1130
       ],
       "size": [
         270,
@@ -400,23 +345,23 @@
       "flags": {
         "collapsed": true
       },
-      "order": 11,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 215
+          "link": 1880
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 135
+          "link": 1878
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 136
+          "link": 1876
         },
         {
           "name": "latent_image",
@@ -461,7 +406,7 @@
           "widget": {
             "name": "end_at_step"
           },
-          "link": 264
+          "link": 1875
         }
       ],
       "outputs": [
@@ -469,7 +414,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            132
+            1923,
+            1924
           ]
         }
       ],
@@ -485,24 +431,24 @@
         510624041166983,
         "randomize",
         40,
-        9,
+        1.4,
         "dpmpp_2m_sde",
         "exponential",
         0,
-        20,
-        "enable"
+        1000,
+        "disable"
       ],
       "widgets_values_named": {
         "add_noise": "enable",
         "noise_seed": 510624041166983,
         "control_after_generate": "randomize",
         "steps": 40,
-        "cfg": 9,
+        "cfg": 1.4,
         "sampler_name": "dpmpp_2m_sde",
         "scheduler": "exponential",
         "start_at_step": 0,
-        "end_at_step": 20,
-        "return_with_leftover_noise": "enable"
+        "end_at_step": 1000,
+        "return_with_leftover_noise": "disable"
       },
       "color": "#432",
       "bgcolor": "#653",
@@ -512,8 +458,8 @@
       "id": 94,
       "type": "KSamplerAdvanced",
       "pos": [
-        1330,
-        820
+        690,
+        1130
       ],
       "size": [
         270,
@@ -522,28 +468,28 @@
       "flags": {
         "collapsed": true
       },
-      "order": 12,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 216
+          "link": 1881
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 137
+          "link": 1879
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 138
+          "link": 1877
         },
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 132
+          "link": 1924
         },
         {
           "name": "noise_seed",
@@ -591,7 +537,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            134
+            1921
           ]
         }
       ],
@@ -607,7 +553,7 @@
         274280309924354,
         "randomize",
         40,
-        9,
+        7.5,
         "dpmpp_2m_sde",
         "exponential",
         14,
@@ -619,12 +565,625 @@
         "noise_seed": 274280309924354,
         "control_after_generate": "randomize",
         "steps": 40,
-        "cfg": 9,
+        "cfg": 7.5,
         "sampler_name": "dpmpp_2m_sde",
         "scheduler": "exponential",
         "start_at_step": 14,
         "end_at_step": 1000,
         "return_with_leftover_noise": "disable"
+      },
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 797,
+      "type": "0a83c443-faf4-4cb3-8200-4c71677af9cc",
+      "pos": [
+        1110,
+        910
+      ],
+      "size": [
+        260,
+        260
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "boolean",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "boolean"
+          },
+          "link": 1890
+        },
+        {
+          "label": "Stage 1 - End At",
+          "name": "on_false",
+          "shape": 7,
+          "type": "INT",
+          "link": 1863
+        },
+        {
+          "label": "FLUX NEGATIVE",
+          "name": "conditioning1",
+          "shape": 7,
+          "type": "CONDITIONING",
+          "link": 1864
+        },
+        {
+          "label": "SD / SDXL NEGATIVE",
+          "name": "conditioning2",
+          "shape": 7,
+          "type": "CONDITIONING",
+          "link": 1865
+        },
+        {
+          "label": "FLUX POSITIVE",
+          "name": "conditioning1_1",
+          "shape": 7,
+          "type": "CONDITIONING",
+          "link": 1866
+        },
+        {
+          "label": "SD / SDXL POSITIVE",
+          "name": "conditioning2_1",
+          "shape": 7,
+          "type": "CONDITIONING",
+          "link": 1867
+        },
+        {
+          "label": "Flux VAE",
+          "name": "VAE1",
+          "shape": 7,
+          "type": "VAE",
+          "link": 1868
+        },
+        {
+          "label": "SD / SDXL VAE",
+          "name": "VAE2",
+          "shape": 7,
+          "type": "VAE",
+          "link": 1869
+        },
+        {
+          "label": "Flux Model",
+          "name": "model1",
+          "type": "MODEL",
+          "link": 1870
+        },
+        {
+          "label": "Flux Clip",
+          "name": "clip1",
+          "type": "CLIP",
+          "link": 1871
+        },
+        {
+          "label": "SD / SDXL Model",
+          "name": "model2",
+          "type": "MODEL",
+          "link": 1872
+        },
+        {
+          "label": "SD / SDXL Clip",
+          "name": "clip2",
+          "type": "CLIP",
+          "link": 1873
+        }
+      ],
+      "outputs": [
+        {
+          "label": "1 ON / 2 OFF",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            1874
+          ]
+        },
+        {
+          "label": "Stage 1 - End At",
+          "name": "output",
+          "type": "INT",
+          "links": [
+            1875
+          ]
+        },
+        {
+          "label": "NEGATIVE",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            1876,
+            1877
+          ]
+        },
+        {
+          "label": "POSITIVE",
+          "name": "CONDITIONING_1",
+          "type": "CONDITIONING",
+          "links": [
+            1878,
+            1879
+          ]
+        },
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1880,
+            1881
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1882
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            1888
+          ]
+        }
+      ],
+      "properties": {
+        "previewExposures": []
+      },
+      "widgets_values": [
+        false
+      ],
+      "widgets_values_named": {
+        "boolean": false
+      }
+    },
+    {
+      "id": 74,
+      "type": "PreviewImage",
+      "pos": [
+        540,
+        1210
+      ],
+      "size": [
+        1000,
+        1010
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 1907
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": "box"
+    },
+    {
+      "id": 117,
+      "type": "Seed Generator",
+      "pos": [
+        980,
+        210
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            202,
+            203
+          ]
+        }
+      ],
+      "title": "🟪 Seed Generator",
+      "properties": {
+        "Node name for S&R": "Seed Generator",
+        "cnr_id": "image-saver",
+        "ver": "65e6903eff274a50f8b5cd768f0f96baf37baea1",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        854154442998161,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "seed": 854154442998161,
+        "control_after_generate": "fixed"
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": "box"
+    },
+    {
+      "id": 95,
+      "type": "VAEDecode",
+      "pos": [
+        810,
+        1130
+      ],
+      "size": [
+        230,
+        100
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 1925
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 1888
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            1907
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.64",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": "box"
+    },
+    {
+      "id": 786,
+      "type": "CR Latent Input Switch",
+      "pos": [
+        1140,
+        830
+      ],
+      "size": [
+        280,
+        80
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Stage 1 Latent",
+          "name": "latent1",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 1923
+        },
+        {
+          "label": "Stage 2 Latent",
+          "name": "latent2",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 1921
+        },
+        {
+          "name": "Input",
+          "type": "INT",
+          "widget": {
+            "name": "Input"
+          },
+          "link": 1874
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            1925
+          ]
+        },
+        {
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "Latent Switch 1",
+      "properties": {
+        "Node name for S&R": "CR Latent Input Switch"
+      },
+      "widgets_values": [
+        1
+      ],
+      "widgets_values_named": {
+        "Input": 1
+      }
+    },
+    {
+      "id": 733,
+      "type": "e714b3ab-e4be-41e1-95ab-4b056d3bfe80",
+      "pos": [
+        980,
+        750
+      ],
+      "size": [
+        560,
+        410
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "1 = GGUF",
+          "name": "unet_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "unet_name"
+          },
+          "link": null
+        },
+        {
+          "label": "2 = CP",
+          "name": "ckpt_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "ckpt_name"
+          },
+          "link": null
+        },
+        {
+          "label": "Select Model Type",
+          "name": "Input",
+          "type": "INT",
+          "widget": {
+            "name": "Input"
+          },
+          "link": null
+        },
+        {
+          "label": "GGUF dequant_dtype",
+          "name": "dequant_dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "dequant_dtype"
+          },
+          "link": null
+        },
+        {
+          "label": "GGUF patch_dtype",
+          "name": "patch_dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "patch_dtype"
+          },
+          "link": null
+        },
+        {
+          "label": "GGUF patch_on_device",
+          "name": "patch_on_device",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "patch_on_device"
+          },
+          "link": null
+        },
+        {
+          "label": "CLIP 1",
+          "name": "clip_name1",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name1"
+          },
+          "link": null
+        },
+        {
+          "label": "CLIP 2",
+          "name": "clip_name2",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name2"
+          },
+          "link": null
+        },
+        {
+          "label": "CLIP type",
+          "name": "type",
+          "type": "COMBO",
+          "widget": {
+            "name": "type"
+          },
+          "link": null
+        },
+        {
+          "label": "VAE",
+          "name": "vae_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "vae_name"
+          },
+          "link": null
+        },
+        {
+          "label": "Positive In",
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 1767
+        },
+        {
+          "label": "Negative In",
+          "name": "conditioning_1",
+          "type": "CONDITIONING",
+          "link": 1768
+        },
+        {
+          "label": "Positive Guidance",
+          "name": "guidance",
+          "type": "FLOAT",
+          "widget": {
+            "name": "guidance"
+          },
+          "link": null
+        },
+        {
+          "label": "Negative Guidance",
+          "name": "guidance_1",
+          "type": "FLOAT",
+          "widget": {
+            "name": "guidance_1"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1870
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1871
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            1868
+          ]
+        },
+        {
+          "label": "Positive Out",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            1866
+          ]
+        },
+        {
+          "label": "Negative Out",
+          "name": "CONDITIONING_1",
+          "type": "CONDITIONING",
+          "links": [
+            1864
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.65",
+        "previewExposures": []
+      },
+      "widgets_values": [
+        "FLUX\\flux1-dev-Q4_K_S.gguf",
+        "5-FLUX\\flux_dev_fp8_scaled_diffusion_model.safetensors",
+        1,
+        "default",
+        "default",
+        false,
+        "FLUX\\clip_l.safetensors",
+        "t5xxl_fp16.safetensors",
+        "flux",
+        "FLUX\\flux_vae.safetensors",
+        3.5,
+        3.5
+      ],
+      "widgets_values_named": {
+        "unet_name": "FLUX\\flux1-dev-Q4_K_S.gguf",
+        "ckpt_name": "5-FLUX\\flux_dev_fp8_scaled_diffusion_model.safetensors",
+        "Input": 1,
+        "dequant_dtype": "default",
+        "patch_dtype": "default",
+        "patch_on_device": false,
+        "clip_name1": "FLUX\\clip_l.safetensors",
+        "clip_name2": "t5xxl_fp16.safetensors",
+        "type": "flux",
+        "vae_name": "FLUX\\flux_vae.safetensors",
+        "guidance": 3.5,
+        "guidance_1": 3.5
+      },
+      "color": "#323",
+      "bgcolor": "#535",
+      "shape": 1
+    },
+    {
+      "id": 126,
+      "type": "Note",
+      "pos": [
+        -180,
+        900
+      ],
+      "size": [
+        700,
+        1330
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "AD&D Character Portrait Generator V2.4 - Basic Workflow",
+      "properties": {
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Flux Switch\n  Added so you can Switch between FLUX workflow and SD /SDXL Workflow.\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load SD / SDXL Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109)\n  But feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  For SD / SDXL - Recommended is:\n\n  - Sampler - dpmpp_2m_sde\n  - scheduler - exponential\n  - Steps - 30\n  \n  For FLUX - Recommended is:\n\n  - Sampler - euler\n  - scheduler - beta\n  - Steps - 12\n\n  but pick whats best for your Checkpoints.\n\n  (Steps end/start are calculated for optimal results based on steps input.\n   Depending on your model and setup - don't go lower than 4)\n\n- 🟪 PREP FLUX Checkpoints\n  Self Explanatory - Set your Flux Models If you want to Use Flux.  This Works Very well in flux.\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
+      ],
+      "widgets_values_named": {
+        "text": "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Flux Switch\n  Added so you can Switch between FLUX workflow and SD /SDXL Workflow.\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load SD / SDXL Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109)\n  But feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  For SD / SDXL - Recommended is:\n\n  - Sampler - dpmpp_2m_sde\n  - scheduler - exponential\n  - Steps - 30\n  \n  For FLUX - Recommended is:\n\n  - Sampler - euler\n  - scheduler - beta\n  - Steps - 12\n\n  but pick whats best for your Checkpoints.\n\n  (Steps end/start are calculated for optimal results based on steps input.\n   Depending on your model and setup - don't go lower than 4)\n\n- 🟪 PREP FLUX Checkpoints\n  Self Explanatory - Set your Flux Models If you want to Use Flux.  This Works Very well in flux.\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
       },
       "color": "#432",
       "bgcolor": "#653",
@@ -641,8 +1200,10 @@
         560,
         190
       ],
-      "flags": {},
-      "order": 2,
+      "flags": {
+        "collapsed": false
+      },
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -686,7 +1247,7 @@
           "name": "INT",
           "type": "INT",
           "links": [
-            264
+            1863
           ]
         },
         {
@@ -704,68 +1265,154 @@
       "widgets_values": [
         "dpmpp_2m_sde",
         "exponential",
-        30
+        12
       ],
       "widgets_values_named": {
         "sampler_name": "dpmpp_2m_sde",
         "scheduler": "exponential",
-        "int": 30
+        "int": 12
       },
       "color": "#323",
       "bgcolor": "#535"
     },
     {
-      "id": 123,
-      "type": "EmptySD3LatentImage",
+      "id": 804,
+      "type": "PrimitiveBoolean",
       "pos": [
-        1270,
+        750,
         210
       ],
       "size": [
-        270,
-        110
+        210,
+        90
       ],
-      "flags": {
-        "collapsed": false
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Flux is",
+          "name": "value",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": [
+            1890
+          ]
+        }
+      ],
+      "title": "🟪 Flux Switch",
+      "properties": {
+        "Node name for S&R": "PrimitiveBoolean"
       },
-      "order": 3,
+      "widgets_values": [
+        false
+      ],
+      "widgets_values_named": {
+        "value": false
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 107,
+      "type": "RPGCharacterSelector",
+      "pos": [
+        -170,
+        380
+      ],
+      "size": [
+        330,
+        460
+      ],
+      "flags": {},
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [
         {
-          "name": "LATENT",
-          "type": "LATENT",
-          "slot_index": 0,
+          "name": "positive_prompt",
+          "type": "STRING",
           "links": [
-            219
+            166
+          ]
+        },
+        {
+          "name": "negative_prompt",
+          "type": "STRING",
+          "links": [
+            167
+          ]
+        },
+        {
+          "name": "Ollama_Generate_V2_Textbox_2",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "selection_summary",
+          "type": "STRING",
+          "links": [
+            168
           ]
         }
       ],
-      "title": "🟪 Empty Latent Image",
+      "title": "⬜ RPG Character Builder",
       "properties": {
-        "Node name for S&R": "EmptySD3LatentImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.3.64",
-        "enableTabs": false,
-        "tabWidth": 65,
-        "tabXOffset": 10,
-        "hasSecondTab": false,
-        "secondTabText": "Send Back",
-        "secondTabOffset": 80,
-        "secondTabWidth": 65
+        "Node name for S&R": "RPGCharacterSelector"
       },
       "widgets_values": [
-        1024,
-        1024,
-        1
+        "Human",
+        "Aasimar",
+        "None",
+        "Feminine",
+        "Mid Adult",
+        "AD&D - Necromancer",
+        "French twist",
+        "Black",
+        "No Beard",
+        "No Beard",
+        "AD&D - Mage Robes",
+        "No Augmentations",
+        "Anger",
+        "Graveyard",
+        2982968848,
+        57,
+        "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":2,\"avoid\":\"silver\",\"preview\":\"tanned\"},\"Clothes Style:positive:0\":{\"count\":5,\"avoid\":\"bronze\",\"preview\":\"green\"},\"Clothes Style:positive:1\":{\"count\":1,\"avoid\":\"gold\",\"preview\":\"purple\"},\"Race:positive:1\":{\"count\":1,\"avoid\":\"gray\",\"preview\":\"pale white\"}}}",
+        "{}",
+        "{\"Race:positive:0\":{\"count\":2,\"avoid\":\"silver\",\"preview\":\"tanned\"},\"Clothes Style:positive:0\":{\"count\":5,\"avoid\":\"bronze\",\"preview\":\"green\"},\"Clothes Style:positive:1\":{\"count\":1,\"avoid\":\"gold\",\"preview\":\"purple\"},\"Race:positive:1\":{\"count\":1,\"avoid\":\"gray\",\"preview\":\"pale white\"}}"
       ],
       "widgets_values_named": {
-        "width": 1024,
-        "height": 1024,
-        "batch_size": 1
+        "🧬 DNA Locker": "Human",
+        "race": "Aasimar",
+        "ethnicity": "None",
+        "gender": "Feminine",
+        "age": "Mid Adult",
+        "character_class": "AD&D - Necromancer",
+        "hair_style": "French twist",
+        "hair_colour": "Black",
+        "beard_style": "No Beard",
+        "beard_colour": "No Beard",
+        "clothes_style": "AD&D - Mage Robes",
+        "Augmentations": "No Augmentations",
+        "emotion": "Anger",
+        "scene": "Graveyard",
+        "dna_seed": 2982968848,
+        "dna_revision": 57,
+        "dna_locks": "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":2,\"avoid\":\"silver\",\"preview\":\"tanned\"},\"Clothes Style:positive:0\":{\"count\":5,\"avoid\":\"bronze\",\"preview\":\"green\"},\"Clothes Style:positive:1\":{\"count\":1,\"avoid\":\"gold\",\"preview\":\"purple\"},\"Race:positive:1\":{\"count\":1,\"avoid\":\"gray\",\"preview\":\"pale white\"}}}",
+        "dna_weights": "{}",
+        "dna_rerolls": "{\"Race:positive:0\":{\"count\":2,\"avoid\":\"silver\",\"preview\":\"tanned\"},\"Clothes Style:positive:0\":{\"count\":5,\"avoid\":\"bronze\",\"preview\":\"green\"},\"Clothes Style:positive:1\":{\"count\":1,\"avoid\":\"gold\",\"preview\":\"purple\"},\"Race:positive:1\":{\"count\":1,\"avoid\":\"gray\",\"preview\":\"pale white\"}}"
       },
-      "color": "#323",
-      "bgcolor": "#535",
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
       "shape": "box"
     },
     {
@@ -780,7 +1427,7 @@
         120
       ],
       "flags": {},
-      "order": 4,
+      "order": 8,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -822,129 +1469,6 @@
       "color": "#2a363b",
       "bgcolor": "#3f5159",
       "shape": "box"
-    },
-    {
-      "id": 126,
-      "type": "Note",
-      "pos": [
-        -180,
-        860
-      ],
-      "size": [
-        690,
-        1060
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "AD&D Character Portrait Generator V2.4 - Basic Workflow",
-      "properties": {
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109) — but feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  Default should be ok, but pick whats best for your Checkpoint.\n  Steps end/start are calculated for optimal results based on steps input.\n  Depending on your model and setup - don't go lower than 8\n\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
-      ],
-      "widgets_values_named": {
-        "text": "AD&D Character Portrait Generator V2.4\n--------------------------------------\n\nA polished, plug-and-play workflow for **ComfyUI** that generates rich, stylized **RPG character portraits** — perfect for **AD&D**, **Pathfinder**, and any fantasy setting. Featuring a clean layout, custom controls, and my very own **RPG-Characters** node for detailed character customization.\n\nNow easier than ever to use — **no dependencies**, no fuss, just results. 🎨⚔️\n\n---\n\n🧠 How to Install RPG-Characters Node\n\n1. Open **ComfyUI Manager** (via sidebar or `custom_nodes` menu).\n2. Navigate to the *Install Custom Nodes* tab.\n3. Search for: `RPG-Characters`\n4. Click **Install** – ZERO dependencies!!! (You're welcome. 😉)\n5. Restart ComfyUI and you're ready to go.\n\n---\n\n🟨 Build Process 🟨\n\nThis workflow is designed to run **out-of-the-box**, but if you want to fine-tune things, here are the configurable parts grouped for convenience:\n\n- 🟪 Seed Generator\n  Added so you can Switch between Fixed and random seeds.\n\n- 🟪 Empty Latent Images\n  Default should be ok, but keep it square, keep it safe!.\n\n- 🟪 Load Checkpoint\n  Optimized for Proteus v0.3 (https://civitai.com/models/267242?modelVersionId=343109) — but feel free to use any SD/SDXL model you prefer.\n\n- 🟪 Sampler + Scheduler + Steps\n  Default should be ok, but pick whats best for your Checkpoint.\n  Steps end/start are calculated for optimal results based on steps input.\n  Depending on your model and setup - don't go lower than 8\n\n\n---\n\n🟦 RPG Character Configuration 🟦\n\nThis is where the *magic* happens — powered by **custom RPG nodes** made specifically for immersive character creation.\n\n- ⬜ RPG Art Style Selector\n  Pick the art style you want for your character: Anime, Realistic, Dark Fantasy, etc.\n\n- ⬜ RPG Character Builder\n  Customize Race, Gender, Age, Class, Hair, Clothing, Emotion, Scene, and more.\n  \n  Now Includes DNA Locker:\n\n  🧬 DNA Locker\n  Your character's genetic playground. 🎲\n\n  - 🎲 Re-roll individual traits — keep rolling until you find one you like.\n  - 🎲 Re-roll the Master Seed — generate a completely new DNA combination.\n  - 🧬 DNA Sculptor — blend the nearest three variants for finer control.\n  - 👁️ Live feedback — DNA changes are shown immediately, so you can experiment\n    before generating an image.\n  - 🔢 Reproducible — the Master Seed lets you recreate the same DNA combination.\n\n  In short: roll the dice, find a combination you like, sculpt it if you want\n  more control, then run the workflow.\n\n  ⚠️ DNA isn't an exact science...\n  Diffusion models can be a little loose with genetics, so results won't always\n  perfectly match the DNA Locker. DNA is fragile. Handle with care. 🧬😏\n\n  Your character. Your DNA. Your dice.\n\n---\n\n🚀 That’s It!\n\nOnce you've tweaked your inputs (or left them at default), **just run the workflow** and enjoy your character portrait.\n\nHappy questing! 🐉🛡️"
-      },
-      "color": "#432",
-      "bgcolor": "#653",
-      "shape": "box"
-    },
-    {
-      "id": 107,
-      "type": "RPGCharacterSelector",
-      "pos": [
-        -170,
-        380
-      ],
-      "size": [
-        330,
-        430
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "positive_prompt",
-          "type": "STRING",
-          "links": [
-            166
-          ]
-        },
-        {
-          "name": "negative_prompt",
-          "type": "STRING",
-          "links": [
-            167
-          ]
-        },
-        {
-          "name": "Ollama_Generate_V2_Textbox_2",
-          "type": "STRING",
-          "links": null
-        },
-        {
-          "name": "selection_summary",
-          "type": "STRING",
-          "links": [
-            168
-          ]
-        }
-      ],
-      "title": "⬜ RPG Character Builder",
-      "properties": {
-        "Node name for S&R": "RPGCharacterSelector"
-      },
-      "widgets_values": [
-        null,
-        "Aasimar",
-        "None",
-        "Feminine",
-        "Mid Adult",
-        "AD&D - Necromancer",
-        "Bald",
-        "No hair",
-        "No Beard",
-        "No Beard",
-        "AD&D - Mage Robes",
-        "No Augmentations",
-        "Anger",
-        "Plain White",
-        3117436956,
-        5,
-        "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}}",
-        "{}",
-        "{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}"
-      ],
-      "widgets_values_named": {
-        "🧬 DNA Locker": null,
-        "race": "Aasimar",
-        "ethnicity": "None",
-        "gender": "Feminine",
-        "age": "Mid Adult",
-        "character_class": "AD&D - Necromancer",
-        "hair_style": "Bald",
-        "hair_colour": "No hair",
-        "beard_style": "No Beard",
-        "beard_colour": "No Beard",
-        "clothes_style": "AD&D - Mage Robes",
-        "Augmentations": "No Augmentations",
-        "emotion": "Anger",
-        "scene": "Plain White",
-        "dna_seed": 3117436956,
-        "dna_revision": 5,
-        "dna_locks": "{\"__dna_rerolls\":{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}}",
-        "dna_weights": "{}",
-        "dna_rerolls": "{\"Race:positive:0\":{\"count\":0,\"avoid\":null,\"preview\":\"dark brown\"},\"Race:positive:1\":{\"count\":0,\"avoid\":null,\"preview\":\"topaz\"}}"
-      },
-      "color": "#2a363b",
-      "bgcolor": "#3f5159",
-      "shape": "box"
     }
   ],
   "links": [
@@ -963,62 +1487,6 @@
       73,
       3,
       "STRING"
-    ],
-    [
-      132,
-      93,
-      0,
-      94,
-      3,
-      "LATENT"
-    ],
-    [
-      134,
-      94,
-      0,
-      95,
-      0,
-      "LATENT"
-    ],
-    [
-      135,
-      73,
-      2,
-      93,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      136,
-      73,
-      3,
-      93,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      137,
-      73,
-      2,
-      94,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      138,
-      73,
-      3,
-      94,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      147,
-      95,
-      0,
-      74,
-      0,
-      "IMAGE"
     ],
     [
       164,
@@ -1077,38 +1545,6 @@
       "INT"
     ],
     [
-      215,
-      122,
-      0,
-      93,
-      0,
-      "MODEL"
-    ],
-    [
-      216,
-      122,
-      0,
-      94,
-      0,
-      "MODEL"
-    ],
-    [
-      217,
-      122,
-      1,
-      73,
-      0,
-      "CLIP"
-    ],
-    [
-      218,
-      122,
-      2,
-      95,
-      1,
-      "VAE"
-    ],
-    [
       219,
       123,
       0,
@@ -1157,14 +1593,6 @@
       "INT"
     ],
     [
-      264,
-      151,
-      3,
-      93,
-      8,
-      "INT"
-    ],
-    [
       265,
       151,
       2,
@@ -1179,6 +1607,238 @@
       94,
       8,
       "INT"
+    ],
+    [
+      1767,
+      73,
+      2,
+      733,
+      10,
+      "CONDITIONING"
+    ],
+    [
+      1768,
+      73,
+      3,
+      733,
+      11,
+      "CONDITIONING"
+    ],
+    [
+      1863,
+      151,
+      3,
+      797,
+      1,
+      "INT"
+    ],
+    [
+      1864,
+      733,
+      4,
+      797,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      1865,
+      73,
+      3,
+      797,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      1866,
+      733,
+      3,
+      797,
+      4,
+      "CONDITIONING"
+    ],
+    [
+      1867,
+      73,
+      2,
+      797,
+      5,
+      "CONDITIONING"
+    ],
+    [
+      1868,
+      733,
+      2,
+      797,
+      6,
+      "VAE"
+    ],
+    [
+      1869,
+      122,
+      2,
+      797,
+      7,
+      "VAE"
+    ],
+    [
+      1870,
+      733,
+      0,
+      797,
+      8,
+      "MODEL"
+    ],
+    [
+      1871,
+      733,
+      1,
+      797,
+      9,
+      "CLIP"
+    ],
+    [
+      1872,
+      122,
+      0,
+      797,
+      10,
+      "MODEL"
+    ],
+    [
+      1873,
+      122,
+      1,
+      797,
+      11,
+      "CLIP"
+    ],
+    [
+      1874,
+      797,
+      0,
+      786,
+      2,
+      "INT"
+    ],
+    [
+      1875,
+      797,
+      1,
+      93,
+      8,
+      "INT"
+    ],
+    [
+      1876,
+      797,
+      2,
+      93,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      1877,
+      797,
+      2,
+      94,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      1878,
+      797,
+      3,
+      93,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      1879,
+      797,
+      3,
+      94,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      1880,
+      797,
+      4,
+      93,
+      0,
+      "MODEL"
+    ],
+    [
+      1881,
+      797,
+      4,
+      94,
+      0,
+      "MODEL"
+    ],
+    [
+      1882,
+      797,
+      5,
+      73,
+      0,
+      "CLIP"
+    ],
+    [
+      1888,
+      797,
+      6,
+      95,
+      1,
+      "VAE"
+    ],
+    [
+      1890,
+      804,
+      0,
+      797,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      1907,
+      95,
+      0,
+      74,
+      0,
+      "IMAGE"
+    ],
+    [
+      1921,
+      94,
+      0,
+      786,
+      1,
+      "LATENT"
+    ],
+    [
+      1923,
+      93,
+      0,
+      786,
+      0,
+      "LATENT"
+    ],
+    [
+      1924,
+      93,
+      0,
+      94,
+      3,
+      "LATENT"
+    ],
+    [
+      1925,
+      786,
+      0,
+      95,
+      0,
+      "LATENT"
     ]
   ],
   "groups": [
@@ -1189,7 +1849,7 @@
         -180,
         140,
         690,
-        680
+        710
       ],
       "color": "#3f789e",
       "flags": {}
@@ -1201,19 +1861,19 @@
         530,
         140,
         1020,
-        1780
+        2090
       ],
       "color": "#b58b2a",
       "flags": {}
     },
     {
       "id": 3,
-      "title": "2 Stage Build Process (It Helps With Illustrations - trust me)",
+      "title": "2 Stage Build Process",
       "bounding": [
-        980,
-        730,
-        560,
-        120
+        540,
+        1050,
+        420,
+        110
       ],
       "color": "#a1309b",
       "flags": {}
@@ -1225,10 +1885,10 @@
         "id": "21249f3c-88af-4b29-9f65-272bfbb3886e",
         "version": 1,
         "state": {
-          "lastGroupId": 3,
-          "lastNodeId": 153,
-          "lastLinkId": 266,
-          "lastRerouteId": 0
+          "lastGroupId": 11,
+          "lastNodeId": 826,
+          "lastLinkId": 1925,
+          "lastRerouteId": 1
         },
         "revision": 0,
         "config": {},
@@ -1433,54 +2093,6 @@
             "shape": 1
           },
           {
-            "id": 128,
-            "type": "Int Literal",
-            "pos": [
-              1260,
-              -140
-            ],
-            "size": [
-              270,
-              60
-            ],
-            "flags": {},
-            "order": 0,
-            "mode": 0,
-            "inputs": [
-              {
-                "localized_name": "int",
-                "name": "int",
-                "type": "INT",
-                "widget": {
-                  "name": "int"
-                },
-                "link": 257
-              }
-            ],
-            "outputs": [
-              {
-                "localized_name": "INT",
-                "name": "INT",
-                "type": "INT",
-                "links": [
-                  258,
-                  259,
-                  260
-                ]
-              }
-            ],
-            "title": "Steps",
-            "properties": {
-              "Node name for S&R": "Int Literal"
-            },
-            "widgets_values": [
-              30
-            ],
-            "widgets_values_named": {
-              "int": 30
-            }
-          },
-          {
             "id": 152,
             "type": "ComfyMathExpression",
             "pos": [
@@ -1607,6 +2219,54 @@
             "widgets_values_named": {
               "expression": "a / 2"
             }
+          },
+          {
+            "id": 128,
+            "type": "Int Literal",
+            "pos": [
+              1260,
+              -140
+            ],
+            "size": [
+              270,
+              60
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "int",
+                "name": "int",
+                "type": "INT",
+                "widget": {
+                  "name": "int"
+                },
+                "link": 257
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  258,
+                  259,
+                  260
+                ]
+              }
+            ],
+            "title": "Steps",
+            "properties": {
+              "Node name for S&R": "Int Literal"
+            },
+            "widgets_values": [
+              30
+            ],
+            "widgets_values_named": {
+              "int": 30
+            }
           }
         ],
         "groups": [],
@@ -1693,16 +2353,1918 @@
           }
         ],
         "extra": {}
+      },
+      {
+        "id": "e714b3ab-e4be-41e1-95ab-4b056d3bfe80",
+        "version": 1,
+        "state": {
+          "lastGroupId": 11,
+          "lastNodeId": 826,
+          "lastLinkId": 1925,
+          "lastRerouteId": 1
+        },
+        "revision": 0,
+        "config": {},
+        "name": "🟪 PREP FLUX Checkpoints",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            -1240,
+            -110,
+            180.099609375,
+            328
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            190,
+            80,
+            128,
+            148
+          ]
+        },
+        "inputs": [
+          {
+            "id": "61ec57bc-70f0-4b08-b898-cf18a2905dda",
+            "name": "unet_name",
+            "type": "COMBO",
+            "linkIds": [
+              1205
+            ],
+            "label": "1 = GGUF",
+            "pos": [
+              -1083.900390625,
+              -86
+            ]
+          },
+          {
+            "id": "3e498ca6-9ae6-4f9b-bf82-25f14fc944f8",
+            "name": "ckpt_name",
+            "type": "COMBO",
+            "linkIds": [
+              1211
+            ],
+            "label": "2 = CP",
+            "pos": [
+              -1083.900390625,
+              -66
+            ]
+          },
+          {
+            "id": "7137256f-9de8-4b55-9955-11f0208d5361",
+            "name": "Input",
+            "type": "INT",
+            "linkIds": [
+              1220
+            ],
+            "label": "Select Model Type",
+            "pos": [
+              -1083.900390625,
+              -46
+            ]
+          },
+          {
+            "id": "1ce7ebd8-c077-49f2-a99f-f5ddb52b7bb6",
+            "name": "dequant_dtype",
+            "type": "COMBO",
+            "linkIds": [
+              1213
+            ],
+            "label": "GGUF dequant_dtype",
+            "pos": [
+              -1083.900390625,
+              -26
+            ]
+          },
+          {
+            "id": "ae68fdd8-e390-4761-83fb-579fe1449a3e",
+            "name": "patch_dtype",
+            "type": "COMBO",
+            "linkIds": [
+              1214
+            ],
+            "label": "GGUF patch_dtype",
+            "pos": [
+              -1083.900390625,
+              -6
+            ]
+          },
+          {
+            "id": "04e98cf1-a308-4846-9afb-e3526e1bb179",
+            "name": "patch_on_device",
+            "type": "BOOLEAN",
+            "linkIds": [
+              1215
+            ],
+            "label": "GGUF patch_on_device",
+            "pos": [
+              -1083.900390625,
+              14
+            ]
+          },
+          {
+            "id": "7b8af957-2aa4-49b4-a2c2-4b701100af94",
+            "name": "clip_name1",
+            "type": "COMBO",
+            "linkIds": [
+              1216
+            ],
+            "label": "CLIP 1",
+            "pos": [
+              -1083.900390625,
+              34
+            ]
+          },
+          {
+            "id": "4aa94f7d-e889-4e34-848f-62000fcf909a",
+            "name": "clip_name2",
+            "type": "COMBO",
+            "linkIds": [
+              1217
+            ],
+            "label": "CLIP 2",
+            "pos": [
+              -1083.900390625,
+              54
+            ]
+          },
+          {
+            "id": "78de096c-104d-40b2-93f1-2d4cd0c49396",
+            "name": "type",
+            "type": "COMBO",
+            "linkIds": [
+              1218
+            ],
+            "label": "CLIP type",
+            "pos": [
+              -1083.900390625,
+              74
+            ]
+          },
+          {
+            "id": "db328a96-2865-4546-9d73-50c0c9dcfaa4",
+            "name": "vae_name",
+            "type": "COMBO",
+            "linkIds": [
+              1219
+            ],
+            "label": "VAE",
+            "pos": [
+              -1083.900390625,
+              94
+            ]
+          },
+          {
+            "id": "7692b5f7-5c20-4a61-a94c-e941661a7615",
+            "name": "conditioning",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1761
+            ],
+            "label": "Positive In",
+            "pos": [
+              -1083.900390625,
+              114
+            ]
+          },
+          {
+            "id": "5b23d629-11da-4930-a537-363d10b8d2a5",
+            "name": "conditioning_1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1763
+            ],
+            "label": "Negative In",
+            "pos": [
+              -1083.900390625,
+              134
+            ]
+          },
+          {
+            "id": "48fad127-8426-4e96-9b01-f9a19fe2af16",
+            "name": "guidance",
+            "type": "FLOAT",
+            "linkIds": [
+              1765
+            ],
+            "label": "Positive Guidance",
+            "pos": [
+              -1083.900390625,
+              154
+            ]
+          },
+          {
+            "id": "62a0eb1b-cfbe-4c96-916b-700e053d1601",
+            "name": "guidance_1",
+            "type": "FLOAT",
+            "linkIds": [
+              1766
+            ],
+            "label": "Negative Guidance",
+            "pos": [
+              -1083.900390625,
+              174
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "b802d667-8aa5-44ee-ad7d-2109294a7e2b",
+            "name": "MODEL",
+            "type": "MODEL",
+            "linkIds": [
+              1202
+            ],
+            "pos": [
+              214,
+              104
+            ]
+          },
+          {
+            "id": "c9a3d817-6905-4834-93d6-38aa0cf5ca38",
+            "name": "CLIP",
+            "type": "CLIP",
+            "linkIds": [
+              1203
+            ],
+            "pos": [
+              214,
+              124
+            ]
+          },
+          {
+            "id": "7e2b5b1f-e517-4bbb-9e01-480c7efa6364",
+            "name": "VAE",
+            "type": "VAE",
+            "linkIds": [
+              1204
+            ],
+            "pos": [
+              214,
+              144
+            ]
+          },
+          {
+            "id": "cab877e1-3e19-4b68-af18-003416858906",
+            "name": "CONDITIONING",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1762
+            ],
+            "label": "Positive Out",
+            "pos": [
+              214,
+              164
+            ]
+          },
+          {
+            "id": "266392ab-5fc7-4062-8737-5980b15039c2",
+            "name": "CONDITIONING_1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1764
+            ],
+            "label": "Negative Out",
+            "pos": [
+              214,
+              184
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 386,
+            "type": "CheckpointLoaderSimple",
+            "pos": [
+              -730,
+              -100
+            ],
+            "size": [
+              340,
+              100
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "ckpt_name",
+                "name": "ckpt_name",
+                "type": "COMBO",
+                "widget": {
+                  "name": "ckpt_name"
+                },
+                "link": 1211
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  1200
+                ]
+              },
+              {
+                "label": "FLUX CLIP",
+                "localized_name": "CLIP",
+                "name": "CLIP",
+                "type": "CLIP",
+                "slot_index": 1,
+                "links": [
+                  1201
+                ]
+              },
+              {
+                "label": "N/A - VAE",
+                "localized_name": "VAE",
+                "name": "VAE",
+                "type": "VAE",
+                "links": null
+              }
+            ],
+            "title": "FLUX Checkpoint",
+            "properties": {
+              "Node name for S&R": "CheckpointLoaderSimple",
+              "cnr_id": "comfy-core",
+              "ver": "0.3.65"
+            },
+            "widgets_values": [
+              "5-FLUX\\flux_dev_fp8_scaled_diffusion_model.safetensors"
+            ],
+            "widgets_values_named": {
+              "ckpt_name": "5-FLUX\\flux_dev_fp8_scaled_diffusion_model.safetensors"
+            }
+          },
+          {
+            "id": 387,
+            "type": "DualCLIPLoaderGGUF",
+            "pos": [
+              -730,
+              50
+            ],
+            "size": [
+              340,
+              110
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "clip_name1",
+                "name": "clip_name1",
+                "type": "COMBO",
+                "widget": {
+                  "name": "clip_name1"
+                },
+                "link": 1216
+              },
+              {
+                "localized_name": "clip_name2",
+                "name": "clip_name2",
+                "type": "COMBO",
+                "widget": {
+                  "name": "clip_name2"
+                },
+                "link": 1217
+              },
+              {
+                "localized_name": "type",
+                "name": "type",
+                "type": "COMBO",
+                "widget": {
+                  "name": "type"
+                },
+                "link": 1218
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "CLIP",
+                "name": "CLIP",
+                "type": "CLIP",
+                "slot_index": 0,
+                "links": [
+                  1199
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "DualCLIPLoaderGGUF",
+              "cnr_id": "comfyui-gguf",
+              "ver": "a2b75978fd50c0227a58316619b79d525b88e570"
+            },
+            "widgets_values": [
+              "FLUX\\clip_l.safetensors",
+              "t5xxl_fp16.safetensors",
+              "flux"
+            ],
+            "widgets_values_named": {
+              "clip_name1": "FLUX\\clip_l.safetensors",
+              "clip_name2": "t5xxl_fp16.safetensors",
+              "type": "flux"
+            }
+          },
+          {
+            "id": 388,
+            "type": "VAELoader",
+            "pos": [
+              -730,
+              210
+            ],
+            "size": [
+              340,
+              60
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "vae_name",
+                "name": "vae_name",
+                "type": "COMBO",
+                "widget": {
+                  "name": "vae_name"
+                },
+                "link": 1219
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "VAE",
+                "name": "VAE",
+                "type": "VAE",
+                "slot_index": 0,
+                "links": [
+                  1204
+                ]
+              }
+            ],
+            "title": "VAE",
+            "properties": {
+              "Node name for S&R": "VAELoader",
+              "cnr_id": "comfy-core",
+              "ver": "0.3.65"
+            },
+            "widgets_values": [
+              "FLUX\\flux_vae.safetensors"
+            ],
+            "widgets_values_named": {
+              "vae_name": "FLUX\\flux_vae.safetensors"
+            }
+          },
+          {
+            "id": 385,
+            "type": "UnetLoaderGGUFAdvanced",
+            "pos": [
+              -730,
+              -280
+            ],
+            "size": [
+              350,
+              130
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "unet_name",
+                "name": "unet_name",
+                "type": "COMBO",
+                "widget": {
+                  "name": "unet_name"
+                },
+                "link": 1205
+              },
+              {
+                "localized_name": "dequant_dtype",
+                "name": "dequant_dtype",
+                "type": "COMBO",
+                "widget": {
+                  "name": "dequant_dtype"
+                },
+                "link": 1213
+              },
+              {
+                "localized_name": "patch_dtype",
+                "name": "patch_dtype",
+                "type": "COMBO",
+                "widget": {
+                  "name": "patch_dtype"
+                },
+                "link": 1214
+              },
+              {
+                "localized_name": "patch_on_device",
+                "name": "patch_on_device",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "patch_on_device"
+                },
+                "link": 1215
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  1198
+                ]
+              }
+            ],
+            "title": "GGUF/Advanced",
+            "properties": {
+              "Node name for S&R": "UnetLoaderGGUFAdvanced",
+              "cnr_id": "comfyui-gguf",
+              "ver": "a2b75978fd50c0227a58316619b79d525b88e570"
+            },
+            "widgets_values": [
+              "FLUX\\flux1-dev-Q4_K_S.gguf",
+              "default",
+              "default",
+              false
+            ],
+            "widgets_values_named": {
+              "unet_name": "FLUX\\flux1-dev-Q4_K_S.gguf",
+              "dequant_dtype": "default",
+              "patch_dtype": "default",
+              "patch_on_device": false
+            }
+          },
+          {
+            "id": 389,
+            "type": "CR Switch Model and CLIP",
+            "pos": [
+              -290,
+              -110
+            ],
+            "size": [
+              350,
+              120
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "GGUF Type",
+                "localized_name": "model1",
+                "name": "model1",
+                "type": "MODEL",
+                "link": 1198
+              },
+              {
+                "label": "GGUF CLIP",
+                "localized_name": "clip1",
+                "name": "clip1",
+                "type": "CLIP",
+                "link": 1199
+              },
+              {
+                "label": "Checkpoint Type",
+                "localized_name": "model2",
+                "name": "model2",
+                "type": "MODEL",
+                "link": 1200
+              },
+              {
+                "label": "FLUX CLIP",
+                "localized_name": "clip2",
+                "name": "clip2",
+                "type": "CLIP",
+                "link": 1201
+              },
+              {
+                "localized_name": "Input",
+                "name": "Input",
+                "type": "INT",
+                "widget": {
+                  "name": "Input"
+                },
+                "link": 1220
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  1202
+                ]
+              },
+              {
+                "localized_name": "CLIP",
+                "name": "CLIP",
+                "type": "CLIP",
+                "slot_index": 1,
+                "links": [
+                  1203
+                ]
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": null
+              }
+            ],
+            "title": "Model / Clip Switch - 1 = GGUF / 2 = FLUX",
+            "properties": {
+              "Node name for S&R": "CR Switch Model and CLIP",
+              "cnr_id": "comfyroll",
+              "ver": "d78b780ae43fcf8c6b7c6505e6ffb4584281ceca"
+            },
+            "widgets_values": [
+              1
+            ],
+            "widgets_values_named": {
+              "Input": 1
+            }
+          },
+          {
+            "id": 760,
+            "type": "FluxGuidance",
+            "pos": [
+              -670,
+              320
+            ],
+            "size": [
+              230,
+              60
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "conditioning",
+                "name": "conditioning",
+                "type": "CONDITIONING",
+                "link": 1761
+              },
+              {
+                "localized_name": "guidance",
+                "name": "guidance",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "guidance"
+                },
+                "link": 1765
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "CONDITIONING",
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "slot_index": 0,
+                "links": [
+                  1762
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "FluxGuidance",
+              "cnr_id": "comfy-core",
+              "ver": "0.3.68"
+            },
+            "widgets_values": [
+              3.5
+            ],
+            "widgets_values_named": {
+              "guidance": 3.5
+            }
+          },
+          {
+            "id": 759,
+            "type": "FluxGuidance",
+            "pos": [
+              -670,
+              420
+            ],
+            "size": [
+              230,
+              60
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "conditioning",
+                "name": "conditioning",
+                "type": "CONDITIONING",
+                "link": 1763
+              },
+              {
+                "localized_name": "guidance",
+                "name": "guidance",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "guidance"
+                },
+                "link": 1766
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "CONDITIONING",
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "slot_index": 0,
+                "links": [
+                  1764
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "FluxGuidance",
+              "cnr_id": "comfy-core",
+              "ver": "0.3.68"
+            },
+            "widgets_values": [
+              3.6
+            ],
+            "widgets_values_named": {
+              "guidance": 3.6
+            }
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 1198,
+            "origin_id": 385,
+            "origin_slot": 0,
+            "target_id": 389,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 1199,
+            "origin_id": 387,
+            "origin_slot": 0,
+            "target_id": 389,
+            "target_slot": 1,
+            "type": "CLIP"
+          },
+          {
+            "id": 1200,
+            "origin_id": 386,
+            "origin_slot": 0,
+            "target_id": 389,
+            "target_slot": 2,
+            "type": "MODEL"
+          },
+          {
+            "id": 1201,
+            "origin_id": 386,
+            "origin_slot": 1,
+            "target_id": 389,
+            "target_slot": 3,
+            "type": "CLIP"
+          },
+          {
+            "id": 1202,
+            "origin_id": 389,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 1203,
+            "origin_id": 389,
+            "origin_slot": 1,
+            "target_id": -20,
+            "target_slot": 1,
+            "type": "CLIP"
+          },
+          {
+            "id": 1204,
+            "origin_id": 388,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 2,
+            "type": "VAE"
+          },
+          {
+            "id": 1205,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 385,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 1211,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 386,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 1213,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 385,
+            "target_slot": 1,
+            "type": "COMBO"
+          },
+          {
+            "id": 1214,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 385,
+            "target_slot": 2,
+            "type": "COMBO"
+          },
+          {
+            "id": 1215,
+            "origin_id": -10,
+            "origin_slot": 5,
+            "target_id": 385,
+            "target_slot": 3,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 1216,
+            "origin_id": -10,
+            "origin_slot": 6,
+            "target_id": 387,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 1217,
+            "origin_id": -10,
+            "origin_slot": 7,
+            "target_id": 387,
+            "target_slot": 1,
+            "type": "COMBO"
+          },
+          {
+            "id": 1218,
+            "origin_id": -10,
+            "origin_slot": 8,
+            "target_id": 387,
+            "target_slot": 2,
+            "type": "COMBO"
+          },
+          {
+            "id": 1219,
+            "origin_id": -10,
+            "origin_slot": 9,
+            "target_id": 388,
+            "target_slot": 0,
+            "type": "COMBO"
+          },
+          {
+            "id": 1220,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 389,
+            "target_slot": 4,
+            "type": "INT"
+          },
+          {
+            "id": 1761,
+            "origin_id": -10,
+            "origin_slot": 10,
+            "target_id": 760,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1762,
+            "origin_id": 760,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 3,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1763,
+            "origin_id": -10,
+            "origin_slot": 11,
+            "target_id": 759,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1764,
+            "origin_id": 759,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 4,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1765,
+            "origin_id": -10,
+            "origin_slot": 12,
+            "target_id": 760,
+            "target_slot": 1,
+            "type": "FLOAT"
+          },
+          {
+            "id": 1766,
+            "origin_id": -10,
+            "origin_slot": 13,
+            "target_id": 759,
+            "target_slot": 1,
+            "type": "FLOAT"
+          }
+        ],
+        "extra": {}
+      },
+      {
+        "id": "0a83c443-faf4-4cb3-8200-4c71677af9cc",
+        "version": 1,
+        "state": {
+          "lastGroupId": 11,
+          "lastNodeId": 826,
+          "lastLinkId": 1925,
+          "lastRerouteId": 1
+        },
+        "revision": 0,
+        "config": {},
+        "name": "FLUX / SD /SDXL Swapper",
+        "inputNode": {
+          "id": -10,
+          "bounding": [
+            1696.61328125,
+            -119,
+            168.38671875,
+            288
+          ]
+        },
+        "outputNode": {
+          "id": -20,
+          "bounding": [
+            2285,
+            -59,
+            138.298828125,
+            188
+          ]
+        },
+        "inputs": [
+          {
+            "id": "69f46c54-e4dd-4000-bb1a-b53c1fec2feb",
+            "name": "boolean",
+            "type": "BOOLEAN",
+            "linkIds": [
+              1837,
+              1836
+            ],
+            "localized_name": "boolean",
+            "pos": [
+              1841,
+              -95
+            ]
+          },
+          {
+            "id": "9db41224-44ed-4154-8b83-e3503f4bb790",
+            "name": "on_false",
+            "type": "INT",
+            "linkIds": [
+              1842
+            ],
+            "localized_name": "on_false",
+            "label": "Stage 1 - End At",
+            "shape": 7,
+            "pos": [
+              1841,
+              -75
+            ]
+          },
+          {
+            "id": "792820d2-ddbc-422f-8446-c13bec861b26",
+            "name": "conditioning1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1845
+            ],
+            "localized_name": "conditioning1",
+            "label": "FLUX NEGATIVE",
+            "shape": 7,
+            "pos": [
+              1841,
+              -55
+            ]
+          },
+          {
+            "id": "57e050a0-4731-48c0-b0e6-b679e0b31b6d",
+            "name": "conditioning2",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1846
+            ],
+            "localized_name": "conditioning2",
+            "label": "SD / SDXL NEGATIVE",
+            "shape": 7,
+            "pos": [
+              1841,
+              -35
+            ]
+          },
+          {
+            "id": "037cf878-6cb0-4d84-a9b8-faad0f06bfd9",
+            "name": "conditioning1_1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1843
+            ],
+            "localized_name": "conditioning1_1",
+            "label": "FLUX POSITIVE",
+            "shape": 7,
+            "pos": [
+              1841,
+              -15
+            ]
+          },
+          {
+            "id": "59117334-964a-44c9-9474-b4db3134fbb5",
+            "name": "conditioning2_1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1844
+            ],
+            "localized_name": "conditioning2_1",
+            "label": "SD / SDXL POSITIVE",
+            "shape": 7,
+            "pos": [
+              1841,
+              5
+            ]
+          },
+          {
+            "id": "70e365a6-b29a-4c67-b838-bc9e008f4b05",
+            "name": "VAE1",
+            "type": "VAE",
+            "linkIds": [
+              1847
+            ],
+            "localized_name": "VAE1",
+            "label": "Flux VAE",
+            "shape": 7,
+            "pos": [
+              1841,
+              25
+            ]
+          },
+          {
+            "id": "11ef4660-7749-44d2-9781-a0b584957ceb",
+            "name": "VAE2",
+            "type": "VAE",
+            "linkIds": [
+              1848
+            ],
+            "localized_name": "VAE2",
+            "label": "SD / SDXL VAE",
+            "shape": 7,
+            "pos": [
+              1841,
+              45
+            ]
+          },
+          {
+            "id": "f28f4de1-ff8b-4efb-987c-8e0482920cc2",
+            "name": "model1",
+            "type": "MODEL",
+            "linkIds": [
+              1849
+            ],
+            "localized_name": "model1",
+            "label": "Flux Model",
+            "pos": [
+              1841,
+              65
+            ]
+          },
+          {
+            "id": "f0999fdf-5ecf-4ed2-9b88-389881e7e0ee",
+            "name": "clip1",
+            "type": "CLIP",
+            "linkIds": [
+              1850
+            ],
+            "localized_name": "clip1",
+            "label": "Flux Clip",
+            "pos": [
+              1841,
+              85
+            ]
+          },
+          {
+            "id": "f360d8e0-1416-4623-855a-cde15c4edd73",
+            "name": "model2",
+            "type": "MODEL",
+            "linkIds": [
+              1851
+            ],
+            "localized_name": "model2",
+            "label": "SD / SDXL Model",
+            "pos": [
+              1841,
+              105
+            ]
+          },
+          {
+            "id": "bfde686c-9756-419a-b5c5-47a23081e659",
+            "name": "clip2",
+            "type": "CLIP",
+            "linkIds": [
+              1852
+            ],
+            "localized_name": "clip2",
+            "label": "SD / SDXL Clip",
+            "pos": [
+              1841,
+              125
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "70646894-27c5-4ad7-83c7-de9676cb1157",
+            "name": "INT",
+            "type": "INT",
+            "linkIds": [
+              1854
+            ],
+            "localized_name": "INT",
+            "label": "1 ON / 2 OFF",
+            "pos": [
+              2309,
+              -35
+            ]
+          },
+          {
+            "id": "7c8d17b3-dcfb-48d3-b989-818e0eeaacbf",
+            "name": "output",
+            "type": "INT",
+            "linkIds": [
+              1853
+            ],
+            "localized_name": "output",
+            "label": "Stage 1 - End At",
+            "pos": [
+              2309,
+              -15
+            ]
+          },
+          {
+            "id": "cc208309-16c6-4bc5-aa2d-92162e74fddb",
+            "name": "CONDITIONING",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1857,
+              1857
+            ],
+            "localized_name": "CONDITIONING",
+            "label": "NEGATIVE",
+            "pos": [
+              2309,
+              5
+            ]
+          },
+          {
+            "id": "4d972e07-6e56-43e1-b76a-b307de7c97c5",
+            "name": "CONDITIONING_1",
+            "type": "CONDITIONING",
+            "linkIds": [
+              1855,
+              1855
+            ],
+            "localized_name": "CONDITIONING_1",
+            "label": "POSITIVE",
+            "pos": [
+              2309,
+              25
+            ]
+          },
+          {
+            "id": "5684cdfe-9b47-421c-9624-9482efabcfa8",
+            "name": "MODEL",
+            "type": "MODEL",
+            "linkIds": [
+              1859,
+              1859
+            ],
+            "localized_name": "MODEL",
+            "pos": [
+              2309,
+              45
+            ]
+          },
+          {
+            "id": "b3f5e948-42e7-48d9-a93b-a30c11873300",
+            "name": "CLIP",
+            "type": "CLIP",
+            "linkIds": [
+              1861
+            ],
+            "localized_name": "CLIP",
+            "pos": [
+              2309,
+              65
+            ]
+          },
+          {
+            "id": "823facda-e1d6-4d8f-957e-5282c7f4f832",
+            "name": "VAE",
+            "type": "VAE",
+            "linkIds": [
+              1887
+            ],
+            "pos": [
+              2309,
+              85
+            ]
+          }
+        ],
+        "widgets": [],
+        "nodes": [
+          {
+            "id": 791,
+            "type": "CR Set Value On Boolean",
+            "pos": [
+              1960,
+              380
+            ],
+            "size": [
+              270,
+              130
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "boolean",
+                "name": "boolean",
+                "type": "BOOLEAN",
+                "link": 1837
+              }
+            ],
+            "outputs": [
+              {
+                "label": "1 ON / 2 OFF",
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  1838,
+                  1839,
+                  1840,
+                  1841,
+                  1854
+                ]
+              },
+              {
+                "localized_name": "FLOAT",
+                "name": "FLOAT",
+                "type": "FLOAT",
+                "links": []
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": []
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CR Set Value On Boolean"
+            },
+            "widgets_values": [
+              1,
+              2
+            ],
+            "widgets_values_named": {
+              "value_if_true": 1,
+              "value_if_false": 2
+            }
+          },
+          {
+            "id": 790,
+            "type": "Int Literal",
+            "pos": [
+              1960,
+              140
+            ],
+            "size": [
+              270,
+              60
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "localized_name": "INT",
+                "name": "INT",
+                "type": "INT",
+                "links": [
+                  1835
+                ]
+              }
+            ],
+            "title": "Flux End At",
+            "properties": {
+              "Node name for S&R": "Int Literal"
+            },
+            "widgets_values": [
+              1000
+            ],
+            "widgets_values_named": {
+              "int": 1000
+            }
+          },
+          {
+            "id": 793,
+            "type": "CR Conditioning Input Switch",
+            "pos": [
+              1960,
+              0
+            ],
+            "size": [
+              260,
+              80
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "FLUX NEGATIVE",
+                "localized_name": "conditioning1",
+                "name": "conditioning1",
+                "shape": 7,
+                "type": "CONDITIONING",
+                "link": 1845
+              },
+              {
+                "label": "SD / SDXL NEGATIVE",
+                "localized_name": "conditioning2",
+                "name": "conditioning2",
+                "shape": 7,
+                "type": "CONDITIONING",
+                "link": 1846
+              },
+              {
+                "localized_name": "Input",
+                "name": "Input",
+                "type": "INT",
+                "widget": {
+                  "name": "Input"
+                },
+                "link": 1839
+              }
+            ],
+            "outputs": [
+              {
+                "label": "NEGATIVE",
+                "localized_name": "CONDITIONING",
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "links": [
+                  1857
+                ]
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": []
+              }
+            ],
+            "title": "Negative",
+            "properties": {
+              "Node name for S&R": "CR Conditioning Input Switch"
+            },
+            "widgets_values": [
+              1
+            ],
+            "widgets_values_named": {
+              "Input": 1
+            }
+          },
+          {
+            "id": 792,
+            "type": "CR Conditioning Input Switch",
+            "pos": [
+              1960,
+              -130
+            ],
+            "size": [
+              260,
+              80
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "FLUX POSITIVE",
+                "localized_name": "conditioning1",
+                "name": "conditioning1",
+                "shape": 7,
+                "type": "CONDITIONING",
+                "link": 1843
+              },
+              {
+                "label": "SD / SDXL POSITIVE",
+                "localized_name": "conditioning2",
+                "name": "conditioning2",
+                "shape": 7,
+                "type": "CONDITIONING",
+                "link": 1844
+              },
+              {
+                "localized_name": "Input",
+                "name": "Input",
+                "type": "INT",
+                "widget": {
+                  "name": "Input"
+                },
+                "link": 1838
+              }
+            ],
+            "outputs": [
+              {
+                "label": "POSITIVE",
+                "localized_name": "CONDITIONING",
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "links": [
+                  1855
+                ]
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": []
+              }
+            ],
+            "title": "Positive",
+            "properties": {
+              "Node name for S&R": "CR Conditioning Input Switch"
+            },
+            "widgets_values": [
+              1
+            ],
+            "widgets_values_named": {
+              "Input": 1
+            }
+          },
+          {
+            "id": 795,
+            "type": "CR Switch Model and CLIP",
+            "pos": [
+              1930,
+              -430
+            ],
+            "size": [
+              300,
+              120
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "Flux Model",
+                "localized_name": "model1",
+                "name": "model1",
+                "type": "MODEL",
+                "link": 1849
+              },
+              {
+                "label": "Flux Clip",
+                "localized_name": "clip1",
+                "name": "clip1",
+                "type": "CLIP",
+                "link": 1850
+              },
+              {
+                "label": "SD / SDXL Model",
+                "localized_name": "model2",
+                "name": "model2",
+                "type": "MODEL",
+                "link": 1851
+              },
+              {
+                "label": "SD / SDXL Clip",
+                "localized_name": "clip2",
+                "name": "clip2",
+                "type": "CLIP",
+                "link": 1852
+              },
+              {
+                "localized_name": "Input",
+                "name": "Input",
+                "type": "INT",
+                "widget": {
+                  "name": "Input"
+                },
+                "link": 1841
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  1859
+                ]
+              },
+              {
+                "localized_name": "CLIP",
+                "name": "CLIP",
+                "type": "CLIP",
+                "links": [
+                  1861
+                ]
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": []
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CR Switch Model and CLIP"
+            },
+            "widgets_values": [
+              1
+            ],
+            "widgets_values_named": {
+              "Input": 1
+            }
+          },
+          {
+            "id": 794,
+            "type": "CR VAE Input Switch",
+            "pos": [
+              1950,
+              -260
+            ],
+            "size": [
+              270,
+              80
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "Flux VAE",
+                "localized_name": "VAE1",
+                "name": "VAE1",
+                "shape": 7,
+                "type": "VAE",
+                "link": 1847
+              },
+              {
+                "label": "SD / SDXL VAE",
+                "localized_name": "VAE2",
+                "name": "VAE2",
+                "shape": 7,
+                "type": "VAE",
+                "link": 1848
+              },
+              {
+                "localized_name": "Input",
+                "name": "Input",
+                "type": "INT",
+                "widget": {
+                  "name": "Input"
+                },
+                "link": 1840
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "VAE",
+                "name": "VAE",
+                "type": "VAE",
+                "links": [
+                  1887
+                ]
+              },
+              {
+                "localized_name": "show_help",
+                "name": "show_help",
+                "type": "STRING",
+                "links": []
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CR VAE Input Switch"
+            },
+            "widgets_values": [
+              1
+            ],
+            "widgets_values_named": {
+              "Input": 1
+            }
+          },
+          {
+            "id": 789,
+            "type": "ComfySwitchNode",
+            "pos": [
+              1960,
+              250
+            ],
+            "size": [
+              270,
+              80
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "label": "Stage 1 - End At",
+                "localized_name": "on_false",
+                "name": "on_false",
+                "shape": 7,
+                "type": "INT",
+                "link": 1842
+              },
+              {
+                "localized_name": "on_true",
+                "name": "on_true",
+                "shape": 7,
+                "type": "INT",
+                "link": 1835
+              },
+              {
+                "localized_name": "switch",
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 1836
+              }
+            ],
+            "outputs": [
+              {
+                "label": "Stage 1 - End At",
+                "localized_name": "output",
+                "name": "output",
+                "type": "INT",
+                "links": [
+                  1853
+                ]
+              }
+            ],
+            "title": "End At Switch",
+            "properties": {
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
+          }
+        ],
+        "groups": [],
+        "links": [
+          {
+            "id": 1835,
+            "origin_id": 790,
+            "origin_slot": 0,
+            "target_id": 789,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 1839,
+            "origin_id": 791,
+            "origin_slot": 0,
+            "target_id": 793,
+            "target_slot": 2,
+            "type": "INT"
+          },
+          {
+            "id": 1838,
+            "origin_id": 791,
+            "origin_slot": 0,
+            "target_id": 792,
+            "target_slot": 2,
+            "type": "INT"
+          },
+          {
+            "id": 1840,
+            "origin_id": 791,
+            "origin_slot": 0,
+            "target_id": 794,
+            "target_slot": 2,
+            "type": "INT"
+          },
+          {
+            "id": 1841,
+            "origin_id": 791,
+            "origin_slot": 0,
+            "target_id": 795,
+            "target_slot": 4,
+            "type": "INT"
+          },
+          {
+            "id": 1837,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 791,
+            "target_slot": 0,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 1836,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 789,
+            "target_slot": 2,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 1842,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 789,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 1845,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 793,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1846,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 793,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1843,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 792,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1844,
+            "origin_id": -10,
+            "origin_slot": 5,
+            "target_id": 792,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1847,
+            "origin_id": -10,
+            "origin_slot": 6,
+            "target_id": 794,
+            "target_slot": 0,
+            "type": "VAE"
+          },
+          {
+            "id": 1848,
+            "origin_id": -10,
+            "origin_slot": 7,
+            "target_id": 794,
+            "target_slot": 1,
+            "type": "VAE"
+          },
+          {
+            "id": 1849,
+            "origin_id": -10,
+            "origin_slot": 8,
+            "target_id": 795,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 1850,
+            "origin_id": -10,
+            "origin_slot": 9,
+            "target_id": 795,
+            "target_slot": 1,
+            "type": "CLIP"
+          },
+          {
+            "id": 1851,
+            "origin_id": -10,
+            "origin_slot": 10,
+            "target_id": 795,
+            "target_slot": 2,
+            "type": "MODEL"
+          },
+          {
+            "id": 1852,
+            "origin_id": -10,
+            "origin_slot": 11,
+            "target_id": 795,
+            "target_slot": 3,
+            "type": "CLIP"
+          },
+          {
+            "id": 1854,
+            "origin_id": 791,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "INT"
+          },
+          {
+            "id": 1853,
+            "origin_id": 789,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 1857,
+            "origin_id": 793,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 2,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1855,
+            "origin_id": 792,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 3,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 1859,
+            "origin_id": 795,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 4,
+            "type": "MODEL"
+          },
+          {
+            "id": 1861,
+            "origin_id": 795,
+            "origin_slot": 1,
+            "target_id": -20,
+            "target_slot": 5,
+            "type": "CLIP"
+          },
+          {
+            "id": 1887,
+            "origin_id": 794,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 6,
+            "type": "VAE"
+          }
+        ],
+        "extra": {}
       }
     ]
   },
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7513148009015777,
+      "scale": 0.8264462809917354,
       "offset": [
-        354.97500562522185,
-        216.36047762552792
+        341.70999999999975,
+        13.420000000000009
       ]
     },
     "frontendVersion": "1.52.7",

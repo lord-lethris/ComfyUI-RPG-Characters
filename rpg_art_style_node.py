@@ -10,7 +10,7 @@ class RPGArtStyleSelector:
                     "Dark Fantasy",
                     "Realistic",
                     "Fantasy Illustration",
-                    "Digital Painting",
+                    "Pixel Art",
                     "Sci-Fi / Cyberpunk",  # NEW
                 ],)
             }
@@ -44,9 +44,9 @@ class RPGArtStyleSelector:
             "positive": "fantasy art, painterly strokes, epic atmosphere, vibrant colors",
             "negative": "dull, flat, low contrast"
         },
-        "Digital Painting": {
-            "positive": "digital painting, smooth brushwork, rich textures, detailed lighting",
-            "negative": "pixelated, noisy, flat lighting"
+        "Pixel Art": {
+            "positive": "pixel art, classic fantasy RPG pixel art, hand-crafted pixel illustration, crisp hard-edged pixels, limited color palette, deliberate pixel clusters, dithering, sprite-art aesthetics, stylized fantasy character portrait",
+            "negative": "photorealistic, photographic, hyperrealistic, 3D render, CGI, smooth gradients, airbrushed shading, anti-aliased edges, painterly brushstrokes, realistic skin pores, glossy realism, blurry, noisy"
         },
         "Sci-Fi / Cyberpunk": {  # NEW
             "positive": "sci-fi, cyberpunk, neon lights, futuristic tech, detailed cybernetic elements, vibrant neon colors",
@@ -93,14 +93,15 @@ class RPGArtStyleSelector:
                 "**Upper Chest/Clothing**: Armor or robes, enchanted detail, magical symbols.\n\n"
                 "**Soft Background**: Clouds, magical auras, glowing cliffs or ruins."
             ),
-            "Digital Painting": (
-                "Use digital painting style: rich texture, brushstrokes, dynamic lighting.\n\n"
+            "Pixel Art": (
+                "Use classic fantasy RPG pixel art style: hand-crafted pixel illustration with crisp hard-edged pixels, deliberate pixel clusters, limited but expressive color palettes, strong silhouettes, dithering, selective highlights, and readable sprite-art forms. The result should look like a deliberately created piece of pixel art, not a normal illustration that has merely been pixelated.\n\n"
                 "**1024x1024 Extreme Close-Up Portrait**\n\n"
-                "Painted detail with soft blend transitions and visible brush techniques.\n\n"
-                "**Eyes**: Reflective, highlighted with strokes.\n\n"
-                "**Hair**: Painterly motion with rich shading.\n\n"
-                "**Upper Chest/Clothing**: Stylized materials with visual brushwork.\n\n"
-                "**Soft Background**: Smudged gradients and digital bloom."
+                "Render the character as a polished fantasy RPG pixel-art portrait, inspired by classic 16-bit and 32-bit game artwork. Use visible pixel structure throughout the image, stepped edges, block-based shading, clustered pixels, controlled dithering, and deliberate colour grouping. Keep important facial and costume features readable while simplifying tiny details into intentional pixel shapes.\n\n"
+                "**Eyes**: Bright, expressive pixel-art eyes with a few carefully placed highlight pixels and strong readable shapes.\n\n"
+                "**Hair**: Build hair from grouped pixel clusters and sweeping stepped shapes, with a small number of highlight bands rather than individual realistic strands.\n\n"
+                "**Upper Chest/Clothing**: Use strong silhouettes, blocky folds, clustered highlights and shadows, and simplified decorative details that remain clearly readable at pixel scale.\n\n"
+                "**Soft Background**: Construct the environment from layered pixel-art shapes, atmospheric colour blocks, silhouettes, dithering and simplified environmental details rather than photographic depth of field.\n\n"
+                "Avoid photorealistic rendering, smooth photographic gradients, anti-aliased edges, painterly brushwork, CGI/3D-render appearance, excessive micro-detail, and simply applying a pixelation filter to realistic artwork."
             ),
             "Sci-Fi / Cyberpunk": (  # NEW
                 "Use sci-fi / cyberpunk style: neon lights, futuristic city, cybernetic implants, high-tech fashion.\n\n"
