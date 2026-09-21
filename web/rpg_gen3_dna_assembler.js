@@ -4,6 +4,7 @@ const EXTENSION_NAME = "lethris.rpg_character_gen3.dna_assembler";
 const NODE_NAME = "RPGCharacterDNAAssembler";
 const CHANGE_PREFIX = "change_";
 const INPUT_TYPE = 1;
+const MAX_CHANGE_INPUTS = 16;
 
 function isChangeInput(input) {
     return typeof input?.name === "string" && input.name.startsWith(CHANGE_PREFIX);
@@ -42,7 +43,7 @@ function ensureChangeInput(node) {
     // Keep exactly one empty landing slot at the end.
     inputs = changeInputs(node);
     const last = inputs[inputs.length - 1];
-    if (last?.link != null) {
+    if (last?.link != null && inputs.length < MAX_CHANGE_INPUTS) {
         node.addInput(`${CHANGE_PREFIX}${inputs.length + 1}`, "RPG_DNA_SECTION", {
             forceInput: true,
             label: `Change ${inputs.length + 1}`,
@@ -63,6 +64,23 @@ function compactDisconnectedChangeInputs(node) {
     for (let i = inputs.length - 2; i >= 0; i--) {
         if (inputs[i].link == null) {
             const actualIndex = node.inputs.indexOf(inputs[i]);
+            if (actualIndex >= 0) node.removeInput(actualIndex);
+        }
+    }
+
+    // The backend declares a finite pool of dynamic slots so ComfyUI's V1
+    // execution layer knows about every socket. Keep only the connected
+    // changes plus one empty landing slot visible in the frontend.
+    inputs = changeInputs(node);
+    let lastConnected = -1;
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].link != null) lastConnected = i;
+    }
+    const keepCount = Math.max(1, lastConnected + 2);
+    for (let i = inputs.length - 1; i >= keepCount; i--) {
+        const input = inputs[i];
+        if (input?.link == null) {
+            const actualIndex = node.inputs.indexOf(input);
             if (actualIndex >= 0) node.removeInput(actualIndex);
         }
     }
@@ -89,6 +107,13 @@ app.registerExtension({
         };
 
         const originalConnectionsChange = nodeType.prototype.onConnectionsChange;
+        const originalConfigure = nodeType.prototype.onConfigure;
+        nodeType.prototype.onConfigure = function () {
+            const result = originalConfigure?.apply(this, arguments);
+            compactDisconnectedChangeInputs(this);
+            return result;
+        };
+
         nodeType.prototype.onConnectionsChange = function (type, index, connected, linkInfo) {
             const result = originalConnectionsChange?.apply(this, arguments);
 
