@@ -13,7 +13,6 @@ class RPGCharacterDNAEditor:
         return {
             "required": {
                 "DNA_SECTION": ("RPG_DNA_SECTION",),
-                "section": (list(DNA_SECTIONS),),
                 "operation": (["Edit", "Pass Through", "Clear"],),
                 "revision": ("INT", {
                     "default": 0,
@@ -39,7 +38,11 @@ class RPGCharacterDNAEditor:
     CATEGORY = "RPG/Gen 3/DNA"
     OUTPUT_NODE = True
 
-    def edit(self, DNA_SECTION, section, operation, revision=0, edited_section=""):
+    def edit(self, DNA_SECTION, operation, revision=0, edited_section=""):
+        section = DNA_SECTION.get("id") if isinstance(DNA_SECTION, dict) else None
+        if section not in DNA_SECTIONS:
+            raise ValueError("DNA Editor received an invalid or missing DNA section")
+
         if operation == "Clear":
             result = make_empty_section(section)
         else:
