@@ -43,10 +43,27 @@ class RPGCharacterDNAEditor:
         if section not in DNA_SECTIONS:
             raise ValueError("DNA Editor received an invalid or missing DNA section")
 
+        incoming_signature = DNA_SECTION.get("source_signature") if isinstance(DNA_SECTION, dict) else None
+
         if operation == "Clear":
             result = make_empty_section(section)
+            if incoming_signature:
+                result["source_signature"] = incoming_signature
+                result["source_inputs"] = deepcopy(DNA_SECTION.get("source_inputs", {}))
         else:
             result = self._parse_edited_section(edited_section, section)
+            persisted_signature = result.get("source_signature") if isinstance(result, dict) else None
+
+            # The editor owns local edits only while the upstream source is the
+            # same. A changed signature means the source has genuinely changed,
+            # so discard the old local state and adopt the new source section.
+            if (
+                result is not None
+                and incoming_signature is not None
+                and persisted_signature != incoming_signature
+            ):
+                result = None
+
             if result is None:
                 if not isinstance(DNA_SECTION, dict):
                     result = make_empty_section(section)
