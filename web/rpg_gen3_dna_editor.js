@@ -213,6 +213,7 @@ function renderExpressionMouth(node, section, locus, host) {
         x: Number(control.x_value ?? 0),
         y: Number(control.y_value ?? 0),
     };
+    const draft = { x: values.x, y: values.y };
 
     function render() {
         const px = 50 + values.x * 40;
@@ -249,8 +250,8 @@ function renderExpressionMouth(node, section, locus, host) {
         const p = positionFromEvent(event);
         values.x = p.x;
         values.y = p.y;
-        control.x_value = Number(p.x.toFixed(3));
-        control.y_value = Number(p.y.toFixed(3));
+        draft.x = Number(p.x.toFixed(3));
+        draft.y = Number(p.y.toFixed(3));
         render();
         readout.textContent = `Smile ${p.x >= 0 ? "+" : ""}${p.x.toFixed(2)}  •  Open ${p.y.toFixed(2)}`;
     }
@@ -271,23 +272,51 @@ function renderExpressionMouth(node, section, locus, host) {
     const readout = document.createElement("div");
     readout.style.cssText = "font-size:9px;opacity:.65;text-align:center;margin-top:5px";
 
+    const controls = document.createElement("div");
+    controls.style.cssText = "display:flex;justify-content:flex-end;gap:4px;margin-top:5px";
+
     const reset = document.createElement("button");
-    reset.textContent = "Reset Mouth";
-    reset.style.cssText = "margin-top:5px;width:100%";
+    reset.textContent = "Reset";
+    reset.style.cssText = "min-width:60px";
     reset.onclick = event => {
         event.stopPropagation();
         values.x = 0;
         values.y = 0;
-        control.x_value = 0;
-        control.y_value = 0;
+        draft.x = 0;
+        draft.y = 0;
         render();
         readout.textContent = "Smile +0.00  •  Open 0.00";
-        applySection(node, section);
     };
+
+    const cancel = document.createElement("button");
+    cancel.textContent = "✕";
+    cancel.title = "Cancel mouth edit";
+    cancel.style.cssText = "min-width:34px";
+    cancel.onclick = event => {
+        event.stopPropagation();
+        host.innerHTML = "";
+        refreshEditorHeight(node);
+    };
+
+    const accept = document.createElement("button");
+    accept.textContent = "✓";
+    accept.title = "Apply mouth edit";
+    accept.style.cssText = "min-width:34px";
+    accept.onclick = event => {
+        event.stopPropagation();
+        control.x_value = Number(draft.x.toFixed(3));
+        control.y_value = Number(draft.y.toFixed(3));
+        applySection(node, section);
+        renderEditor(node);
+    };
+
+    controls.appendChild(reset);
+    controls.appendChild(cancel);
+    controls.appendChild(accept);
 
     wrap.appendChild(field);
     wrap.appendChild(readout);
-    wrap.appendChild(reset);
+    wrap.appendChild(controls);
     host.appendChild(wrap);
 
     render();
