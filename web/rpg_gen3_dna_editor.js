@@ -263,7 +263,7 @@ function openSculptor(node, section, locusIndex) {
             <button id="gen3-apply">✓</button>
         </div>
         <div style="font-size:11px;opacity:.6;margin:6px 0 9px">
-            Drag the point. The nearest three variants blend together using inverse-distance weighting.\n            ${locus.options.length > 12 ? "Large set: variant names appear when they contribute to the blend." : ""}
+            Drag the point. The nearest three variants blend together using inverse-distance weighting.
         </div>
         <svg id="gen3-svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:250px;background:rgba(0,0,0,.15);border-radius:6px"></svg>
         <div id="gen3-weights" style="margin-top:8px"></div>
@@ -286,6 +286,9 @@ function openSculptor(node, section, locusIndex) {
         circle.setAttribute("fill", "rgba(210,210,210,.16)");
         circle.setAttribute("stroke", "rgba(255,255,255,.45)");
         circle.setAttribute("data-anchor", String(i));
+        const title = document.createElementNS(ns, "title");
+        title.textContent = locus.options[i];
+        circle.appendChild(title);
         svg.appendChild(circle);
 
         const text = document.createElementNS(ns, "text");
@@ -333,16 +336,25 @@ function openSculptor(node, section, locusIndex) {
             }
         });
 
-        weightsEl.innerHTML = locus.options.map((option, i) => {
+        const visibleIndices = anchors.length > 12
+            ? active
+            : locus.options.map((_, i) => i);
+
+        weightsEl.innerHTML = visibleIndices.map(i => {
+            const option = locus.options[i];
             const pct = Math.round((weights[i] || 0) * 100);
             return `<div style="display:flex;gap:7px;align-items:center;margin:4px 0">
-                <div style="width:115px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(option)}</div>
-                <div style="flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
+                <div style="flex:1;min-width:0;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(option)}</div>
+                <div style="width:90px;height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
                     <div style="height:100%;width:${pct}%;background:#aaa"></div>
                 </div>
                 <div style="width:34px;text-align:right;font-size:10px;opacity:.7">${pct}%</div>
             </div>`;
-        }).join("");
+        }).join("") || `<div style="font-size:10px;opacity:.55">Move the point to select variants.</div>`;
+
+        if (anchors.length > 12) {
+            weightsEl.innerHTML += `<div style="font-size:10px;opacity:.45;margin-top:7px">${locus.options.length} variants available · showing active blend</div>`;
+        }
 
         resultEl.textContent = locus.options
             .map((option, i) => (weights[i] || 0) > .0005 ? `(${option}:${weights[i].toFixed(3)})` : null)
