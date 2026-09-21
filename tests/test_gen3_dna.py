@@ -135,6 +135,20 @@ class TestGen3DNA(unittest.TestCase):
         )
 
 
+    def test_assembler_exposes_base_and_first_change_input(self):
+        inputs = RPGCharacterDNAAssembler.INPUT_TYPES()
+
+        self.assertEqual(
+            inputs["required"]["character_info"],
+            ("CHARACTER_INFO",),
+        )
+        self.assertEqual(
+            inputs["optional"]["change_1"],
+            ("RPG_DNA_SECTION",),
+        )
+        self.assertNotIn("change_2", inputs.get("optional", {}))
+
+
     def test_assembler_accepts_character_info_without_changes(self):
         character = make_character_dna(
             seed=4321,
