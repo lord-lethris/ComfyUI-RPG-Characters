@@ -378,7 +378,11 @@ function applyEdits(node, section) {
     // Store the edited section as JSON in the node's hidden transport widget.
     // The runtime node receives the original section from the Pipe; this
     // widget lets the editor preserve the user's changes between executions.
-    setWidget(node, "DNA_SECTION", section);
+    const transport = getWidget(node, "edited_section");
+    if (transport) {
+        transport.value = JSON.stringify(section);
+        transport.callback?.(transport.value);
+    }
     node.__gen3SectionData = section;
     bumpRevision(node);
 }
@@ -420,6 +424,12 @@ app.registerExtension({
                 };
             }
 
+            const transport = getWidget(node, "edited_section");
+            if (transport) {
+                transport.hidden = true;
+                transport.computeSize = () => [0, -4];
+            }
+
             const button = node.addWidget("button", "🧬 Open DNA Editor", null, () => openEditor(node));
             node.__gen3EditorButton = button;
         };
@@ -427,7 +437,8 @@ app.registerExtension({
         const originalExecuted = nodeType.prototype.onExecuted;
         nodeType.prototype.onExecuted = function (message) {
             originalExecuted?.apply(this, arguments);
-            const section = message?.section ?? message?.ui?.section;
+            const raw = message?.section ?? message?.ui?.section;
+            const section = Array.isArray(raw) ? raw[0] : raw;
             if (section && typeof section === "object") {
                 this.__gen3SectionData = section;
             }
