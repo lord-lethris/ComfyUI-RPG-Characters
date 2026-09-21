@@ -733,19 +733,24 @@ app.registerExtension({
 
             const transport = getWidget(node, "edited_section");
             if (transport) {
+                // Keep this as a real prompt widget even though it is visually
+                // suppressed. ComfyUI has two independent serialization flags:
+                // widget.serialize controls workflow persistence, while
+                // widget.options.serialize controls API prompt inclusion.
+                // Set both explicitly so this transport cannot silently drop
+                // out of either path.
+                transport.serialize = true;
+                transport.options = transport.options || {};
+                transport.options.serialize = true;
                 transport.hidden = true;
                 transport.computeSize = () => [0, -4];
 
-                // The editor mutates node.__gen3SectionData directly. Use
-                // ComfyUI's prompt serialization hook so execution always
-                // receives the live edited section rather than a stale widget
-                // value from workflow/configuration state.
-                transport.serializeValue = () => {
-                    const section = node.__gen3SectionData;
-                    return section && typeof section === "object"
-                        ? JSON.stringify(section)
-                        : String(transport.value ?? "");
-                };
+                // The transport widget is the canonical execution value.
+                // All editor mutations call applySection(), which updates
+                // transport.value before queueing. Reading that value here
+                // avoids depending on transient node-side state during
+                // prompt construction.
+                transport.serializeValue = () => String(transport.value ?? "");
 
                 const restored = parseState(transport.value);
                 if (restored && restored.id) {
