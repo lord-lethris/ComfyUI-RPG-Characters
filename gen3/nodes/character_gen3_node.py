@@ -134,7 +134,7 @@ class RPGCharacterGen3:
         loci = {}
         for locus_id, (label, selected, entry) in selected_entries.items():
             field = locus_id.split(":", 1)[0]
-            loci.setdefault(field, []).append({
+            locus = {
                 "id": locus_id,
                 "label": label,
                 "options": list({
@@ -154,7 +154,19 @@ class RPGCharacterGen3:
                 }[locus_id].keys()),
                 "selected": selected,
                 "variant_sets": _extract_variant_sets(entry, locus_id),
-            })
+            }
+            if locus_id == "expression:emotion":
+                locus["controls"] = {
+                    "mouth": {
+                        "label": "Mouth",
+                        "type": "expression_2d",
+                        "x": {"label": "Smile", "min": -1.0, "max": 1.0},
+                        "y": {"label": "Open", "min": 0.0, "max": 1.0},
+                        "x_value": 0.0,
+                        "y_value": 0.0,
+                    }
+                }
+            loci.setdefault(field, []).append(locus)
 
         sections = {
             "identity": {
