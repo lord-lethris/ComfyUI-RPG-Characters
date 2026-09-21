@@ -144,9 +144,14 @@ class TestGen3DNA(unittest.TestCase):
         )
         self.assertEqual(
             inputs["optional"]["change_1"],
-            ("*",),
+            ("RPG_DNA_SECTION",),
         )
-        self.assertNotIn("change_2", inputs.get("optional", {}))
+        for index in range(1, 17):
+            self.assertEqual(
+                inputs["optional"][f"change_{index}"],
+                ("RPG_DNA_SECTION",),
+            )
+        self.assertNotIn("change_17", inputs.get("optional", {}))
 
 
     def test_assembler_accepts_character_info_without_changes(self):
