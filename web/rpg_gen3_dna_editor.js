@@ -264,8 +264,6 @@ function renderSculptField(node, section, locus, host) {
         point.style.top = position.y + "%";
 
         const weights = weightsAt(position.x, position.y);
-        const weightMap = {};
-        weights.forEach(item => weightMap[String(item.index)] = item.weight);
         updateWeights(weights);
     }
 
@@ -380,6 +378,7 @@ function renderEditor(node) {
             <div style="padding:10px;opacity:.6;font-size:11px;text-align:center">
                 Run the graph to populate this DNA section.
             </div>`;
+        node.__gen3EditorHeight = 55;
         node.setSize?.([Math.max(node.size[0], 320), Math.max(node.size[1], 180)]);
         return;
     }
@@ -399,11 +398,50 @@ function renderEditor(node) {
             <div style="padding:12px 4px;opacity:.55;font-size:10px">
                 No editable loci in this section yet.
             </div>`;
+        node.__gen3EditorHeight = 95;
+        node.setSize?.([Math.max(node.size[0], 320), Math.max(node.size[1], 240)]);
         return;
     }
 
-    for (let i = 0; i < loci.length; i++) {
-        const locus = loci[i];
+    const makeActions = (target, card) => {
+        const actions = document.createElement("div");
+        actions.style.cssText = "display:flex;gap:5px";
+
+        const reroll = document.createElement("button");
+        reroll.textContent = "🎲 Re-roll";
+        reroll.style.flex = "1";
+        reroll.onclick = event => {
+            event.stopPropagation();
+            const index = pickRerollIndex(target, currentIndex(target));
+            setLocusSelection(section, target, index);
+            applySection(node, section);
+            renderEditor(node);
+        };
+
+        const sculpt = document.createElement("button");
+        sculpt.textContent = "🧬 Sculpt";
+        sculpt.style.flex = "1";
+        sculpt.onclick = event => {
+            event.stopPropagation();
+            const existing = card.querySelector(".gen3-inline-sculpt");
+            if (existing) {
+                existing.remove();
+                refreshEditorHeight(node);
+                return;
+            }
+            const sculptHost = document.createElement("div");
+            sculptHost.className = "gen3-inline-sculpt";
+            card.appendChild(sculptHost);
+            renderSculptField(node, section, target, sculptHost);
+            refreshEditorHeight(node);
+        };
+
+        actions.appendChild(reroll);
+        actions.appendChild(sculpt);
+        card.appendChild(actions);
+    };
+
+    for (const locus of loci) {
         const card = document.createElement("div");
         card.style.cssText = "padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)";
 
@@ -419,44 +457,36 @@ function renderEditor(node) {
         value.style.cssText = "font-size:10px;margin:3px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
         card.appendChild(value);
 
-        const actions = document.createElement("div");
-        actions.style.cssText = "display:flex;gap:5px";
+        const variants = Array.isArray(locus.variant_sets) ? locus.variant_sets : [];
+        if (variants.length) {
+            const note = document.createElement("div");
+            note.textContent = "Internal DNA variants";
+            note.style.cssText = "font-size:9px;opacity:.5;margin:4px 0 5px";
+            card.appendChild(note);
 
-        const reroll = document.createElement("button");
-        reroll.textContent = "🎲 Re-roll";
-        reroll.style.flex = "1";
-        reroll.onclick = event => {
-            event.stopPropagation();
-            const index = pickRerollIndex(locus, currentIndex(locus));
-            setLocusSelection(section, locus, index);
-            applySection(node, section);
-            renderEditor(node);
-        };
+            for (const variant of variants) {
+                const variantCard = document.createElement("div");
+                variantCard.style.cssText = "padding:7px;margin:5px 0;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:5px";
 
-        const sculpt = document.createElement("button");
-        sculpt.textContent = "🧬 Sculpt";
-        sculpt.style.flex = "1";
-        sculpt.onclick = event => {
-            event.stopPropagation();
-            const existing = card.querySelector(".gen3-inline-sculpt");
-            if (existing) {
-                existing.remove();
-                return;
+                const variantTitle = document.createElement("div");
+                variantTitle.style.cssText = "display:flex;align-items:center;gap:6px";
+                variantTitle.innerHTML = `
+                    <div style="flex:1;font-size:10px;font-weight:600">${escapeHtml(variant.label || "Variant")}</div>
+                    <div style="font-size:8px;opacity:.5">${escapeHtml(variant.mode || "RANDOM").toUpperCase()}</div>`;
+                variantCard.appendChild(variantTitle);
+
+                const variantValue = document.createElement("div");
+                variantValue.textContent = variant.selected || "Random";
+                variantValue.style.cssText = "font-size:10px;margin:3px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+                variantCard.appendChild(variantValue);
+
+                makeActions(variant, variantCard);
+                card.appendChild(variantCard);
             }
-            const sculptHost = document.createElement("div");
-            sculptHost.className = "gen3-inline-sculpt";
-            card.appendChild(sculptHost);
-            renderSculptField(node, section, locus, sculptHost);
-            requestAnimationFrame(() => {
-                const size = node.computeSize?.();
-                if (size) node.setSize?.([Math.max(node.size[0], size[0]), size[1]]);
-                node.setDirtyCanvas?.(true, true);
-            });
-        };
+        } else {
+            makeActions(locus, card);
+        }
 
-        actions.appendChild(reroll);
-        actions.appendChild(sculpt);
-        card.appendChild(actions);
         container.appendChild(card);
     }
 
@@ -465,7 +495,20 @@ function renderEditor(node) {
     footer.textContent = "Changes are stored in the DNA section and revisioned automatically.";
     container.appendChild(footer);
 
-    node.setSize?.([Math.max(node.size[0], 320), Math.max(node.size[1], 240)]);
+    refreshEditorHeight(node);
+}
+
+function refreshEditorHeight(node) {
+    const container = node.__gen3EditorContainer;
+    if (!container) return;
+    const height = Math.max(50, container.scrollHeight + 4);
+    node.__gen3EditorHeight = height;
+    container.style.minHeight = height + "px";
+    const size = node.computeSize?.();
+    if (size) {
+        node.setSize?.([Math.max(node.size[0], 320, size[0]), Math.max(node.size[1], size[1], height + 70)]);
+    }
+    node.setDirtyCanvas?.(true, true);
 }
 
 app.registerExtension({
@@ -495,11 +538,18 @@ app.registerExtension({
                 "overflow:visible",
             ].join(";");
 
-            node.addDOMWidget("gen3_dna_editor", "custom", container, {
+            const editorWidget = node.addDOMWidget("gen3_dna_editor", "custom", container, {
                 serialize: false,
                 hideOnZoom: false,
                 getValue() { return ""; },
                 setValue() {},
+                getMinHeight() { return node.__gen3EditorHeight || 50; },
+                getMaxHeight() { return node.__gen3EditorHeight || 50; },
+            });
+            editorWidget.computeLayoutSize = () => ({
+                minHeight: node.__gen3EditorHeight || 50,
+                maxHeight: node.__gen3EditorHeight || 50,
+                minWidth: 300,
             });
 
             node.__gen3EditorContainer = container;
