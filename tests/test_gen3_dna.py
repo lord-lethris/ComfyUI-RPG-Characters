@@ -118,7 +118,7 @@ class TestGen3DNA(unittest.TestCase):
             "Edit",
             1,
             json.dumps(section),
-        )["result"][0]
+        )[0]
 
         self.assertEqual(result["id"], "hair")
         self.assertEqual(result["loci"][0]["selected"], "White")
