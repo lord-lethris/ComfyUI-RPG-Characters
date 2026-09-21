@@ -700,13 +700,23 @@ function renderEditor(node) {
 function refreshEditorHeight(node) {
     const container = node.__gen3EditorContainer;
     if (!container) return;
+
+    // Measure the natural DOM height.  Do not leave the previous minHeight
+    // in place while measuring: scrollHeight includes it and would make the
+    // node grow a few pixels every time the graph is executed.
+    const previousMinHeight = container.style.minHeight;
+    container.style.minHeight = "0px";
     const height = Math.max(50, container.scrollHeight + 4);
+    container.style.minHeight = previousMinHeight || "";
+
     node.__gen3EditorHeight = height;
+
+    // The DOM widget owns this part of the node's height.  Don't use the
+    // existing node.size[1] as a lower bound or it becomes a ratchet.
     container.style.minHeight = height + "px";
-    const size = node.computeSize?.();
-    if (size) {
-        node.setSize?.([Math.max(node.size[0], 320, size[0]), Math.max(node.size[1], size[1], height + 70)]);
-    }
+    const width = Math.max(node.size[0], 320);
+    const headerHeight = node.__gen3EditorHeaderHeight || 120;
+    node.setSize?.([width, headerHeight + height]);
     node.setDirtyCanvas?.(true, true);
 }
 
