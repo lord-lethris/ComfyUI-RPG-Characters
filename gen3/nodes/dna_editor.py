@@ -43,6 +43,40 @@ class RPGCharacterDNAEditor:
 
         incoming_signature = DNA_SECTION.get("source_signature") if isinstance(DNA_SECTION, dict) else None
 
+        # Temporary execution-path diagnostic. This tells us exactly what
+        # reached Python after the browser built the prompt, without dumping
+        # the entire DNA document into the server log.
+        parsed_debug = self._parse_edited_section(edited_section, section)
+        debug_loci = parsed_debug.get("loci", []) if isinstance(parsed_debug, dict) else []
+        debug_values = parsed_debug.get("values", {}) if isinstance(parsed_debug, dict) else {}
+        debug_mouth = None
+        debug_variants = []
+        for locus in debug_loci:
+            if not isinstance(locus, dict):
+                continue
+            if locus.get("controls", {}).get("mouth"):
+                control = locus["controls"]["mouth"]
+                debug_mouth = (
+                    control.get("x_value"),
+                    control.get("y_value"),
+                )
+            for variant in locus.get("variant_sets", []) or []:
+                if isinstance(variant, dict):
+                    debug_variants.append((
+                        variant.get("id"),
+                        variant.get("selected"),
+                        variant.get("weights"),
+                    ))
+        print(
+            "[RPG Gen3 DNA DEBUG] "
+            f"section={section!r} operation={operation!r} revision={revision} "
+            f"edited_len={len(edited_section or '')} "
+            f"incoming_sig={str(incoming_signature)[:12]} "
+            f"edited_sig={str(parsed_debug.get('source_signature'))[:12] if parsed_debug else None} "
+            f"values={debug_values!r} mouth={debug_mouth!r} variants={debug_variants!r}",
+            flush=True,
+        )
+
         if operation == "Clear":
             result = make_empty_section(section)
             if incoming_signature:
