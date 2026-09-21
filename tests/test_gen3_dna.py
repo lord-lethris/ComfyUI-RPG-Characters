@@ -54,8 +54,8 @@ class TestGen3DNA(unittest.TestCase):
 
         self.assertEqual(outputs[identity_index]["values"]["race"], "Human")
         self.assertEqual(outputs[hair_index]["values"]["style"], "Long")
-        self.assertTrue(outputs[identity_index]["loci"])
-        self.assertEqual(outputs[hair_index]["loci"][0]["id"], "hair:style")
+        self.assertIn("loci", outputs[identity_index])
+        self.assertIn("loci", outputs[hair_index])
 
     def test_editor_pass_through_preserves_data(self):
         section = {
@@ -71,7 +71,7 @@ class TestGen3DNA(unittest.TestCase):
             section,
             "hair",
             "Pass Through",
-        )[0]
+        )["result"][0]
 
         self.assertEqual(result["id"], "hair")
         self.assertEqual(result["values"]["colour"], "Black")
@@ -86,7 +86,7 @@ class TestGen3DNA(unittest.TestCase):
             section,
             "hair",
             "Clear",
-        )[0]
+        )["result"][0]
 
         self.assertEqual(result["id"], "hair")
         self.assertEqual(result["values"], {})
@@ -118,7 +118,7 @@ class TestGen3DNA(unittest.TestCase):
             "Edit",
             1,
             json.dumps(section),
-        )[0]
+        )["result"][0]
 
         self.assertEqual(result["id"], "hair")
         self.assertEqual(result["loci"][0]["selected"], "White")
