@@ -117,17 +117,6 @@ function bumpRevision(node) {
     app.graph?.setDirtyCanvas?.(true, true);
 }
 
-function sectionFromInput(node) {
-    const widget = getWidget(node, "section");
-    return widget?.value || "";
-}
-
-function updateSection(node, section) {
-    setWidget(node, "DNA_SECTION", section);
-    node.__gen3Section = section;
-    bumpRevision(node);
-}
-
 function closeEditor(node) {
     node.__gen3Editor?.remove();
     node.__gen3Editor = null;
@@ -142,7 +131,7 @@ function openEditor(node) {
         return;
     }
 
-    const sectionId = input.id || sectionFromInput(node);
+    const sectionId = input.id;
     const loci = Array.isArray(input.loci) ? input.loci : [];
 
     const panel = document.createElement("div");
@@ -400,17 +389,6 @@ app.registerExtension({
         nodeType.prototype.onNodeCreated = function () {
             originalCreated?.apply(this, arguments);
             const node = this;
-
-            const inputWidget = getWidget(node, "DNA_SECTION");
-            if (inputWidget) {
-                const originalCallback = inputWidget.callback;
-                inputWidget.callback = value => {
-                    originalCallback?.(value);
-                    if (value && typeof value === "object") {
-                        node.__gen3SectionData = value;
-                    }
-                };
-            }
 
             const transport = getWidget(node, "edited_section");
             if (transport) {
