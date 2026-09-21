@@ -24,6 +24,7 @@ def make_empty_section(section_id):
         "description": definition["description"],
         "values": {},
         "traits": [],
+        "loci": [],
         "source": None,
     }
 
