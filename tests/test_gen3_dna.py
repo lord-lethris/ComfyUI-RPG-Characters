@@ -9,6 +9,7 @@ import unittest
 from gen3.dna.character_dna import (
     CHARACTER_DNA_VERSION,
     make_character_dna,
+    make_source_signature,
 )
 from gen3.dna.dna_schema import DNA_SECTIONS
 from gen3.nodes.dna_editor import RPGCharacterDNAEditor
@@ -95,6 +96,88 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(mouth["x_value"], 0.0)
         self.assertEqual(mouth["y_value"], 0.0)
 
+    def test_gen3_source_signatures_only_change_affected_sections(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+
+        first = RPGCharacterGen3().create_character(**values)[0]
+        values["hair_style"] = inputs["hair_style"][0][1]
+        second = RPGCharacterGen3().create_character(**values)[0]
+
+        self.assertNotEqual(
+            first["sections"]["hair"]["source_signature"],
+            second["sections"]["hair"]["source_signature"],
+        )
+        self.assertEqual(
+            first["sections"]["expression"]["source_signature"],
+            second["sections"]["expression"]["source_signature"],
+        )
+
+    def test_editor_preserves_edits_when_source_signature_is_unchanged(self):
+        import json
+
+        signature = make_source_signature("hair", {"hair_style": "Long", "hair_colour": "Black"})
+        source = {
+            "id": "hair",
+            "values": {"style": "Long", "colour": "Black"},
+            "traits": ["Long", "Black"],
+            "loci": [{
+                "id": "hair:style",
+                "label": "Hair Style",
+                "options": ["Long", "Short"],
+                "selected": "Long",
+                "weights": {"0": 1.0},
+                "mode": "selected",
+            }],
+            "source_signature": signature,
+            "source_inputs": {"hair_style": "Long", "hair_colour": "Black"},
+        }
+        edited = dict(source)
+        edited["loci"] = [dict(source["loci"][0], selected="Short", weights={"1": 1.0}, mode="selected")]
+
+        result = RPGCharacterDNAEditor().edit(
+            source, "Edit", 1, json.dumps(edited)
+        )["result"][0]
+
+        self.assertEqual(result["loci"][0]["selected"], "Short")
+        self.assertEqual(result["source_signature"], signature)
+
+    def test_editor_resets_edits_when_source_signature_changes(self):
+        import json
+
+        old_signature = make_source_signature("hair", {"hair_style": "Long", "hair_colour": "Black"})
+        new_signature = make_source_signature("hair", {"hair_style": "Short", "hair_colour": "Black"})
+        source = {
+            "id": "hair",
+            "values": {"style": "Short", "colour": "Black"},
+            "traits": ["Short", "Black"],
+            "loci": [{
+                "id": "hair:style",
+                "label": "Hair Style",
+                "options": ["Long", "Short"],
+                "selected": "Short",
+                "weights": {"1": 1.0},
+                "mode": "selected",
+            }],
+            "source_signature": new_signature,
+            "source_inputs": {"hair_style": "Short", "hair_colour": "Black"},
+        }
+        edited = dict(source)
+        edited["source_signature"] = old_signature
+        edited["loci"] = [dict(source["loci"][0], selected="Long", weights={"0": 1.0}, mode="selected")]
+
+        result = RPGCharacterDNAEditor().edit(
+            source, "Edit", 2, json.dumps(edited)
+        )["result"][0]
+
+        self.assertEqual(result["loci"][0]["selected"], "Short")
+        self.assertEqual(result["source_signature"], new_signature)
+
     def test_editor_pass_through_preserves_data(self):
         section = {
             "id": "hair",
@@ -145,6 +228,7 @@ class TestGen3DNA(unittest.TestCase):
                 "mode": "sculpted",
             }],
             "source": "test",
+            "source_signature": make_source_signature("hair", {"hair_style": "Long", "hair_colour": "Black"}),
         }
 
         import json
