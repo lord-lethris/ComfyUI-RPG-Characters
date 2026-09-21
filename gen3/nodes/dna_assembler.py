@@ -1,65 +1,58 @@
 """Character DNA assembly node.
 
 Combines the stable, independently editable Gen 3 DNA sections back into one
-complete Character DNA document.  The assembler does not reinterpret or
-render the sections; it preserves them as the source of truth for downstream
-nodes.
+complete Character DNA document.  The assembler starts from the original
+Character DNA and overlays any connected section changes.  Unconnected change
+inputs are intentionally ignored.
 """
 
 from copy import deepcopy
 
-from ..dna.character_dna import make_character_dna
 from ..dna.dna_schema import DNA_SECTIONS
 
 
 class RPGCharacterDNAAssembler:
-    """Rebuild a complete Character DNA document from edited sections."""
+    """Apply zero or more edited DNA sections to a Character DNA document."""
 
     @classmethod
     def INPUT_TYPES(cls):
-        required = {
-            section_id: ("RPG_DNA_SECTION",)
-            for section_id in DNA_SECTIONS
+        return {
+            "required": {
+                "character_info": ("CHARACTER_INFO",),
+            },
+            "optional": {
+                "change_1": ("RPG_DNA_SECTION",),
+            },
         }
-        required.update({
-            "seed": ("INT", {
-                "default": -1,
-                "min": -1,
-                "max": 4294967295,
-                "step": 1,
-            }),
-            "source": ("STRING", {
-                "default": "DNA Assembler (Character)",
-                "multiline": False,
-            }),
-        })
-        return {"required": required}
 
     RETURN_TYPES = ("CHARACTER_INFO",)
     RETURN_NAMES = ("CHARACTER_INFO",)
     FUNCTION = "assemble"
     CATEGORY = "RPG/Gen 3"
 
-    def assemble(self, seed, source, **sections):
-        assembled_sections = {}
+    def assemble(self, character_info, **changes):
+        result = deepcopy(character_info)
 
-        for section_id in DNA_SECTIONS:
-            section = sections.get(section_id)
+        sections = result.get("sections")
+        if not isinstance(sections, dict):
+            sections = {}
+            result["sections"] = sections
 
-            if isinstance(section, dict) and section.get("id") == section_id:
-                assembled_sections[section_id] = deepcopy(section)
-            else:
-                # Keep the output contract stable even if a disconnected or
-                # malformed input reaches the node.
-                assembled_sections[section_id] = None
+        for input_name in sorted(changes):
+            if not input_name.startswith("change_"):
+                continue
 
-        resolved_seed = None if int(seed) < 0 else int(seed)
+            change = changes[input_name]
+            if not isinstance(change, dict):
+                continue
 
-        return (make_character_dna(
-            seed=resolved_seed,
-            source=source,
-            sections=assembled_sections,
-        ),)
+            section_id = change.get("id")
+            if section_id not in DNA_SECTIONS:
+                continue
+
+            sections[section_id] = deepcopy(change)
+
+        return (result,)
 
 
 NODE_CLASS_MAPPINGS = {
