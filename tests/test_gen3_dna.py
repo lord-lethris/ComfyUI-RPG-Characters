@@ -27,6 +27,7 @@ from _rpg_characters_test.gen3.dna.dna_schema import DNA_SECTIONS
 from _rpg_characters_test.gen3.nodes.dna_editor import RPGCharacterDNAEditor
 from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
 from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
+from _rpg_characters_test.gen3.nodes.dna_assembler import RPGCharacterDNAAssembler
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -132,6 +133,66 @@ class TestGen3DNA(unittest.TestCase):
             first["sections"]["expression"]["source_signature"],
             second["sections"]["expression"]["source_signature"],
         )
+
+
+    def test_assembler_rebuilds_complete_character_dna(self):
+        sections = {}
+        for section_id in DNA_SECTIONS:
+            sections[section_id] = {
+                "id": section_id,
+                "values": {"test": section_id},
+                "traits": [section_id],
+                "loci": [],
+                "source": "test",
+            }
+
+        result = RPGCharacterDNAAssembler().assemble(
+            seed=4321,
+            source="Assembler Test",
+            **sections,
+        )[0]
+
+        self.assertEqual(result["type"], "RPG_CHARACTER_DNA")
+        self.assertEqual(result["seed"], 4321)
+        self.assertEqual(result["source"], "Assembler Test")
+        self.assertEqual(tuple(result["sections"].keys()), DNA_SECTIONS)
+
+        for section_id in DNA_SECTIONS:
+            self.assertEqual(result["sections"][section_id]["id"], section_id)
+            self.assertEqual(result["sections"][section_id]["values"]["test"], section_id)
+
+    def test_assembler_preserves_edited_section_content(self):
+        edited_hair = {
+            "id": "hair",
+            "values": {"style": "Short"},
+            "traits": ["Short"],
+            "loci": [{
+                "id": "hair:style",
+                "selected": "Short",
+                "weights": {"1": 1.0},
+                "mode": "selected",
+            }],
+            "source_signature": "edited-signature",
+        }
+        sections = {
+            section_id: {
+                "id": section_id,
+                "values": {},
+                "traits": [],
+                "loci": [],
+            }
+            for section_id in DNA_SECTIONS
+        }
+        sections["hair"] = edited_hair
+
+        result = RPGCharacterDNAAssembler().assemble(
+            seed=-1,
+            source="test",
+            **sections,
+        )[0]
+
+        self.assertIsNone(result["seed"])
+        self.assertEqual(result["sections"]["hair"], edited_hair)
 
     def test_editor_preserves_edits_when_source_signature_is_unchanged(self):
         import json
