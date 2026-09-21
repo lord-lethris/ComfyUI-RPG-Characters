@@ -20,10 +20,9 @@ class RPGCharacterDNAEditor:
                     "max": 2147483647,
                     "step": 1,
                 }),
-            },
-            "optional": {
-                # Hidden transport for frontend edits.  A socket cannot itself
-                # be mutated by the browser and persisted in a workflow.
+                # Required so ComfyUI always includes the editor's structured
+                # state in the execution payload. The frontend hides this
+                # transport widget from the visible node UI.
                 "edited_section": ("STRING", {
                     "default": "",
                     "multiline": False,
