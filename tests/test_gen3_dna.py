@@ -4,17 +4,29 @@ Run from the repository root with:
     python -m unittest discover -s tests -p "test_gen3*.py"
 """
 
+import sys
+import types
 import unittest
+from pathlib import Path
 
-from gen3.dna.character_dna import (
+# Gen 3 uses package-relative imports because it normally lives inside the
+# RPG-Characters custom-node package.  Give the test runner the same package
+# context without changing the production import structure.
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_PACKAGE_NAME = "_rpg_characters_test"
+_test_package = types.ModuleType(_PACKAGE_NAME)
+_test_package.__path__ = [str(_REPO_ROOT)]
+sys.modules.setdefault(_PACKAGE_NAME, _test_package)
+
+from _rpg_characters_test.gen3.dna.character_dna import (
     CHARACTER_DNA_VERSION,
     make_character_dna,
     make_source_signature,
 )
-from gen3.dna.dna_schema import DNA_SECTIONS
-from gen3.nodes.dna_editor import RPGCharacterDNAEditor
-from gen3.nodes.character_gen3_node import RPGCharacterGen3
-from gen3.nodes.dna_pipe import RPGCharacterDNAPipe
+from _rpg_characters_test.gen3.dna.dna_schema import DNA_SECTIONS
+from _rpg_characters_test.gen3.nodes.dna_editor import RPGCharacterDNAEditor
+from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
+from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
 
 
 class TestGen3DNA(unittest.TestCase):
