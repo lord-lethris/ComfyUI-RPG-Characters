@@ -135,75 +135,95 @@ class TestGen3DNA(unittest.TestCase):
         )
 
 
-    def test_assembler_rebuilds_complete_character_dna(self):
-        sections = {}
-        for section_id in DNA_SECTIONS:
-            sections[section_id] = {
-                "id": section_id,
-                "values": {"test": section_id},
-                "traits": [section_id],
-                "loci": [],
-                "source": "test",
-            }
+    def test_assembler_accepts_character_info_without_changes(self):
+        character = make_character_dna(
+            seed=4321,
+            source="Gen 3",
+            sections={
+                "hair": {
+                    "values": {"style": "Long"},
+                    "traits": ["Long"],
+                    "loci": [],
+                },
+            },
+        )
 
         result = RPGCharacterDNAAssembler().assemble(
-            seed=4321,
-            source="Assembler Test",
-            **sections,
+            character_info=character,
         )[0]
 
-        self.assertEqual(result["type"], "RPG_CHARACTER_DNA")
-        self.assertEqual(result["seed"], 4321)
-        self.assertEqual(result["source"], "Assembler Test")
-        self.assertEqual(tuple(result["sections"].keys()), DNA_SECTIONS)
+        self.assertEqual(result, character)
+        self.assertIsNot(result, character)
+        self.assertIsNot(result["sections"], character["sections"])
 
-        for section_id in DNA_SECTIONS:
-            self.assertEqual(result["sections"][section_id]["id"], section_id)
-            self.assertEqual(result["sections"][section_id]["values"]["test"], section_id)
+    def test_assembler_applies_connected_section_changes(self):
+        character = make_character_dna(
+            seed=4321,
+            source="Gen 3",
+            sections={
+                "hair": {
+                    "values": {"style": "Long"},
+                    "traits": ["Long"],
+                    "loci": [],
+                },
+                "expression": {
+                    "values": {"emotion": "Neutral"},
+                    "traits": ["Neutral"],
+                    "loci": [],
+                },
+            },
+        )
 
-    def test_assembler_preserves_edited_section_content(self):
         edited_hair = {
             "id": "hair",
             "values": {"style": "Short"},
             "traits": ["Short"],
-            "loci": [{
-                "id": "hair:style",
-                "selected": "Short",
-                "weights": {"1": 1.0},
-                "mode": "selected",
-            }],
-            "source_signature": "edited-signature",
+            "loci": [],
+            "source_signature": "edited-hair",
         }
-        sections = {
-            section_id: {
-                "id": section_id,
-                "values": {},
-                "traits": [],
-                "loci": [],
-            }
-            for section_id in DNA_SECTIONS
+        edited_expression = {
+            "id": "expression",
+            "values": {"emotion": "Angry"},
+            "traits": ["Angry"],
+            "loci": [],
+            "source_signature": "edited-expression",
         }
-        sections["hair"] = edited_hair
 
         result = RPGCharacterDNAAssembler().assemble(
-            seed=-1,
-            source="test",
-            **sections,
+            character_info=character,
+            change_2=edited_expression,
+            change_1=edited_hair,
         )[0]
 
-        self.assertIsNone(result["seed"])
+        self.assertEqual(result["seed"], character["seed"])
+        self.assertEqual(result["source"], character["source"])
+        self.assertEqual(result["sections"]["hair"], edited_hair)
+        self.assertEqual(result["sections"]["expression"], edited_expression)
 
-        assembled_hair = result["sections"]["hair"]
-        self.assertEqual(assembled_hair["id"], "hair")
-        self.assertEqual(assembled_hair["values"], edited_hair["values"])
-        self.assertEqual(assembled_hair["traits"], edited_hair["traits"])
-        self.assertEqual(assembled_hair["loci"], edited_hair["loci"])
-        self.assertEqual(
-            assembled_hair["source_signature"],
-            edited_hair["source_signature"],
-        )
-        self.assertEqual(assembled_hair["label"], "Hair")
-        self.assertIn("description", assembled_hair)
+        # Unchanged sections remain untouched.
+        for section_id in DNA_SECTIONS:
+            if section_id not in ("hair", "expression"):
+                self.assertEqual(
+                    result["sections"][section_id],
+                    character["sections"][section_id],
+                )
+
+        # The assembler must not mutate its source character or change inputs.
+        self.assertEqual(character["sections"]["hair"]["values"]["style"], "Long")
+        self.assertEqual(edited_hair["values"]["style"], "Short")
+
+    def test_assembler_ignores_missing_and_invalid_changes(self):
+        character = make_character_dna(seed=99)
+
+        result = RPGCharacterDNAAssembler().assemble(
+            character_info=character,
+            change_1=None,
+            change_2={"not_a_section": True},
+            change_3={"id": "not-a-real-section", "values": {"x": 1}},
+        )[0]
+
+        self.assertEqual(result, character)
+
 
     def test_editor_preserves_edits_when_source_signature_is_unchanged(self):
         import json
