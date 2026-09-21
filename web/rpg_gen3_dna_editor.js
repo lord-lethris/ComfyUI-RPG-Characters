@@ -772,6 +772,18 @@ app.registerExtension({
             const raw = message?.section ?? message?.ui?.section;
             const section = Array.isArray(raw) ? raw[0] : raw;
             if (section && typeof section === "object") {
+                const transport = getWidget(this, "edited_section");
+                const persisted = parseState(transport?.value);
+                const incomingSignature = section.source_signature;
+                const persistedSignature = persisted.source_signature;
+
+                // A source-signature change is an upstream reset, not a local
+                // edit. Replace the hidden workflow transport without bumping
+                // revision or firing a graph-change callback.
+                if (incomingSignature && persistedSignature !== incomingSignature && transport) {
+                    transport.value = JSON.stringify(section);
+                }
+
                 this.__gen3SectionData = section;
                 renderEditor(this);
             }
