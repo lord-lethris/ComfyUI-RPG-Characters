@@ -56,6 +56,12 @@ class RPGCharacterDNAEditor:
                     result.setdefault("values", {})
                     result.setdefault("traits", [])
                     result.setdefault("loci", [])
+            elif isinstance(DNA_SECTION, dict):
+                # The incoming Character Gen 3 section is the schema authority.
+                # Merge its locus metadata into persisted edits so newly added
+                # fields such as internal prompt variant sets survive older
+                # edited_section payloads saved in workflows.
+                result = self._merge_locus_metadata(DNA_SECTION, result)
 
         # Always return the authoritative section to the frontend so the
         # graphical editor can stay in sync after execution.
@@ -63,6 +69,34 @@ class RPGCharacterDNAEditor:
             "ui": {"section": [result]},
             "result": (result,),
         }
+
+    @staticmethod
+    def _merge_locus_metadata(source, persisted):
+        result = deepcopy(persisted)
+        source_loci = {
+            locus.get("id"): locus
+            for locus in source.get("loci", [])
+            if isinstance(locus, dict) and locus.get("id")
+        }
+        merged_loci = []
+        for persisted_locus in result.get("loci", []):
+            if not isinstance(persisted_locus, dict):
+                continue
+            locus_id = persisted_locus.get("id")
+            source_locus = source_loci.get(locus_id)
+            merged = deepcopy(source_locus or {})
+            merged.update(deepcopy(persisted_locus))
+            for key in ("label", "options", "variant_sets"):
+                if source_locus and key in source_locus:
+                    merged[key] = deepcopy(source_locus[key])
+            merged_loci.append(merged)
+            source_loci.pop(locus_id, None)
+
+        for source_locus in source_loci.values():
+            merged_loci.append(deepcopy(source_locus))
+
+        result["loci"] = merged_loci
+        return result
 
     @staticmethod
     def _parse_edited_section(value, expected_section):
