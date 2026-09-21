@@ -12,6 +12,7 @@ from gen3.dna.character_dna import (
 )
 from gen3.dna.dna_schema import DNA_SECTIONS
 from gen3.nodes.dna_editor import RPGCharacterDNAEditor
+from gen3.nodes.character_gen3_node import RPGCharacterGen3
 from gen3.nodes.dna_pipe import RPGCharacterDNAPipe
 
 
@@ -57,6 +58,24 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("loci", outputs[identity_index])
         self.assertIn("loci", outputs[hair_index])
 
+
+    def test_character_gen3_populates_real_loci(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+
+        values["dna_seed"] = 1234
+        dna = RPGCharacterGen3().create_character(**values)[0]
+
+        self.assertEqual(dna["type"], "RPG_CHARACTER_DNA")
+        self.assertEqual(dna["seed"], 1234)
+
+        for section_id in ("identity", "anatomy", "hair", "facial_hair", "clothing", "equipment", "expression", "scene"):
+            self.assertTrue(dna["sections"][section_id]["loci"], section_id)
+
     def test_editor_pass_through_preserves_data(self):
         section = {
             "id": "hair",
@@ -69,7 +88,6 @@ class TestGen3DNA(unittest.TestCase):
 
         result = RPGCharacterDNAEditor().edit(
             section,
-            "hair",
             "Pass Through",
         )["result"][0]
 
@@ -84,7 +102,6 @@ class TestGen3DNA(unittest.TestCase):
 
         result = RPGCharacterDNAEditor().edit(
             section,
-            "hair",
             "Clear",
         )["result"][0]
 
@@ -114,7 +131,6 @@ class TestGen3DNA(unittest.TestCase):
         import json
         result = RPGCharacterDNAEditor().edit(
             {},
-            "hair",
             "Edit",
             1,
             json.dumps(section),
