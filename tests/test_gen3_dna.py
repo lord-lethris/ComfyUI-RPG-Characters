@@ -75,7 +75,7 @@ class TestGen3DNA(unittest.TestCase):
     def test_character_gen3_populates_real_loci(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
-            name: options[0]
+            name: options[0][0]
             for name, options in inputs.items()
             if isinstance(options, tuple) and isinstance(options[0], list)
         }
