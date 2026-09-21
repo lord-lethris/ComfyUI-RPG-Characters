@@ -1,11 +1,6 @@
-"""Structured DNA editor node.
+"""Structured DNA editor node."""
 
-The node is intentionally model-independent.  It accepts one section from the
-DNA Pipe, exposes its loci to the frontend, and returns the edited section.
-The frontend can persist weights on the section without turning them into
-prompt syntax.
-"""
-
+import json
 from copy import deepcopy
 
 from ..dna.character_dna import make_empty_section
@@ -26,7 +21,16 @@ class RPGCharacterDNAEditor:
                     "max": 2147483647,
                     "step": 1,
                 }),
-            }
+            },
+            "optional": {
+                # Hidden transport for frontend edits.  A socket cannot itself
+                # be mutated by the browser and persisted in a workflow.
+                "edited_section": ("STRING", {
+                    "default": "",
+                    "multiline": False,
+                    "hidden": True,
+                }),
+            },
         }
 
     RETURN_TYPES = ("RPG_DNA_SECTION",)
@@ -35,23 +39,41 @@ class RPGCharacterDNAEditor:
     CATEGORY = "RPG/Gen 3/DNA"
     OUTPUT_NODE = True
 
-    def edit(self, DNA_SECTION, section, operation, revision=0):
+    def edit(self, DNA_SECTION, section, operation, revision=0, edited_section=""):
         if operation == "Clear":
-            return (make_empty_section(section),)
+            result = make_empty_section(section)
+        else:
+            result = self._parse_edited_section(edited_section, section)
+            if result is None:
+                if not isinstance(DNA_SECTION, dict):
+                    result = make_empty_section(section)
+                else:
+                    result = deepcopy(DNA_SECTION)
+                    result["id"] = section
+                    result.setdefault("values", {})
+                    result.setdefault("traits", [])
+                    result.setdefault("loci", [])
 
-        if not isinstance(DNA_SECTION, dict):
-            return (make_empty_section(section),)
+        # Always return the authoritative section to the frontend so the
+        # graphical editor can stay in sync after execution.
+        return {
+            "ui": {"section": [result]},
+            "result": (result,),
+        }
 
-        edited = deepcopy(DNA_SECTION)
-        edited["id"] = section
-        edited.setdefault("values", {})
-        edited.setdefault("traits", [])
-        edited.setdefault("loci", [])
-
-        # The frontend stores sculpted weights on individual loci.  We do not
-        # render or collapse those weights here; keeping them structured means
-        # future generators can interpret the same DNA for different models.
-        return (edited,)
+    @staticmethod
+    def _parse_edited_section(value, expected_section):
+        if not value:
+            return None
+        try:
+            parsed = json.loads(value)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return None
+        if not isinstance(parsed, dict):
+            return None
+        if parsed.get("id") != expected_section:
+            return None
+        return parsed
 
 
 NODE_CLASS_MAPPINGS = {"RPGCharacterDNAEditor": RPGCharacterDNAEditor}
