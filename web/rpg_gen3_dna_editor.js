@@ -63,14 +63,32 @@ function makeAnchors(count, width = 340, height = 250) {
         { x: width - 62, y: height / 2 },
     ];
 
-    const cx = width / 2;
-    const cy = height / 2;
-    const rx = Math.min(width * 0.40, 138);
-    const ry = Math.min(height * 0.39, 88);
-    return Array.from({ length: count }, (_, i) => {
-        const angle = -Math.PI / 2 + (Math.PI * 2 * i / count);
-        return { x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry };
-    });
+    // A ring works nicely for a small number of variants. Large RPG data
+    // tables can contain dozens or hundreds, so use a compact grid instead.
+    if (count <= 12) {
+        const cx = width / 2;
+        const cy = height / 2;
+        const rx = Math.min(width * 0.40, 138);
+        const ry = Math.min(height * 0.39, 88);
+        return Array.from({ length: count }, (_, i) => {
+            const angle = -Math.PI / 2 + (Math.PI * 2 * i / count);
+            return { x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry };
+        });
+    }
+
+    const columns = Math.max(4, Math.ceil(Math.sqrt(count * width / height)));
+    const rows = Math.ceil(count / columns);
+    const marginX = 18;
+    const marginY = 18;
+    const usableWidth = Math.max(1, width - marginX * 2);
+    const usableHeight = Math.max(1, height - marginY * 2);
+    const stepX = columns > 1 ? usableWidth / (columns - 1) : 0;
+    const stepY = rows > 1 ? usableHeight / (rows - 1) : 0;
+
+    return Array.from({ length: count }, (_, i) => ({
+        x: marginX + (i % columns) * stepX,
+        y: marginY + Math.floor(i / columns) * stepY,
+    }));
 }
 
 function nearestThreeWeights(point, anchors) {
@@ -245,7 +263,7 @@ function openSculptor(node, section, locusIndex) {
             <button id="gen3-apply">✓</button>
         </div>
         <div style="font-size:11px;opacity:.6;margin:6px 0 9px">
-            Drag the point. The nearest three variants blend together using inverse-distance weighting.
+            Drag the point. The nearest three variants blend together using inverse-distance weighting.\n            ${locus.options.length > 12 ? "Large set: variant names appear when they contribute to the blend." : ""}
         </div>
         <svg id="gen3-svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:250px;background:rgba(0,0,0,.15);border-radius:6px"></svg>
         <div id="gen3-weights" style="margin-top:8px"></div>
@@ -259,23 +277,24 @@ function openSculptor(node, section, locusIndex) {
     const resultEl = modal.querySelector("#gen3-result");
     const ns = "http://www.w3.org/2000/svg";
 
+    const anchorLabels = [];
     anchors.forEach((anchor, i) => {
         const circle = document.createElementNS(ns, "circle");
         circle.setAttribute("cx", anchor.x);
         circle.setAttribute("cy", anchor.y);
-        circle.setAttribute("r", "8");
+        circle.setAttribute("r", anchors.length > 12 ? "4" : "8");
         circle.setAttribute("fill", "rgba(210,210,210,.16)");
         circle.setAttribute("stroke", "rgba(255,255,255,.45)");
+        circle.setAttribute("data-anchor", String(i));
         svg.appendChild(circle);
 
         const text = document.createElementNS(ns, "text");
-        text.setAttribute("x", anchor.x);
-        text.setAttribute("y", anchor.y < height / 2 ? anchor.y - 13 : anchor.y + 23);
         text.setAttribute("text-anchor", "middle");
         text.setAttribute("fill", "rgba(255,255,255,.85)");
-        text.setAttribute("font-size", "11");
+        text.setAttribute("font-size", anchors.length > 12 ? "9" : "11");
         text.textContent = locus.options[i];
         svg.appendChild(text);
+        anchorLabels.push(text);
     });
 
     const core = document.createElementNS(ns, "circle");
@@ -296,6 +315,23 @@ function openSculptor(node, section, locusIndex) {
         const weights = nearestThreeWeights(point, anchors);
         core.setAttribute("cx", point.x);
         core.setAttribute("cy", point.y);
+
+        // For large sets, only label variants that currently contribute.
+        const active = weights
+            .map((weight, i) => ({ weight, i }))
+            .filter(item => item.weight > 0.0005)
+            .sort((a, b) => b.weight - a.weight)
+            .slice(0, 3)
+            .map(item => item.i);
+
+        anchorLabels.forEach((label, i) => {
+            const show = anchors.length <= 12 || active.includes(i);
+            label.textContent = show ? locus.options[i] : "";
+            if (show) {
+                label.setAttribute("x", anchors[i].x);
+                label.setAttribute("y", anchors[i].y < height / 2 ? anchors[i].y - 9 : anchors[i].y + 13);
+            }
+        });
 
         weightsEl.innerHTML = locus.options.map((option, i) => {
             const pct = Math.round((weights[i] || 0) * 100);
