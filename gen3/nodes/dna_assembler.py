@@ -21,7 +21,10 @@ class RPGCharacterDNAAssembler:
                 "character_info": ("CHARACTER_INFO",),
             },
             "optional": {
-                "change_1": ("RPG_DNA_SECTION",),
+                # The first dynamic slot is declared as ANY so ComfyUI's
+                # legacy V1 execution layer will pass the auto-created
+                # change_2, change_3, ... sockets through as kwargs too.
+                "change_1": ("*",),
             },
         }
 
