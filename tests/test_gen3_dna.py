@@ -54,6 +54,8 @@ class TestGen3DNA(unittest.TestCase):
 
         self.assertEqual(outputs[identity_index]["values"]["race"], "Human")
         self.assertEqual(outputs[hair_index]["values"]["style"], "Long")
+        self.assertTrue(outputs[identity_index]["loci"])
+        self.assertEqual(outputs[hair_index]["loci"][0]["id"], "hair:style")
 
     def test_editor_pass_through_preserves_data(self):
         section = {
@@ -90,6 +92,37 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(result["values"], {})
         self.assertEqual(result["traits"], [])
 
+
+    def test_editor_accepts_persisted_structured_section(self):
+        section = {
+            "id": "hair",
+            "label": "Hair",
+            "description": "test",
+            "values": {"colour": "Black"},
+            "traits": ["Black"],
+            "loci": [{
+                "id": "hair:colour",
+                "label": "Hair Colour",
+                "options": ["Black", "White"],
+                "selected": "White",
+                "weights": {"0": 0.25, "1": 0.75},
+                "mode": "sculpted",
+            }],
+            "source": "test",
+        }
+
+        import json
+        result = RPGCharacterDNAEditor().edit(
+            {},
+            "hair",
+            "Edit",
+            1,
+            json.dumps(section),
+        )["result"][0]
+
+        self.assertEqual(result["id"], "hair")
+        self.assertEqual(result["loci"][0]["selected"], "White")
+        self.assertEqual(result["loci"][0]["weights"]["1"], 0.75)
 
 if __name__ == "__main__":
     unittest.main()
