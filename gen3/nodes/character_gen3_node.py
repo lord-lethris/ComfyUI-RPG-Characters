@@ -1,5 +1,7 @@
 """RPG Character Gen 3 source-of-truth node."""
 
+import re
+
 from ..dna.character_dna import make_character_dna
 from ..dna.dna_schema import DNA_SECTIONS
 
@@ -16,6 +18,28 @@ from ...rpg_character_data.rpg_clothes_style_data import CLOTHES_STYLE_DATA
 from ...rpg_character_data.rpg_augment_data import AUGMENT_DATA
 from ...rpg_character_data.rpg_emotion_data import EMOTION_DATA
 from ...rpg_character_data.rpg_scene_data import SCENE_DATA
+
+
+VARIANT_PATTERN = re.compile(r"\\{([^{}]+)\\}")
+
+
+def _extract_variant_sets(entry, prefix):
+    """Expose the internal prompt variants as structured DNA variant sets."""
+    prompt = str(entry.get("prompt", "")) if isinstance(entry, dict) else ""
+    variant_sets = []
+    for index, match in enumerate(VARIANT_PATTERN.finditer(prompt)):
+        options = [item.strip() for item in match.group(1).split("|") if item.strip()]
+        if len(options) <= 1:
+            continue
+        variant_sets.append({
+            "id": f"{prefix}:variant:{index}",
+            "label": f"Variant {len(variant_sets) + 1}",
+            "options": options,
+            "selected": options[0],
+            "weights": {"0": 1.0},
+            "mode": "selected",
+        })
+    return variant_sets
 
 
 class RPGCharacterGen3:
@@ -91,37 +115,46 @@ class RPGCharacterGen3:
         # Each populated section also exposes its selectable loci.  The
         # options come from the existing RPG data tables, while the DNA Editor
         # stores the user's blend independently of prompt rendering.
-        loci = {
-            "identity": [
-                {"id": "identity:race", "label": "Race", "options": list(RACE_DATA.keys()), "selected": race},
-                {"id": "identity:ethnicity", "label": "Ethnicity", "options": list(ETHNICITY_DATA.keys()), "selected": ethnicity},
-                {"id": "identity:class", "label": "Class", "options": list(CLASS_DATA.keys()), "selected": character_class},
-            ],
-            "anatomy": [
-                {"id": "anatomy:gender", "label": "Gender", "options": list(GENDER_DATA.keys()), "selected": gender},
-                {"id": "anatomy:age", "label": "Age", "options": list(AGE_DATA.keys()), "selected": age},
-            ],
-            "hair": [
-                {"id": "hair:style", "label": "Hair Style", "options": list(HAIR_STYLE_DATA.keys()), "selected": hair_style},
-                {"id": "hair:colour", "label": "Hair Colour", "options": list(HAIR_COLOUR_DATA.keys()), "selected": hair_colour},
-            ],
-            "facial_hair": [
-                {"id": "facial_hair:style", "label": "Beard Style", "options": list(BEARD_STYLE_DATA.keys()), "selected": beard_style},
-                {"id": "facial_hair:colour", "label": "Beard Colour", "options": list(BEARD_COLOUR_DATA.keys()), "selected": beard_colour},
-            ],
-            "clothing": [
-                {"id": "clothing:style", "label": "Clothing Style", "options": list(CLOTHES_STYLE_DATA.keys()), "selected": clothes_style},
-            ],
-            "equipment": [
-                {"id": "equipment:augmentations", "label": "Augmentations", "options": list(AUGMENT_DATA.keys()), "selected": augmentations},
-            ],
-            "expression": [
-                {"id": "expression:emotion", "label": "Emotion", "options": list(EMOTION_DATA.keys()), "selected": emotion},
-            ],
-            "scene": [
-                {"id": "scene:scene", "label": "Scene", "options": list(SCENE_DATA.keys()), "selected": scene},
-            ],
+        selected_entries = {
+            "identity:race": ("Race", race, RACE_DATA[race]),
+            "identity:ethnicity": ("Ethnicity", ethnicity, ETHNICITY_DATA[ethnicity]),
+            "identity:class": ("Class", character_class, CLASS_DATA[character_class]),
+            "anatomy:gender": ("Gender", gender, GENDER_DATA[gender]),
+            "anatomy:age": ("Age", age, AGE_DATA[age]),
+            "hair:style": ("Hair Style", hair_style, HAIR_STYLE_DATA[hair_style]),
+            "hair:colour": ("Hair Colour", hair_colour, HAIR_COLOUR_DATA[hair_colour]),
+            "facial_hair:style": ("Beard Style", beard_style, BEARD_STYLE_DATA[beard_style]),
+            "facial_hair:colour": ("Beard Colour", beard_colour, BEARD_COLOUR_DATA[beard_colour]),
+            "clothing:style": ("Clothing Style", clothes_style, CLOTHES_STYLE_DATA[clothes_style]),
+            "equipment:augmentations": ("Augmentations", augmentations, AUGMENT_DATA[augmentations]),
+            "expression:emotion": ("Emotion", emotion, EMOTION_DATA[emotion]),
+            "scene:scene": ("Scene", scene, SCENE_DATA[scene]),
         }
+
+        loci = {}
+        for locus_id, (label, selected, entry) in selected_entries.items():
+            field = locus_id.split(":", 1)[0]
+            loci.setdefault(field, []).append({
+                "id": locus_id,
+                "label": label,
+                "options": list({
+                    "identity:race": RACE_DATA,
+                    "identity:ethnicity": ETHNICITY_DATA,
+                    "identity:class": CLASS_DATA,
+                    "anatomy:gender": GENDER_DATA,
+                    "anatomy:age": AGE_DATA,
+                    "hair:style": HAIR_STYLE_DATA,
+                    "hair:colour": HAIR_COLOUR_DATA,
+                    "facial_hair:style": BEARD_STYLE_DATA,
+                    "facial_hair:colour": BEARD_COLOUR_DATA,
+                    "clothing:style": CLOTHES_STYLE_DATA,
+                    "equipment:augmentations": AUGMENT_DATA,
+                    "expression:emotion": EMOTION_DATA,
+                    "scene:scene": SCENE_DATA,
+                }[locus_id].keys()),
+                "selected": selected,
+                "variant_sets": _extract_variant_sets(entry, locus_id),
+            })
 
         sections = {
             "identity": {
