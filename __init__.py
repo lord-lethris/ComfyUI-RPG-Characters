@@ -30,3 +30,11 @@ NODE_DISPLAY_NAME_MAPPINGS["ModelLikenessSwitch"] = "Model Selector (Use Likenes
 
 NODE_CLASS_MAPPINGS["prompt_selector_node"] = prompt_selector_node
 NODE_DISPLAY_NAME_MAPPINGS["prompt_selector_node"] = "Prompt Selector"
+
+# Gen 3 structured Character DNA system.
+from .gen3 import (
+    NODE_CLASS_MAPPINGS as GEN3_MAPPINGS,
+    NODE_DISPLAY_NAME_MAPPINGS as GEN3_DISPLAY,
+)
+NODE_CLASS_MAPPINGS.update(GEN3_MAPPINGS)
+NODE_DISPLAY_NAME_MAPPINGS.update(GEN3_DISPLAY)
