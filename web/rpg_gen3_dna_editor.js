@@ -152,6 +152,148 @@ function setVariantSelection(variant, index) {
     variant.selected = variant.options[index];
 }
 
+function renderExpressionMouth(node, section, locus, host) {
+    const control = locus?.controls?.mouth;
+    if (!control) return;
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "margin-top:8px;padding:7px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:5px";
+
+    const title = document.createElement("div");
+    title.style.cssText = "display:flex;align-items:center;gap:6px;margin-bottom:5px";
+    title.innerHTML = '<span style="font-size:11px;font-weight:700">👄 Mouth</span><span style="margin-left:auto;font-size:8px;opacity:.5">EXPRESSION CONTROL</span>';
+    wrap.appendChild(title);
+
+    const field = document.createElement("div");
+    field.style.cssText = [
+        "position:relative",
+        "height:190px",
+        "border:1px solid rgba(255,255,255,.12)",
+        "border-radius:5px",
+        "background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.04),rgba(0,0,0,.18))",
+        "overflow:hidden",
+        "touch-action:none",
+    ].join(";");
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 300 190");
+    svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
+    field.appendChild(svg);
+
+    const upper = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const lower = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const opening = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    [upper, lower, opening].forEach(p => {
+        p.setAttribute("fill", "none");
+        p.setAttribute("stroke", "rgba(240,240,240,.9)");
+        p.setAttribute("stroke-width", "3");
+        p.setAttribute("stroke-linecap", "round");
+        svg.appendChild(p);
+    });
+    opening.setAttribute("fill", "rgba(255,255,255,.08)");
+    opening.setAttribute("stroke", "rgba(255,255,255,.45)");
+
+    const point = document.createElement("div");
+    point.style.cssText = "position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#e8f7ff;border:2px solid #fff;box-shadow:0 0 10px rgba(200,235,255,.8);cursor:grab;z-index:5";
+    field.appendChild(point);
+
+    const axisX = document.createElement("div");
+    axisX.style.cssText = "position:absolute;left:8px;right:8px;top:50%;border-top:1px dashed rgba(255,255,255,.12);pointer-events:none";
+    field.appendChild(axisX);
+    const axisY = document.createElement("div");
+    axisY.style.cssText = "position:absolute;top:8px;bottom:8px;left:50%;border-left:1px dashed rgba(255,255,255,.12);pointer-events:none";
+    field.appendChild(axisY);
+
+    const labels = document.createElement("div");
+    labels.style.cssText = "position:absolute;inset:0;pointer-events:none;font-size:8px;opacity:.45";
+    labels.innerHTML = '<span style="position:absolute;left:6px;top:4px">Frown</span><span style="position:absolute;right:6px;top:4px">Smile</span><span style="position:absolute;left:6px;bottom:4px">Closed</span><span style="position:absolute;right:6px;bottom:4px">Open</span>';
+    field.appendChild(labels);
+
+    const values = {
+        x: Number(control.x_value ?? 0),
+        y: Number(control.y_value ?? 0),
+    };
+
+    function render() {
+        const px = 50 + values.x * 40;
+        const py = 10 + values.y * 80;
+        point.style.left = px + "%";
+        point.style.top = py + "%";
+
+        const smile = values.x;
+        const open = values.y;
+        const cx = 150;
+        const width = 76;
+        const left = cx - width;
+        const right = cx + width;
+        const corner = 145 - smile * 24;
+        const center = 118;
+        const openingHeight = 3 + open * 35;
+        const upperY = center;
+        const lowerY = center + openingHeight;
+
+        upper.setAttribute("d", `M ${left} ${corner} Q ${cx - 30} ${center - 18 - smile * 8} ${cx} ${center + 2} Q ${cx + 30} ${center - 18 + smile * 8} ${right} ${corner}`);
+        lower.setAttribute("d", `M ${left} ${corner} Q ${cx - 30} ${lowerY + 10} ${cx} ${lowerY} Q ${cx + 30} ${lowerY + 10} ${right} ${corner}`);
+        opening.setAttribute("d", `M ${left} ${corner} Q ${cx} ${center + openingHeight} ${right} ${corner} Q ${cx} ${center - 1} ${left} ${corner} Z`);
+    }
+
+    function positionFromEvent(event) {
+        const rect = field.getBoundingClientRect();
+        return {
+            x: Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2)),
+            y: Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)),
+        };
+    }
+
+    function move(event) {
+        const p = positionFromEvent(event);
+        values.x = p.x;
+        values.y = p.y;
+        control.x_value = Number(p.x.toFixed(3));
+        control.y_value = Number(p.y.toFixed(3));
+        render();
+        readout.textContent = `Smile ${p.x >= 0 ? "+" : ""}${p.x.toFixed(2)}  •  Open ${p.y.toFixed(2)}`;
+    }
+
+    let dragging = false;
+    field.addEventListener("pointerdown", event => {
+        dragging = true;
+        field.setPointerCapture?.(event.pointerId);
+        move(event);
+        event.stopPropagation();
+    });
+    field.addEventListener("pointermove", event => {
+        if (dragging) move(event);
+    });
+    field.addEventListener("pointerup", () => { dragging = false; });
+    field.addEventListener("pointercancel", () => { dragging = false; });
+
+    const readout = document.createElement("div");
+    readout.style.cssText = "font-size:9px;opacity:.65;text-align:center;margin-top:5px";
+
+    const reset = document.createElement("button");
+    reset.textContent = "Reset Mouth";
+    reset.style.cssText = "margin-top:5px;width:100%";
+    reset.onclick = event => {
+        event.stopPropagation();
+        values.x = 0;
+        values.y = 0;
+        control.x_value = 0;
+        control.y_value = 0;
+        render();
+        readout.textContent = "Smile +0.00  •  Open 0.00";
+        applySection(node, section);
+    };
+
+    wrap.appendChild(field);
+    wrap.appendChild(readout);
+    wrap.appendChild(reset);
+    host.appendChild(wrap);
+
+    render();
+    readout.textContent = `Smile ${values.x >= 0 ? "+" : ""}${values.x.toFixed(2)}  •  Open ${values.y.toFixed(2)}`;
+}
+
 function renderSculptField(node, section, locus, host) {
     const candidates = candidateIndices(locus, 6);
     if (!candidates.length) return;
@@ -477,6 +619,13 @@ function renderEditor(node) {
         card.appendChild(value);
 
         const variants = Array.isArray(locus.variant_sets) ? locus.variant_sets : [];
+
+        if (locus.controls?.mouth) {
+            const mouthHost = document.createElement("div");
+            mouthHost.className = "gen3-expression-mouth";
+            renderExpressionMouth(node, section, locus, mouthHost);
+            card.appendChild(mouthHost);
+        }
         if (variants.length) {
             const note = document.createElement("div");
             note.textContent = "Internal DNA variants";
