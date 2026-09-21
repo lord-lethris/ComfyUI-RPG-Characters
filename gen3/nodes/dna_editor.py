@@ -27,7 +27,6 @@ class RPGCharacterDNAEditor:
                 "edited_section": ("STRING", {
                     "default": "",
                     "multiline": False,
-                    "hidden": True,
                 }),
             },
         }
