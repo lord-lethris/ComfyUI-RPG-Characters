@@ -266,19 +266,7 @@ function renderSculptField(node, section, locus, host) {
         const weights = weightsAt(position.x, position.y);
         const weightMap = {};
         weights.forEach(item => weightMap[String(item.index)] = item.weight);
-        locus.weights = weightMap;
-        locus.mode = "sculpted";
-
-        const best = weights.slice().sort((a, b) => b.weight - a.weight)[0];
-        if (best) {
-            locus.selected = locus.options[best.index];
-            section.values = section.values || {};
-            const key = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
-            if (key) section.values[key] = locus.selected;
-        }
-
         updateWeights(weights);
-        applySection(node, section);
     }
 
     function updateWeights(weights) {
@@ -324,11 +312,54 @@ function renderSculptField(node, section, locus, host) {
     field.addEventListener("pointerup", () => { dragging = false; });
     field.addEventListener("pointercancel", () => { dragging = false; });
 
+    const controls = document.createElement("div");
+    controls.style.cssText = "display:flex;justify-content:flex-end;gap:4px;margin-top:5px";
+
+    const cancel = document.createElement("button");
+    cancel.textContent = "✕";
+    cancel.title = "Cancel sculpting";
+    cancel.style.cssText = "min-width:34px";
+
+    const accept = document.createElement("button");
+    accept.textContent = "✓";
+    accept.title = "Apply sculpting";
+    accept.style.cssText = "min-width:34px";
+
+    controls.appendChild(cancel);
+    controls.appendChild(accept);
+
     const help = document.createElement("div");
     help.textContent = "Drag the point • nearest three variants blend • hover dots for names";
     help.style.cssText = "font-size:9px;opacity:.5;margin-top:4px";
 
+    cancel.onclick = event => {
+        event.stopPropagation();
+        host.innerHTML = "";
+    };
+
+    accept.onclick = event => {
+        event.stopPropagation();
+        const weights = weightsAt(position.x, position.y);
+        const weightMap = {};
+        weights.forEach(item => weightMap[String(item.index)] = item.weight);
+
+        locus.weights = weightMap;
+        locus.mode = "sculpted";
+
+        const best = weights.slice().sort((a, b) => b.weight - a.weight)[0];
+        if (best) {
+            locus.selected = locus.options[best.index];
+            section.values = section.values || {};
+            const key = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
+            if (key) section.values[key] = locus.selected;
+        }
+
+        applySection(node, section);
+        renderEditor(node);
+    };
+
     host.appendChild(field);
+    host.appendChild(controls);
     host.appendChild(weightList);
     host.appendChild(help);
 
