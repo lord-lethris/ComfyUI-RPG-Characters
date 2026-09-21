@@ -801,12 +801,24 @@ app.registerExtension({
                 // A source-signature change is an upstream reset, not a local
                 // edit. Replace the hidden workflow transport without bumping
                 // revision or firing a graph-change callback.
-                if (incomingSignature && persistedSignature !== incomingSignature && transport) {
-                    transport.value = JSON.stringify(section);
+                // Execution is not itself a source change. If the upstream
+                // signature is unchanged, preserve the editor's local DNA
+                // state exactly as-is. Only a genuine upstream change replaces
+                // the local section.
+                if (incomingSignature && persistedSignature !== incomingSignature) {
+                    if (transport) {
+                        transport.value = JSON.stringify(section);
+                    }
+                    this.__gen3SectionData = section;
+                    renderEditor(this);
+                } else if (!persisted.id) {
+                    // Initial population: there is no local state yet.
+                    if (transport) {
+                        transport.value = JSON.stringify(section);
+                    }
+                    this.__gen3SectionData = section;
+                    renderEditor(this);
                 }
-
-                this.__gen3SectionData = section;
-                renderEditor(this);
             }
         };
     },
