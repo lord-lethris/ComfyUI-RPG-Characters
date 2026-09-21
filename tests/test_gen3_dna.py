@@ -88,6 +88,13 @@ class TestGen3DNA(unittest.TestCase):
             ["brown leather", "woven hemp", "wooden", "bronze"],
         )
 
+        expression = dna["sections"]["expression"]["loci"][0]
+        self.assertIn("controls", expression)
+        mouth = expression["controls"]["mouth"]
+        self.assertEqual(mouth["type"], "expression_2d")
+        self.assertEqual(mouth["x_value"], 0.0)
+        self.assertEqual(mouth["y_value"], 0.0)
+
     def test_editor_pass_through_preserves_data(self):
         section = {
             "id": "hair",
