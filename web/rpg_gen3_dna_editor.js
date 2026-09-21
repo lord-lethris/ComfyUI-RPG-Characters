@@ -55,376 +55,377 @@ function normaliseWeights(weights, count) {
     return total > 0 ? values.map(v => v / total) : null;
 }
 
-function makeAnchors(count, width = 340, height = 250) {
-    if (!count) return [];
-    if (count === 1) return [{ x: width / 2, y: height / 2 }];
-    if (count === 2) return [
-        { x: 62, y: height / 2 },
-        { x: width - 62, y: height / 2 },
-    ];
-
-    // A ring works nicely for a small number of variants. Large RPG data
-    // tables can contain dozens or hundreds, so use a compact grid instead.
-    if (count <= 12) {
-        const cx = width / 2;
-        const cy = height / 2;
-        const rx = Math.min(width * 0.40, 138);
-        const ry = Math.min(height * 0.39, 88);
-        return Array.from({ length: count }, (_, i) => {
-            const angle = -Math.PI / 2 + (Math.PI * 2 * i / count);
-            return { x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry };
-        });
+function hashString(value) {
+    let hash = 2166136261;
+    for (const ch of String(value)) {
+        hash ^= ch.charCodeAt(0);
+        hash = Math.imul(hash, 16777619);
     }
-
-    const columns = Math.max(4, Math.ceil(Math.sqrt(count * width / height)));
-    const rows = Math.ceil(count / columns);
-    const marginX = 18;
-    const marginY = 18;
-    const usableWidth = Math.max(1, width - marginX * 2);
-    const usableHeight = Math.max(1, height - marginY * 2);
-    const stepX = columns > 1 ? usableWidth / (columns - 1) : 0;
-    const stepY = rows > 1 ? usableHeight / (rows - 1) : 0;
-
-    return Array.from({ length: count }, (_, i) => ({
-        x: marginX + (i % columns) * stepX,
-        y: marginY + Math.floor(i / columns) * stepY,
-    }));
+    return hash >>> 0;
 }
 
-function nearestThreeWeights(point, anchors) {
-    if (!anchors.length) return [];
-    const distances = anchors.map((anchor, index) => ({
-        index,
-        distance: Math.hypot(point.x - anchor.x, point.y - anchor.y),
-    })).sort((a, b) => a.distance - b.distance);
+function candidateIndices(locus, count = 6) {
+    const options = Array.isArray(locus?.options) ? locus.options : [];
+    if (!options.length) return [];
 
-    const nearest = distances.slice(0, Math.min(3, anchors.length));
-    if (nearest[0].distance < 0.001) {
-        return anchors.map((_, i) => i === nearest[0].index ? 1 : 0);
+    const selectedIndex = Math.max(0, options.indexOf(locus.selected));
+    const result = [selectedIndex];
+    let state = hashString(locus.id || locus.label || "");
+
+    while (result.length < Math.min(count, options.length)) {
+        state = Math.imul(state ^ (state >>> 16), 2246822507) >>> 0;
+        const index = state % options.length;
+        if (!result.includes(index)) result.push(index);
     }
-
-    const raw = nearest.map(item => 1 / Math.pow(item.distance, 2));
-    const total = raw.reduce((a, b) => a + b, 0);
-    const result = Array(anchors.length).fill(0);
-    nearest.forEach((item, i) => {
-        result[item.index] = raw[i] / total;
-    });
     return result;
 }
 
-function currentPoint(locus, anchors) {
-    const weights = normaliseWeights(locus?.weights, anchors.length);
-    if (!weights) {
-        const selected = anchors[locus?.options?.indexOf(locus.selected) ?? 0];
-        return selected || anchors[0] || { x: 170, y: 125 };
-    }
-    return weights.reduce((point, weight, i) => ({
-        x: point.x + anchors[i].x * weight,
-        y: point.y + anchors[i].y * weight,
-    }), { x: 0, y: 0 });
+function pickRerollIndex(locus, currentIndex) {
+    const options = Array.isArray(locus?.options) ? locus.options : [];
+    if (options.length < 2) return currentIndex;
+    let index = Math.floor(Math.random() * options.length);
+    if (index === currentIndex) index = (index + 1) % options.length;
+    return index;
 }
 
-function bumpRevision(node) {
-    const widget = getWidget(node, "revision");
-    const previous = Number(widget?.value ?? 0);
-    setWidget(node, "revision",
-        Number.isFinite(previous) ? (previous >= 2147483647 ? 0 : previous + 1) : 1
-    );
-    node.graph?.change?.();
-    app.graph?.change?.();
-    app.graph?.setDirtyCanvas?.(true, true);
+function activeWeights(locus) {
+    const weights = normaliseWeights(locus?.weights, locus?.options?.length || 0);
+    return weights || [];
 }
 
-function closeEditor(node) {
-    node.__gen3Editor?.remove();
-    node.__gen3Editor = null;
-}
-
-function openEditor(node) {
-    closeEditor(node);
-
-    const input = node.__gen3SectionData;
-    if (!input || typeof input !== "object") {
-        showMessage(node, "No DNA section received. Connect a DNA Pipe output.");
-        return;
-    }
-
-    const sectionId = input.id;
-    const loci = Array.isArray(input.loci) ? input.loci : [];
-
-    const panel = document.createElement("div");
-    node.__gen3Editor = panel;
-
-    Object.assign(panel.style, {
-        position: "fixed",
-        right: "0",
-        top: "0",
-        width: "430px",
-        height: "100vh",
-        zIndex: "100000",
-        background: "var(--comfy-menu-bg, #202020)",
-        color: "var(--input-text, #ddd)",
-        boxShadow: "-8px 0 24px rgba(0,0,0,.5)",
-        borderLeft: "1px solid rgba(255,255,255,.12)",
-        fontFamily: "Arial,sans-serif",
-        display: "flex",
-        flexDirection: "column",
-    });
-
-    panel.innerHTML = `
-        <div style="padding:16px;border-bottom:1px solid rgba(255,255,255,.12)">
-            <div style="font-size:19px;font-weight:700">🧬 DNA EDITOR</div>
-            <div style="font-size:12px;opacity:.6;margin-top:4px">
-                Structured character DNA — ${escapeHtml(SECTION_LABELS[sectionId] || sectionId)}
-            </div>
-        </div>
-        <div id="gen3-loci" style="flex:1;overflow:auto;padding:12px"></div>
-        <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:7px">
-            <button id="gen3-close" style="flex:1">Close</button>
-            <button id="gen3-apply" style="flex:1">✓ Apply</button>
-        </div>
-    `;
-
-    document.body.appendChild(panel);
-
-    panel.querySelector("#gen3-close").addEventListener("click", () => closeEditor(node));
-    panel.querySelector("#gen3-apply").addEventListener("click", () => {
-        applyEdits(node, input);
-        closeEditor(node);
-    });
-
-    renderLoci(node, panel, input);
-}
-
-function renderLoci(node, panel, section) {
-    const container = panel.querySelector("#gen3-loci");
-    const loci = Array.isArray(section?.loci) ? section.loci : [];
-
-    if (!loci.length) {
-        container.innerHTML = `
-            <div style="text-align:center;padding:40px 15px;opacity:.6">
-                <div style="font-size:34px">🧬</div>
-                <div style="margin-top:10px">No editable loci are available for this section yet.</div>
-                <div style="font-size:11px;margin-top:7px">
-                    The section is still valid DNA and can be passed to future generators.
-                </div>
-            </div>`;
-        return;
-    }
-
-    container.innerHTML = loci.map((locus, i) => `
-        <div style="background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:6px;padding:10px;margin-bottom:8px">
-            <div style="font-size:13px;font-weight:700">${escapeHtml(locus.label || locus.id)}</div>
-            <div style="font-size:11px;opacity:.55;margin:3px 0 8px">${escapeHtml(locus.id)}</div>
-            <div style="font-size:12px;margin-bottom:8px">${escapeHtml(locus.selected || "Random")}</div>
-            <button data-sculpt="${i}" style="width:100%">🧬 Sculpt DNA</button>
-        </div>
-    `).join("");
-
-    container.querySelectorAll("[data-sculpt]").forEach(button => {
-        button.addEventListener("click", () => openSculptor(node, section, Number(button.dataset.sculpt)));
-    });
-}
-
-function openSculptor(node, section, locusIndex) {
-    const locus = section?.loci?.[locusIndex];
-    if (!locus || !Array.isArray(locus.options) || !locus.options.length) return;
-
-    const existing = node.__gen3Sculptor;
-    existing?.remove();
-
-    const modal = document.createElement("div");
-    node.__gen3Sculptor = modal;
-
-    Object.assign(modal.style, {
-        position: "fixed",
-        right: "18px",
-        top: "18px",
-        width: "390px",
-        zIndex: "100001",
-        background: "var(--comfy-menu-bg, #202020)",
-        color: "#ddd",
-        border: "1px solid rgba(255,255,255,.15)",
-        borderRadius: "8px",
-        boxShadow: "0 12px 40px rgba(0,0,0,.6)",
-        padding: "14px",
-        fontFamily: "Arial,sans-serif",
-    });
-
-    const width = 340, height = 250;
-    const anchors = makeAnchors(locus.options.length, width, height);
-    let point = currentPoint(locus, anchors);
-    let dragging = false;
-
-    modal.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px">
-            <div style="font-weight:700;flex:1">🧬 ${escapeHtml(locus.label || locus.id)}</div>
-            <button id="gen3-cancel">✕</button>
-            <button id="gen3-apply">✓</button>
-        </div>
-        <div style="font-size:11px;opacity:.6;margin:6px 0 9px">
-            Drag the point. The nearest three variants blend together using inverse-distance weighting.
-        </div>
-        <svg id="gen3-svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:250px;background:rgba(0,0,0,.15);border-radius:6px"></svg>
-        <div id="gen3-weights" style="margin-top:8px"></div>
-        <div id="gen3-result" style="margin-top:9px;padding:8px;background:#111;border-radius:4px;font-size:11px"></div>
-    `;
-
-    document.body.appendChild(modal);
-
-    const svg = modal.querySelector("#gen3-svg");
-    const weightsEl = modal.querySelector("#gen3-weights");
-    const resultEl = modal.querySelector("#gen3-result");
-    const ns = "http://www.w3.org/2000/svg";
-
-    const anchorLabels = [];
-    anchors.forEach((anchor, i) => {
-        const circle = document.createElementNS(ns, "circle");
-        circle.setAttribute("cx", anchor.x);
-        circle.setAttribute("cy", anchor.y);
-        circle.setAttribute("r", anchors.length > 12 ? "4" : "8");
-        circle.setAttribute("fill", "rgba(210,210,210,.16)");
-        circle.setAttribute("stroke", "rgba(255,255,255,.45)");
-        circle.setAttribute("data-anchor", String(i));
-        const title = document.createElementNS(ns, "title");
-        title.textContent = locus.options[i];
-        circle.appendChild(title);
-        svg.appendChild(circle);
-
-        const text = document.createElementNS(ns, "text");
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("fill", "rgba(255,255,255,.85)");
-        text.setAttribute("font-size", anchors.length > 12 ? "9" : "11");
-        text.textContent = locus.options[i];
-        svg.appendChild(text);
-        anchorLabels.push(text);
-    });
-
-    const core = document.createElementNS(ns, "circle");
-    core.setAttribute("r", "8");
-    core.setAttribute("fill", "rgba(220,245,255,.95)");
-    core.setAttribute("stroke", "white");
-    core.setAttribute("stroke-width", "2");
-    svg.appendChild(core);
-
-    function setPoint(event) {
-        const rect = svg.getBoundingClientRect();
-        point.x = Math.max(8, Math.min(width - 8, (event.clientX - rect.left) * width / rect.width));
-        point.y = Math.max(8, Math.min(height - 8, (event.clientY - rect.top) * height / rect.height));
-        redraw();
-    }
-
-    function redraw() {
-        const weights = nearestThreeWeights(point, anchors);
-        core.setAttribute("cx", point.x);
-        core.setAttribute("cy", point.y);
-
-        // For large sets, only label variants that currently contribute.
-        const active = weights
-            .map((weight, i) => ({ weight, i }))
-            .filter(item => item.weight > 0.0005)
-            .sort((a, b) => b.weight - a.weight)
-            .slice(0, 3)
-            .map(item => item.i);
-
-        anchorLabels.forEach((label, i) => {
-            const show = anchors.length <= 12 || active.includes(i);
-            label.textContent = show ? locus.options[i] : "";
-            if (show) {
-                label.setAttribute("x", anchors[i].x);
-                label.setAttribute("y", anchors[i].y < height / 2 ? anchors[i].y - 9 : anchors[i].y + 13);
-            }
-        });
-
-        const visibleIndices = anchors.length > 12
-            ? active
-            : locus.options.map((_, i) => i);
-
-        weightsEl.innerHTML = visibleIndices.map(i => {
-            const option = locus.options[i];
-            const pct = Math.round((weights[i] || 0) * 100);
-            return `<div style="display:flex;gap:7px;align-items:center;margin:4px 0">
-                <div style="flex:1;min-width:0;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(option)}</div>
-                <div style="width:90px;height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
-                    <div style="height:100%;width:${pct}%;background:#aaa"></div>
-                </div>
-                <div style="width:34px;text-align:right;font-size:10px;opacity:.7">${pct}%</div>
-            </div>`;
-        }).join("") || `<div style="font-size:10px;opacity:.55">Move the point to select variants.</div>`;
-
-        if (anchors.length > 12) {
-            weightsEl.innerHTML += `<div style="font-size:10px;opacity:.45;margin-top:7px">${locus.options.length} variants available · showing active blend</div>`;
+function currentIndex(locus) {
+    const options = Array.isArray(locus?.options) ? locus.options : [];
+    const weights = activeWeights(locus);
+    if (weights.length) {
+        let best = 0;
+        for (let i = 1; i < weights.length; i++) {
+            if (weights[i] > weights[best]) best = i;
         }
-
-        resultEl.textContent = locus.options
-            .map((option, i) => (weights[i] || 0) > .0005 ? `(${option}:${weights[i].toFixed(3)})` : null)
-            .filter(Boolean).join(" & ") || locus.selected || "Random";
-
-        modal.__weights = weights;
+        if (weights[best] > 0) return best;
     }
-
-    svg.addEventListener("pointerdown", event => {
-        dragging = true;
-        svg.setPointerCapture?.(event.pointerId);
-        setPoint(event);
-    });
-    svg.addEventListener("pointermove", event => {
-        if (dragging) setPoint(event);
-    });
-    svg.addEventListener("pointerup", () => { dragging = false; });
-    svg.addEventListener("pointercancel", () => { dragging = false; });
-
-    modal.querySelector("#gen3-cancel").addEventListener("click", () => {
-        modal.remove();
-        node.__gen3Sculptor = null;
-    });
-
-    modal.querySelector("#gen3-apply").addEventListener("click", () => {
-        locus.weights = {};
-        (modal.__weights || []).forEach((weight, i) => {
-            locus.weights[String(i)] = weight;
-        });
-        locus.mode = "sculpted";
-        locus.selected = locus.options
-            .map((option, i) => ({ option, weight: modal.__weights?.[i] || 0 }))
-            .sort((a, b) => b.weight - a.weight)[0]?.option || locus.selected;
-
-        applyEdits(node, section);
-        modal.remove();
-        node.__gen3Sculptor = null;
-    });
-
-    redraw();
+    const index = options.indexOf(locus?.selected);
+    return index >= 0 ? index : 0;
 }
 
-function applyEdits(node, section) {
-    if (!section || typeof section !== "object") return;
-
-    // Store the edited section as JSON in the node's hidden transport widget.
-    // The runtime node receives the original section from the Pipe; this
-    // widget lets the editor preserve the user's changes between executions.
+function applySection(node, section) {
     const transport = getWidget(node, "edited_section");
     if (transport) {
         transport.value = JSON.stringify(section);
         transport.callback?.(transport.value);
     }
+
     node.__gen3SectionData = section;
-    bumpRevision(node);
+
+    const revision = getWidget(node, "revision");
+    const previous = Number(revision?.value ?? 0);
+    setWidget(node, "revision",
+        Number.isFinite(previous) ? (previous >= 2147483647 ? 0 : previous + 1) : 1
+    );
+
+    node.setDirtyCanvas?.(true, true);
+    node.graph?.change?.();
+    app.graph?.change?.();
+    app.graph?.setDirtyCanvas?.(true, true);
 }
 
-function showMessage(node, message) {
-    const panel = document.createElement("div");
-    Object.assign(panel.style, {
-        position: "fixed", right: "18px", top: "18px", zIndex: "100000",
-        background: "#202020", color: "#ddd", padding: "18px",
-        border: "1px solid rgba(255,255,255,.15)", borderRadius: "7px",
-        boxShadow: "0 12px 35px rgba(0,0,0,.5)", fontFamily: "Arial,sans-serif",
+function setLocusSelection(section, locus, index) {
+    if (!Array.isArray(locus.options) || !locus.options.length) return;
+
+    const weights = {};
+    weights[String(index)] = 1;
+    locus.weights = weights;
+    locus.mode = "selected";
+    locus.selected = locus.options[index];
+    section.values = section.values || {};
+    const valueKey = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
+    if (valueKey) section.values[valueKey] = locus.selected;
+    section.traits = Array.isArray(section.traits) ? section.traits : [];
+    if (locus.selected && !section.traits.includes(locus.selected)) section.traits.push(locus.selected);
+}
+
+function renderSculptField(node, section, locus, host) {
+    const candidates = candidateIndices(locus, 6);
+    if (!candidates.length) return;
+
+    const field = document.createElement("div");
+    field.className = "gen3-sculpt-field";
+    field.style.cssText = [
+        "position:relative",
+        "height:180px",
+        "margin-top:8px",
+        "border:1px solid rgba(255,255,255,.12)",
+        "border-radius:5px",
+        "background:rgba(0,0,0,.18)",
+        "overflow:hidden",
+    ].join(";");
+
+    const point = document.createElement("div");
+    point.style.cssText = [
+        "position:absolute",
+        "width:14px",
+        "height:14px",
+        "margin:-7px 0 0 -7px",
+        "border-radius:50%",
+        "background:#e8f7ff",
+        "border:2px solid #fff",
+        "box-shadow:0 0 10px rgba(200,235,255,.8)",
+        "cursor:grab",
+        "z-index:5",
+    ].join(";");
+
+    const anchors = candidates.map((index, i) => {
+        const angle = -Math.PI / 2 + (Math.PI * 2 * i / candidates.length);
+        return {
+            index,
+            x: 50 + Math.cos(angle) * 37,
+            y: 50 + Math.sin(angle) * 38,
+        };
     });
-    panel.innerHTML = `<div style="font-weight:700">🧬 DNA Editor</div>
-        <div style="margin-top:8px;font-size:12px;opacity:.75">${escapeHtml(message)}</div>
-        <button style="margin-top:12px;width:100%">OK</button>`;
-    panel.querySelector("button").addEventListener("click", () => panel.remove());
-    document.body.appendChild(panel);
+
+    for (const anchor of anchors) {
+        const dot = document.createElement("div");
+        dot.title = locus.options[anchor.index];
+        dot.style.cssText = [
+            "position:absolute",
+            "width:9px",
+            "height:9px",
+            "margin:-4px 0 0 -4px",
+            "border-radius:50%",
+            "background:rgba(210,210,210,.2)",
+            "border:1px solid rgba(255,255,255,.45)",
+            "cursor:pointer",
+        ].join(";");
+        dot.style.left = anchor.x + "%";
+        dot.style.top = anchor.y + "%";
+
+        const label = document.createElement("div");
+        label.textContent = locus.options[anchor.index];
+        label.style.cssText = [
+            "position:absolute",
+            "left:50%",
+            "transform:translateX(-50%)",
+            "white-space:nowrap",
+            "max-width:120px",
+            "overflow:hidden",
+            "text-overflow:ellipsis",
+            "font-size:9px",
+            "opacity:.8",
+            "pointer-events:none",
+        ].join(";");
+        label.style.top = anchor.y < 50 ? "10px" : "-20px";
+        dot.appendChild(label);
+
+        dot.addEventListener("click", event => {
+            event.stopPropagation();
+            movePoint(anchor.x, anchor.y);
+        });
+        field.appendChild(dot);
+    }
+
+    field.appendChild(point);
+
+    const existing = activeWeights(locus);
+    let position = { x: 50, y: 50 };
+    if (existing.length) {
+        let total = 0;
+        let x = 0;
+        let y = 0;
+        anchors.forEach(anchor => {
+            const weight = existing[anchor.index] || 0;
+            total += weight;
+            x += anchor.x * weight;
+            y += anchor.y * weight;
+        });
+        if (total > 0) position = { x: x / total, y: y / total };
+    } else {
+        const selected = anchors.find(a => a.index === currentIndex(locus));
+        if (selected) position = { x: selected.x, y: selected.y };
+    }
+
+    function weightsAt(x, y) {
+        const distances = anchors.map(anchor => ({
+            ...anchor,
+            distance: Math.hypot(x - anchor.x, y - anchor.y),
+        })).sort((a, b) => a.distance - b.distance);
+
+        const nearest = distances.slice(0, Math.min(3, distances.length));
+        if (nearest[0].distance < 0.001) {
+            return nearest.map(a => ({ index: a.index, weight: a.index === nearest[0].index ? 1 : 0 }));
+        }
+
+        const raw = nearest.map(a => 1 / Math.pow(a.distance, 2));
+        const total = raw.reduce((a, b) => a + b, 0);
+        return nearest.map((a, i) => ({ index: a.index, weight: raw[i] / total }));
+    }
+
+    function movePoint(x, y) {
+        position = { x: Math.max(3, Math.min(97, x)), y: Math.max(3, Math.min(97, y)) };
+        point.style.left = position.x + "%";
+        point.style.top = position.y + "%";
+
+        const weights = weightsAt(position.x, position.y);
+        const weightMap = {};
+        weights.forEach(item => weightMap[String(item.index)] = item.weight);
+        locus.weights = weightMap;
+        locus.mode = "sculpted";
+
+        const best = weights.slice().sort((a, b) => b.weight - a.weight)[0];
+        if (best) {
+            locus.selected = locus.options[best.index];
+            section.values = section.values || {};
+            const key = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
+            if (key) section.values[key] = locus.selected;
+        }
+
+        updateWeights(weights);
+        applySection(node, section);
+    }
+
+    function updateWeights(weights) {
+        const weightMap = new Map(weights.map(item => [item.index, item.weight]));
+        weightList.innerHTML = anchors
+            .map(anchor => {
+                const weight = weightMap.get(anchor.index) || 0;
+                return `<div style="display:flex;gap:6px;align-items:center;margin:3px 0">
+                    <div style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px">${escapeHtml(locus.options[anchor.index])}</div>
+                    <div style="width:70px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden">
+                        <div style="height:100%;width:${Math.round(weight * 100)}%;background:#aaa"></div>
+                    </div>
+                    <div style="width:30px;text-align:right;font-size:10px;opacity:.7">${Math.round(weight * 100)}%</div>
+                </div>`;
+            }).join("");
+    }
+
+    const weightList = document.createElement("div");
+    weightList.style.marginTop = "6px";
+
+    let dragging = false;
+    function pointerPosition(event) {
+        const rect = field.getBoundingClientRect();
+        return {
+            x: ((event.clientX - rect.left) / rect.width) * 100,
+            y: ((event.clientY - rect.top) / rect.height) * 100,
+        };
+    }
+
+    field.addEventListener("pointerdown", event => {
+        if (event.target !== point && event.target.parentElement !== point) {
+            const p = pointerPosition(event);
+            movePoint(p.x, p.y);
+        }
+        dragging = true;
+        field.setPointerCapture?.(event.pointerId);
+    });
+    field.addEventListener("pointermove", event => {
+        if (!dragging) return;
+        const p = pointerPosition(event);
+        movePoint(p.x, p.y);
+    });
+    field.addEventListener("pointerup", () => { dragging = false; });
+    field.addEventListener("pointercancel", () => { dragging = false; });
+
+    const help = document.createElement("div");
+    help.textContent = "Drag the point • nearest three variants blend • hover dots for names";
+    help.style.cssText = "font-size:9px;opacity:.5;margin-top:4px";
+
+    host.appendChild(field);
+    host.appendChild(weightList);
+    host.appendChild(help);
+
+    updateWeights(weightsAt(position.x, position.y));
+}
+
+function renderEditor(node) {
+    const container = node.__gen3EditorContainer;
+    if (!container) return;
+
+    const section = node.__gen3SectionData;
+    if (!section || typeof section !== "object") {
+        container.innerHTML = `
+            <div style="padding:10px;opacity:.6;font-size:11px;text-align:center">
+                Run the graph to populate this DNA section.
+            </div>`;
+        node.setSize?.([Math.max(node.size[0], 320), Math.max(node.size[1], 180)]);
+        return;
+    }
+
+    const loci = Array.isArray(section.loci) ? section.loci : [];
+    const sectionLabel = SECTION_LABELS[section.id] || section.id || "DNA";
+
+    container.innerHTML = `
+        <div style="padding:4px 2px 8px;border-bottom:1px solid rgba(255,255,255,.1)">
+            <div style="font-weight:700;font-size:13px">🧬 ${escapeHtml(sectionLabel)}</div>
+            <div style="font-size:9px;opacity:.5">Structured DNA editor</div>
+        </div>
+    `;
+
+    if (!loci.length) {
+        container.innerHTML += `
+            <div style="padding:12px 4px;opacity:.55;font-size:10px">
+                No editable loci in this section yet.
+            </div>`;
+        return;
+    }
+
+    for (let i = 0; i < loci.length; i++) {
+        const locus = loci[i];
+        const card = document.createElement("div");
+        card.style.cssText = "padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)";
+
+        const title = document.createElement("div");
+        title.style.cssText = "display:flex;align-items:center;gap:6px";
+        title.innerHTML = `
+            <div style="flex:1;font-weight:700;font-size:11px">${escapeHtml(locus.label || locus.id)}</div>
+            <div style="font-size:8px;opacity:.5">${escapeHtml(locus.mode || "RANDOM").toUpperCase()}</div>`;
+        card.appendChild(title);
+
+        const value = document.createElement("div");
+        value.textContent = locus.selected || "Random";
+        value.style.cssText = "font-size:10px;margin:3px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+        card.appendChild(value);
+
+        const actions = document.createElement("div");
+        actions.style.cssText = "display:flex;gap:5px";
+
+        const reroll = document.createElement("button");
+        reroll.textContent = "🎲 Re-roll";
+        reroll.style.flex = "1";
+        reroll.onclick = event => {
+            event.stopPropagation();
+            const index = pickRerollIndex(locus, currentIndex(locus));
+            setLocusSelection(section, locus, index);
+            applySection(node, section);
+            renderEditor(node);
+        };
+
+        const sculpt = document.createElement("button");
+        sculpt.textContent = "🧬 Sculpt";
+        sculpt.style.flex = "1";
+        sculpt.onclick = event => {
+            event.stopPropagation();
+            const existing = card.querySelector(".gen3-inline-sculpt");
+            if (existing) {
+                existing.remove();
+                return;
+            }
+            const sculptHost = document.createElement("div");
+            sculptHost.className = "gen3-inline-sculpt";
+            card.appendChild(sculptHost);
+            renderSculptField(node, section, locus, sculptHost);
+        };
+
+        actions.appendChild(reroll);
+        actions.appendChild(sculpt);
+        card.appendChild(actions);
+        container.appendChild(card);
+    }
+
+    const footer = document.createElement("div");
+    footer.style.cssText = "padding:7px 0 2px;font-size:9px;opacity:.45;text-align:center";
+    footer.textContent = "Changes are stored in the DNA section and revisioned automatically.";
+    container.appendChild(footer);
+
+    node.setSize?.([Math.max(node.size[0], 320), Math.max(node.size[1], 240)]);
 }
 
 app.registerExtension({
@@ -444,17 +445,36 @@ app.registerExtension({
                 transport.computeSize = () => [0, -4];
             }
 
-            const button = node.addWidget("button", "🧬 Open DNA Editor", null, () => openEditor(node));
-            node.__gen3EditorButton = button;
+            const container = document.createElement("div");
+            container.style.cssText = [
+                "width:100%",
+                "box-sizing:border-box",
+                "padding:0 4px 6px",
+                "color:var(--input-text,#ddd)",
+                "font-family:Arial,sans-serif",
+                "overflow:visible",
+            ].join(";");
+
+            node.addDOMWidget("gen3_dna_editor", "custom", container, {
+                serialize: false,
+                hideOnZoom: false,
+                getValue() { return ""; },
+                setValue() {},
+            });
+
+            node.__gen3EditorContainer = container;
+            renderEditor(node);
         };
 
         const originalExecuted = nodeType.prototype.onExecuted;
         nodeType.prototype.onExecuted = function (message) {
             originalExecuted?.apply(this, arguments);
+
             const raw = message?.section ?? message?.ui?.section;
             const section = Array.isArray(raw) ? raw[0] : raw;
             if (section && typeof section === "object") {
                 this.__gen3SectionData = section;
+                renderEditor(this);
             }
         };
     },
