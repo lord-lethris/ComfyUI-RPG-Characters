@@ -735,6 +735,22 @@ app.registerExtension({
             if (transport) {
                 transport.hidden = true;
                 transport.computeSize = () => [0, -4];
+
+                // The editor mutates node.__gen3SectionData directly. Use
+                // ComfyUI's prompt serialization hook so execution always
+                // receives the live edited section rather than a stale widget
+                // value from workflow/configuration state.
+                transport.serializeValue = () => {
+                    const section = node.__gen3SectionData;
+                    return section && typeof section === "object"
+                        ? JSON.stringify(section)
+                        : String(transport.value ?? "");
+                };
+
+                const restored = parseState(transport.value);
+                if (restored && restored.id) {
+                    node.__gen3SectionData = restored;
+                }
             }
 
             const container = document.createElement("div");
