@@ -21,10 +21,22 @@ class RPGCharacterDNAAssembler:
                 "character_info": ("CHARACTER_INFO",),
             },
             "optional": {
-                # The first dynamic slot is declared as ANY so ComfyUI's
-                # legacy V1 execution layer will pass the auto-created
-                # change_2, change_3, ... sockets through as kwargs too.
-                "change_1": ("*",),
+                "change_1": ("RPG_DNA_SECTION",),
+                "change_2": ("RPG_DNA_SECTION",),
+                "change_3": ("RPG_DNA_SECTION",),
+                "change_4": ("RPG_DNA_SECTION",),
+                "change_5": ("RPG_DNA_SECTION",),
+                "change_6": ("RPG_DNA_SECTION",),
+                "change_7": ("RPG_DNA_SECTION",),
+                "change_8": ("RPG_DNA_SECTION",),
+                "change_9": ("RPG_DNA_SECTION",),
+                "change_10": ("RPG_DNA_SECTION",),
+                "change_11": ("RPG_DNA_SECTION",),
+                "change_12": ("RPG_DNA_SECTION",),
+                "change_13": ("RPG_DNA_SECTION",),
+                "change_14": ("RPG_DNA_SECTION",),
+                "change_15": ("RPG_DNA_SECTION",),
+                "change_16": ("RPG_DNA_SECTION",),
             },
         }
 
