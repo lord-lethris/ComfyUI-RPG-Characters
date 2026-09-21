@@ -356,7 +356,7 @@ function renderSculptField(node, section, locus, host) {
         const best = weights.slice().sort((a, b) => b.weight - a.weight)[0];
         if (best) {
             locus.selected = locus.options[best.index];
-            if (locus.__gen3Variant) {
+            if (locus.id?.includes(":variant:")) {
                 locus.mode = "sculpted";
             } else {
                 section.values = section.values || {};
@@ -426,7 +426,7 @@ function renderEditor(node) {
         reroll.onclick = event => {
             event.stopPropagation();
             const index = pickRerollIndex(target, currentIndex(target));
-            if (target.__gen3Variant) {
+            if (target.id?.includes(":variant:")) {
                 setVariantSelection(target, index);
             } else {
                 setLocusSelection(section, target, index);
@@ -482,7 +482,6 @@ function renderEditor(node) {
             card.appendChild(note);
 
             for (const variant of variants) {
-                variant.__gen3Variant = true;
                 const variantCard = document.createElement("div");
                 variantCard.style.cssText = "padding:7px;margin:5px 0;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:5px";
 
