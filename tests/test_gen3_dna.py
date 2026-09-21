@@ -192,7 +192,18 @@ class TestGen3DNA(unittest.TestCase):
         )[0]
 
         self.assertIsNone(result["seed"])
-        self.assertEqual(result["sections"]["hair"], edited_hair)
+
+        assembled_hair = result["sections"]["hair"]
+        self.assertEqual(assembled_hair["id"], "hair")
+        self.assertEqual(assembled_hair["values"], edited_hair["values"])
+        self.assertEqual(assembled_hair["traits"], edited_hair["traits"])
+        self.assertEqual(assembled_hair["loci"], edited_hair["loci"])
+        self.assertEqual(
+            assembled_hair["source_signature"],
+            edited_hair["source_signature"],
+        )
+        self.assertEqual(assembled_hair["label"], "Hair")
+        self.assertIn("description", assembled_hair)
 
     def test_editor_preserves_edits_when_source_signature_is_unchanged(self):
         import json
