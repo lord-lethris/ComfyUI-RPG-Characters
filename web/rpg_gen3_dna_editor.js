@@ -416,7 +416,7 @@ function renderEditor(node) {
         return;
     }
 
-    const makeActions = (target, card) => {
+    const makeActions = (target, card, allowSculpt = false) => {
         const actions = document.createElement("div");
         actions.style.cssText = "display:flex;gap:5px";
 
@@ -434,27 +434,29 @@ function renderEditor(node) {
             applySection(node, section);
             renderEditor(node);
         };
-
-        const sculpt = document.createElement("button");
-        sculpt.textContent = "🧬 Sculpt";
-        sculpt.style.flex = "1";
-        sculpt.onclick = event => {
-            event.stopPropagation();
-            const existing = card.querySelector(".gen3-inline-sculpt");
-            if (existing) {
-                existing.remove();
-                refreshEditorHeight(node);
-                return;
-            }
-            const sculptHost = document.createElement("div");
-            sculptHost.className = "gen3-inline-sculpt";
-            card.appendChild(sculptHost);
-            renderSculptField(node, section, target, sculptHost);
-            refreshEditorHeight(node);
-        };
-
         actions.appendChild(reroll);
-        actions.appendChild(sculpt);
+
+        if (allowSculpt) {
+            const sculpt = document.createElement("button");
+            sculpt.textContent = "🧬 Sculpt";
+            sculpt.style.flex = "1";
+            sculpt.onclick = event => {
+                event.stopPropagation();
+                const existing = card.querySelector(".gen3-inline-sculpt");
+                if (existing) {
+                    existing.remove();
+                    refreshEditorHeight(node);
+                    return;
+                }
+                const sculptHost = document.createElement("div");
+                sculptHost.className = "gen3-inline-sculpt";
+                card.appendChild(sculptHost);
+                renderSculptField(node, section, target, sculptHost);
+                refreshEditorHeight(node);
+            };
+            actions.appendChild(sculpt);
+        }
+
         card.appendChild(actions);
     };
 
@@ -497,11 +499,13 @@ function renderEditor(node) {
                 variantValue.style.cssText = "font-size:10px;margin:3px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
                 variantCard.appendChild(variantValue);
 
-                makeActions(variant, variantCard);
+                makeActions(variant, variantCard, true);
                 card.appendChild(variantCard);
             }
         } else {
-            makeActions(locus, card);
+            // A top-level categorical choice is re-rollable, but only an
+            // internal {A|B|C} DNA variant is meaningfully sculptable.
+            makeActions(locus, card, false);
         }
 
         container.appendChild(card);
