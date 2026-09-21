@@ -130,7 +130,7 @@ class TestGen3DNA(unittest.TestCase):
 
         import json
         result = RPGCharacterDNAEditor().edit(
-            {},
+            section,
             "Edit",
             1,
             json.dumps(section),
