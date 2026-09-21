@@ -171,13 +171,6 @@ function openEditor(node) {
                 Structured character DNA — ${escapeHtml(SECTION_LABELS[sectionId] || sectionId)}
             </div>
         </div>
-        <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12)">
-            <select id="gen3-section" style="width:100%;padding:7px;background:#111;color:#eee;border:1px solid #555;border-radius:4px">
-                ${Object.entries(SECTION_LABELS).map(([id,label]) =>
-                    `<option value="${id}" ${id === sectionId ? "selected" : ""}>${escapeHtml(label)}</option>`
-                ).join("")}
-            </select>
-        </div>
         <div id="gen3-loci" style="flex:1;overflow:auto;padding:12px"></div>
         <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:7px">
             <button id="gen3-close" style="flex:1">Close</button>
@@ -186,11 +179,6 @@ function openEditor(node) {
     `;
 
     document.body.appendChild(panel);
-
-    panel.querySelector("#gen3-section").addEventListener("change", event => {
-        updateSection(node, event.target.value);
-        renderLoci(node, panel, input);
-    });
 
     panel.querySelector("#gen3-close").addEventListener("click", () => closeEditor(node));
     panel.querySelector("#gen3-apply").addEventListener("click", () => {
