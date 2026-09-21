@@ -3,19 +3,19 @@
 from ..dna.character_dna import make_character_dna
 from ..dna.dna_schema import DNA_SECTIONS
 
-from ...rpg_character_data.rpg_race_data import RACE_DATA
-from ...rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
-from ...rpg_character_data.rpg_gender_data import GENDER_DATA
-from ...rpg_character_data.rpg_age_data import AGE_DATA
-from ...rpg_character_data.rpg_class_data import CLASS_DATA
-from ...rpg_character_data.rpg_hair_style_data import HAIR_STYLE_DATA
-from ...rpg_character_data.rpg_hair_colour_data import HAIR_COLOUR_DATA
-from ...rpg_character_data.rpg_beard_style_data import BEARD_STYLE_DATA
-from ...rpg_character_data.rpg_beard_colour_data import BEARD_COLOUR_DATA
-from ...rpg_character_data.rpg_clothes_style_data import CLOTHES_STYLE_DATA
-from ...rpg_character_data.rpg_augment_data import AUGMENT_DATA
-from ...rpg_character_data.rpg_emotion_data import EMOTION_DATA
-from ...rpg_character_data.rpg_scene_data import SCENE_DATA
+from rpg_character_data.rpg_race_data import RACE_DATA
+from rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
+from rpg_character_data.rpg_gender_data import GENDER_DATA
+from rpg_character_data.rpg_age_data import AGE_DATA
+from rpg_character_data.rpg_class_data import CLASS_DATA
+from rpg_character_data.rpg_hair_style_data import HAIR_STYLE_DATA
+from rpg_character_data.rpg_hair_colour_data import HAIR_COLOUR_DATA
+from rpg_character_data.rpg_beard_style_data import BEARD_STYLE_DATA
+from rpg_character_data.rpg_beard_colour_data import BEARD_COLOUR_DATA
+from rpg_character_data.rpg_clothes_style_data import CLOTHES_STYLE_DATA
+from rpg_character_data.rpg_augment_data import AUGMENT_DATA
+from rpg_character_data.rpg_emotion_data import EMOTION_DATA
+from rpg_character_data.rpg_scene_data import SCENE_DATA
 
 
 class RPGCharacterGen3:
