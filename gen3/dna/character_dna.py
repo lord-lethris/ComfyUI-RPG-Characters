@@ -6,10 +6,24 @@ serialization or execution boundaries.
 """
 
 from copy import deepcopy
+import hashlib
+import json
 
 from .dna_schema import DNA_SECTIONS, DNA_SECTION_DEFINITIONS
 
 CHARACTER_DNA_VERSION = 1
+SOURCE_SIGNATURE_VERSION = 1
+
+
+def make_source_signature(section_id, inputs):
+    """Return a deterministic signature for the upstream inputs of one section."""
+    payload = {
+        "version": SOURCE_SIGNATURE_VERSION,
+        "section": section_id,
+        "inputs": inputs or {},
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def make_empty_section(section_id):
