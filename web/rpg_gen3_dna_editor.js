@@ -143,6 +143,15 @@ function setLocusSelection(section, locus, index) {
     if (locus.selected && !section.traits.includes(locus.selected)) section.traits.push(locus.selected);
 }
 
+function setVariantSelection(variant, index) {
+    if (!Array.isArray(variant.options) || !variant.options.length) return;
+    const weights = {};
+    weights[String(index)] = 1;
+    variant.weights = weights;
+    variant.mode = "selected";
+    variant.selected = variant.options[index];
+}
+
 function renderSculptField(node, section, locus, host) {
     const candidates = candidateIndices(locus, 6);
     if (!candidates.length) return;
@@ -347,9 +356,13 @@ function renderSculptField(node, section, locus, host) {
         const best = weights.slice().sort((a, b) => b.weight - a.weight)[0];
         if (best) {
             locus.selected = locus.options[best.index];
-            section.values = section.values || {};
-            const key = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
-            if (key) section.values[key] = locus.selected;
+            if (locus.__gen3Variant) {
+                locus.mode = "sculpted";
+            } else {
+                section.values = section.values || {};
+                const key = locus.id?.includes(":") ? locus.id.split(":").slice(1).join(":") : locus.id;
+                if (key) section.values[key] = locus.selected;
+            }
         }
 
         applySection(node, section);
@@ -413,7 +426,11 @@ function renderEditor(node) {
         reroll.onclick = event => {
             event.stopPropagation();
             const index = pickRerollIndex(target, currentIndex(target));
-            setLocusSelection(section, target, index);
+            if (target.__gen3Variant) {
+                setVariantSelection(target, index);
+            } else {
+                setLocusSelection(section, target, index);
+            }
             applySection(node, section);
             renderEditor(node);
         };
@@ -465,6 +482,7 @@ function renderEditor(node) {
             card.appendChild(note);
 
             for (const variant of variants) {
+                variant.__gen3Variant = true;
                 const variantCard = document.createElement("div");
                 variantCard.style.cssText = "padding:7px;margin:5px 0;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:5px";
 
