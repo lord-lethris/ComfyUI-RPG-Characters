@@ -76,6 +76,18 @@ class TestGen3DNA(unittest.TestCase):
         for section_id in ("identity", "anatomy", "hair", "facial_hair", "clothing", "equipment", "expression", "scene"):
             self.assertTrue(dna["sections"][section_id]["loci"], section_id)
 
+        clothing = dna["sections"]["clothing"]["loci"][0]
+        self.assertEqual(clothing["selected"], values["clothes_style"])
+        self.assertGreaterEqual(len(clothing["variant_sets"]), 2)
+        self.assertEqual(
+            clothing["variant_sets"][0]["options"],
+            ["forest green", "moss green", "olive", "brown", "tan", "dark grey"],
+        )
+        self.assertEqual(
+            clothing["variant_sets"][1]["options"],
+            ["brown leather", "woven hemp", "wooden", "bronze"],
+        )
+
     def test_editor_pass_through_preserves_data(self):
         section = {
             "id": "hair",
