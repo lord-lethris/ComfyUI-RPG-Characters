@@ -2,7 +2,7 @@
 
 import re
 
-from ..dna.character_dna import make_character_dna
+from ..dna.character_dna import make_character_dna, make_source_signature
 from ..dna.dna_schema import DNA_SECTIONS
 
 from ...rpg_character_data.rpg_race_data import RACE_DATA
@@ -227,6 +227,30 @@ class RPGCharacterGen3:
         for section_id in DNA_SECTIONS:
             sections.setdefault(section_id, {})
             sections[section_id].setdefault("loci", [])
+
+        # Each section gets a deterministic signature for the upstream values
+        # that actually define it. DNA Editors use this to distinguish a
+        # genuine source change from an ordinary graph execution.
+        source_inputs = {
+            "identity": {"race": race, "ethnicity": ethnicity, "class": character_class},
+            "anatomy": {"gender": gender, "age": age},
+            "hair": {"hair_style": hair_style, "hair_colour": hair_colour},
+            "facial_hair": {"beard_style": beard_style, "beard_colour": beard_colour},
+            "clothing": {"clothes_style": clothes_style},
+            "equipment": {"augmentations": augmentations},
+            "expression": {"emotion": emotion},
+            "scene": {"scene": scene},
+            "face": {},
+            "skin": {},
+            "armour": {},
+            "pose": {},
+            "style": {},
+        }
+
+        for section_id in DNA_SECTIONS:
+            inputs = source_inputs.get(section_id, {})
+            sections[section_id]["source_inputs"] = dict(inputs)
+            sections[section_id]["source_signature"] = make_source_signature(section_id, inputs)
 
         seed = None if int(dna_seed) < 0 else int(dna_seed)
         return (make_character_dna(
