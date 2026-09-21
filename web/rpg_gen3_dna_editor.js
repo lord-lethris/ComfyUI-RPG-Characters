@@ -356,6 +356,10 @@ function renderSculptField(node, section, locus, host) {
 
         applySection(node, section);
         renderEditor(node);
+        requestAnimationFrame(() => {
+            const size = node.computeSize?.();
+            if (size) node.setSize?.([Math.max(node.size[0], size[0]), size[1]]);
+        });
     };
 
     host.appendChild(field);
@@ -443,6 +447,11 @@ function renderEditor(node) {
             sculptHost.className = "gen3-inline-sculpt";
             card.appendChild(sculptHost);
             renderSculptField(node, section, locus, sculptHost);
+            requestAnimationFrame(() => {
+                const size = node.computeSize?.();
+                if (size) node.setSize?.([Math.max(node.size[0], size[0]), size[1]]);
+                node.setDirtyCanvas?.(true, true);
+            });
         };
 
         actions.appendChild(reroll);
