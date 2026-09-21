@@ -144,7 +144,7 @@ class TestGen3DNA(unittest.TestCase):
         )
         self.assertEqual(
             inputs["optional"]["change_1"],
-            ("RPG_DNA_SECTION",),
+            ("*",),
         )
         self.assertNotIn("change_2", inputs.get("optional", {}))
 
@@ -225,6 +225,31 @@ class TestGen3DNA(unittest.TestCase):
         # The assembler must not mutate its source character or change inputs.
         self.assertEqual(character["sections"]["hair"]["values"]["style"], "Long")
         self.assertEqual(edited_hair["values"]["style"], "Short")
+
+    def test_assembler_accepts_multiple_dynamic_change_inputs(self):
+        character = make_character_dna(seed=7)
+        edited_hair = {
+            "id": "hair",
+            "values": {"style": "Short"},
+            "traits": ["Short"],
+            "loci": [],
+        }
+        edited_expression = {
+            "id": "expression",
+            "values": {"emotion": "Joy"},
+            "traits": ["Joy"],
+            "loci": [],
+        }
+
+        result = RPGCharacterDNAAssembler().assemble(
+            character_info=character,
+            change_1=edited_hair,
+            change_2=edited_expression,
+            change_3=None,
+        )[0]
+
+        self.assertEqual(result["sections"]["hair"], edited_hair)
+        self.assertEqual(result["sections"]["expression"], edited_expression)
 
     def test_assembler_ignores_missing_and_invalid_changes(self):
         character = make_character_dna(seed=99)
