@@ -20,7 +20,7 @@ from ...rpg_character_data.rpg_emotion_data import EMOTION_DATA
 from ...rpg_character_data.rpg_scene_data import SCENE_DATA
 
 
-VARIANT_PATTERN = re.compile(r"\\{([^{}]+)\\}")
+VARIANT_PATTERN = re.compile(r"\{([^{}]+)\}")
 
 
 def _extract_variant_sets(entry, prefix):
@@ -37,7 +37,7 @@ def _extract_variant_sets(entry, prefix):
             "options": options,
             "selected": options[0],
             "weights": {"0": 1.0},
-            "mode": "selected",
+            "mode": "random",
         })
     return variant_sets
 
