@@ -81,6 +81,9 @@ class TestGen3DNA(unittest.TestCase):
         }
 
         values["dna_seed"] = 1234
+        # Pick a clothing entry with internal prompt variants so the test
+        # exercises the structured variant-set extraction.
+        values["clothes_style"] = "AD&D - Druidic Garments"
         dna = RPGCharacterGen3().create_character(**values)[0]
 
         self.assertEqual(dna["type"], "RPG_CHARACTER_DNA")
