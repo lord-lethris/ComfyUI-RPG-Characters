@@ -239,6 +239,12 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(result, character)
 
 
+    def test_editor_persistence_transport_is_serializable(self):
+        edited = RPGCharacterDNAEditor.INPUT_TYPES()["optional"]["edited_section"]
+        self.assertEqual(edited[0], "STRING")
+        self.assertNotIn("hidden", edited[1])
+
+
     def test_editor_preserves_edits_when_source_signature_is_unchanged(self):
         import json
 
