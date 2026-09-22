@@ -72,6 +72,12 @@ function isVisibleInput(node, input) {
     return number <= getVisibleChangeCount(node);
 }
 
+function compactDisconnectedChangeInputs(node) {
+    // Keep the complete backend-declared socket pool intact. Visibility is
+    // handled by drawSlots/getInputOnPos and node sizing.
+    ensureChangeInput(node);
+}
+
 function resizeToVisibleInputs(node) {
     const visibleChangeCount = getVisibleChangeCount(node);
     const totalVisibleInputs = 1 + visibleChangeCount; // character_info + changes
