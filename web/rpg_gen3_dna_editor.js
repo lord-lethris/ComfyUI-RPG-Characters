@@ -742,84 +742,16 @@ app.registerExtension({
 
             const transport = getWidget(node, "edited_section");
             if (transport) {
-                // Keep this as a real prompt widget even though it is visually
-                // suppressed. ComfyUI has two independent serialization flags:
-                // widget.serialize controls workflow persistence, while
-                // widget.options.serialize controls API prompt inclusion.
-                // Set both explicitly so this transport cannot silently drop
-                // out of either path.
+                // This widget is the single authoritative execution value.
+                // The graphical editor writes its complete DNA section here;
+                // ComfyUI's normal widget serialization carries it to Python.
+                // Keep the widget visually suppressed, but do not replace
+                // ComfyUI's normal serialization with a custom serializer.
                 transport.serialize = true;
                 transport.options = transport.options || {};
                 transport.options.serialize = true;
                 transport.hidden = true;
                 transport.computeSize = () => [0, -4];
-
-                // The transport widget is the canonical execution value.
-                // All editor mutations call applySection(), which updates
-                // transport.value before queueing. Reading that value here
-                // avoids depending on transient node-side state during
-                // prompt construction.
-                transport.serializeValue = () => {
-                    const inputIndex = node.inputs?.findIndex(
-                        input => input.name === transport.name
-                    );
-                    const input = inputIndex >= 0
-                        ? node.inputs[inputIndex]
-                        : null;
-
-                    console.log(
-                        "[RPG Gen3 DNA UI DEBUG] edited_section link state",
-                        {
-                            inputIndex,
-                            name: input?.name,
-                            type: input?.type,
-                            link: input?.link,
-                            linkId: input?.linkId,
-                            widgetName: input?.widget?.name,
-                            isConnected: input?.isConnected,
-                            nodeInputCount: node.inputs?.length,
-                        }
-                    );
-
-                    // The visible editor state is authoritative. Log both
-                    // sources at the exact prompt-serialization boundary so
-                    // we can determine whether the browser state is being
-                    // replaced before ComfyUI builds the prompt.
-                    const section = node.__gen3SectionData;
-                    let widgetValueParsed = null;
-                    try {
-                        const parsed = JSON.parse(String(transport.value ?? ""));
-                        widgetValueParsed = (parsed?.loci || []).flatMap(l =>
-                            (l?.variant_sets || []).map(v => ({
-                                id: v.id,
-                                selected: v.selected,
-                                weights: v.weights,
-                            }))
-                        );
-                    } catch {
-                        widgetValueParsed = null;
-                    }
-
-                    console.log(
-                        "[RPG Gen3 DNA UI DEBUG] serializeValue",
-                        JSON.stringify({
-                            section: section?.id,
-                            authoritative: (section?.loci || []).flatMap(l =>
-                                (l?.variant_sets || []).map(v => ({
-                                    id: v.id,
-                                    selected: v.selected,
-                                    weights: v.weights,
-                                }))
-                            ),
-                            widgetValue: transport.value,
-                            widgetValueParsed,
-                        })
-                    );
-
-                    return section && typeof section === "object"
-                        ? JSON.stringify(section)
-                        : String(transport.value ?? "");
-                };
 
                 const restored = parseState(transport.value);
                 if (restored && restored.id) {
