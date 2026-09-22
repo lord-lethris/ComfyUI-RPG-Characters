@@ -742,15 +742,17 @@ app.registerExtension({
 
             const transport = getWidget(node, "edited_section");
             if (transport) {
-                // This widget is the single authoritative execution value.
-                // The graphical editor writes its complete DNA section here;
-                // ComfyUI's normal widget serialization carries it to Python.
-                // Keep the widget visually suppressed, but do not replace
-                // ComfyUI's normal serialization with a custom serializer.
+                // Keep this as a normal STRING widget so ComfyUI's
+                // execution serializer sees the live widget value. Do not use
+                // hidden=true here: newer frontend renderers have separate
+                // visibility handling, and hidden widgets can take a different
+                // state/serialization path. A zero-size widget gives us the
+                // same visual result without changing its execution semantics.
                 transport.serialize = true;
                 transport.options = transport.options || {};
                 transport.options.serialize = true;
-                transport.hidden = true;
+                transport.hidden = false;
+                transport.options.hidden = false;
                 transport.computeSize = () => [0, -4];
 
                 const restored = parseState(transport.value);
