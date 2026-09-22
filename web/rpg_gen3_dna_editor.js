@@ -782,15 +782,17 @@ app.registerExtension({
                 // execution payload in sync with edits made by the DOM editor.
                 transport.serializeValue = () => {
                     const live = node.__gen3SectionData ?? parseState(transport.value);
-                    console.log("[RPG Gen3 DNA SERIALIZE DEBUG]", {
-                        section: live?.id,
-                        variants: (live?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
-                            id: v.id,
-                            selected: v.selected,
-                            weights: v.weights,
-                        }))),
-                        transport: transport.value,
-                    });
+                    const input = node.inputs?.find(i => i.name === "edited_section");
+                    const inputWidget = input?.widget;
+                    const variant = live?.loci?.flatMap(l => l?.variant_sets || [])?.[0];
+                    console.warn(
+                        "[RPG Gen3 DNA SERIALIZE DEBUG]",
+                        "selected=", variant?.selected,
+                        "weights=", JSON.stringify(variant?.weights),
+                        "widget=", transport.value?.includes('\\"large\\"') ? "contains-large" : "no-large",
+                        "inputWidgetSame=", inputWidget === transport,
+                        "inputWidgetValue=", inputWidget?.value?.includes?.('\\"large\\"') ? "contains-large" : inputWidget?.value,
+                    );
                     return JSON.stringify(live);
                 };
 
