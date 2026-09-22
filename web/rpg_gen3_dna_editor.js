@@ -760,6 +760,27 @@ app.registerExtension({
                 // avoids depending on transient node-side state during
                 // prompt construction.
                 transport.serializeValue = () => {
+                    const inputIndex = node.inputs?.findIndex(
+                        input => input.name === transport.name
+                    );
+                    const input = inputIndex >= 0
+                        ? node.inputs[inputIndex]
+                        : null;
+
+                    console.log(
+                        "[RPG Gen3 DNA UI DEBUG] edited_section link state",
+                        {
+                            inputIndex,
+                            name: input?.name,
+                            type: input?.type,
+                            link: input?.link,
+                            linkId: input?.linkId,
+                            widgetName: input?.widget?.name,
+                            isConnected: input?.isConnected,
+                            nodeInputCount: node.inputs?.length,
+                        }
+                    );
+
                     // The visible editor state is authoritative. Log both
                     // sources at the exact prompt-serialization boundary so
                     // we can determine whether the browser state is being
