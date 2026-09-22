@@ -750,7 +750,15 @@ app.registerExtension({
                 // transport.value before queueing. Reading that value here
                 // avoids depending on transient node-side state during
                 // prompt construction.
-                transport.serializeValue = () => String(transport.value ?? "");
+                transport.serializeValue = () => {
+                    // The visible editor state is authoritative. Reading
+                    // __gen3SectionData here avoids a stale widget-store value
+                    // being sent to Python when the graph is queued.
+                    const section = node.__gen3SectionData;
+                    return section && typeof section === "object"
+                        ? JSON.stringify(section)
+                        : String(transport.value ?? "");
+                };
 
                 const restored = parseState(transport.value);
                 if (restored && restored.id) {
