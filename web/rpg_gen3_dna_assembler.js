@@ -88,6 +88,7 @@ app.registerExtension({
             originalCreated?.apply(this, arguments);
 
             ensureChangeInput(this);
+            compactDisconnectedChangeInputs(this);
 
             // Dynamic inputs are created by the frontend and therefore need
             // their own graph-change notification when added to an existing
@@ -109,11 +110,7 @@ app.registerExtension({
             if (type === INPUT_TYPE) {
                 const input = this.inputs?.[index];
                 if (input && isChangeInput(input)) {
-                    if (connected) {
-                        ensureChangeInput(this);
-                    } else {
-                        compactDisconnectedChangeInputs(this);
-                    }
+                    compactDisconnectedChangeInputs(this);
                     this.graph?.change?.();
                     app.graph?.change?.();
                     this.setDirtyCanvas?.(true, true);
