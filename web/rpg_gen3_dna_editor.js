@@ -110,8 +110,19 @@ function currentIndex(locus) {
 function applySection(node, section) {
     const transport = getWidget(node, "edited_section");
     if (transport) {
-        transport.value = JSON.stringify(section);
-        transport.callback?.(transport.value);
+        const serialized = JSON.stringify(section);
+        transport.value = serialized;
+        transport.callback?.(serialized);
+        // Keep ComfyUI's resolved widget input in sync as well.  The frontend
+        // prompt builder performs a later resolveInput() pass after
+        // serializeValue(); if widgetInfo still contains the old cached value,
+        // that pass can overwrite the freshly serialized DNA.
+        if (transport.options) {
+            transport.options.value = serialized;
+        }
+        if (transport.inputEl) {
+            transport.inputEl.value = serialized;
+        }
     }
 
     console.log("[RPG Gen3 DNA APPLY DEBUG]", {
