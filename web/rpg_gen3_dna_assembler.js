@@ -52,6 +52,19 @@ function ensureChangeInput(node) {
     }
 }
 
+function getVisibleChangeCount(node) {
+    const inputs = changeInputs(node);
+    if (!inputs.length) return 1;
+
+    let lastConnected = -1;
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].link != null) lastConnected = i;
+    }
+
+    // Show all connected changes plus exactly one empty landing slot.
+    return Math.min(inputs.length, Math.max(1, lastConnected + 2));
+}
+
 function compactDisconnectedChangeInputs(node) {
     const inputs = changeInputs(node);
     if (!inputs.length) {
@@ -60,21 +73,43 @@ function compactDisconnectedChangeInputs(node) {
     }
 
     // The backend declares a finite pool of change inputs so legacy ComfyUI
-    // execution accepts every dynamically-created socket. Only show the
-    // connected changes plus one empty landing slot; keep the remaining
-    // declared sockets hidden so saved link indices stay stable.
-    let lastConnected = -1;
-    for (let i = 0; i < inputs.length; i++) {
-        if (inputs[i].link != null) lastConnected = i;
+    // execution accepts every dynamically-created socket. LiteGraph input
+    // slots do not support a real hidden flag, so the frontend keeps the
+    // complete input array for execution/link indices and filters only the
+    // unused tail during rendering/layout.
+    ensureChangeInput(node);
+}
+
+function withVisibleChangeInputs(node, callback) {
+    const visibleCount = getVisibleChangeCount(node);
+    const allInputs = [...(node.inputs || [])];
+    const allConcreteInputs = [...(node._concreteInputs || [])];
+
+    if (!node.inputs || !node._concreteInputs) {
+        return callback();
     }
 
-    const visibleCount = Math.min(inputs.length, Math.max(1, lastConnected + 2));
+    const isVisible = (input) => {
+        if (!isChangeInput(input)) return true;
+        const number = Number(input.name.slice(CHANGE_PREFIX.length));
+        return number <= visibleCount;
+    };
 
-    inputs.forEach((input, index) => {
-        input.hidden = index >= visibleCount;
+    const visibleInputs = allInputs.filter(isVisible);
+    const visibleConcreteInputs = allConcreteInputs.filter((input, index) => {
+        const publicInput = allInputs[index];
+        return isVisible(publicInput);
     });
 
-    ensureChangeInput(node);
+    node.inputs.splice(0, node.inputs.length, ...visibleInputs);
+    node._concreteInputs.splice(0, node._concreteInputs.length, ...visibleConcreteInputs);
+
+    try {
+        return callback();
+    } finally {
+        node.inputs.splice(0, node.inputs.length, ...allInputs);
+        node._concreteInputs.splice(0, node._concreteInputs.length, ...allConcreteInputs);
+    }
 }
 
 app.registerExtension({
@@ -94,6 +129,31 @@ app.registerExtension({
             // their own graph-change notification when added to an existing
             // node so the workflow can be saved with the current socket set.
             this.setDirtyCanvas?.(true, true);
+        };
+
+        const originalArrange = nodeType.prototype.arrange;
+        nodeType.prototype.arrange = function () {
+            return withVisibleChangeInputs(this, () => originalArrange?.apply(this, arguments));
+        };
+
+        const originalDrawSlots = nodeType.prototype.drawSlots;
+        nodeType.prototype.drawSlots = function () {
+            return withVisibleChangeInputs(this, () => originalDrawSlots?.apply(this, arguments));
+        };
+
+        const originalGetInputOnPos = nodeType.prototype.getInputOnPos;
+        nodeType.prototype.getInputOnPos = function (pos) {
+            const visibleCount = getVisibleChangeCount(this);
+            const result = originalGetInputOnPos?.call(this, pos);
+            if (!result) return result;
+
+            const input = result;
+            if (isChangeInput(input)) {
+                const number = Number(input.name.slice(CHANGE_PREFIX.length));
+                if (number > visibleCount) return undefined;
+            }
+
+            return input;
         };
 
         const originalConnectionsChange = nodeType.prototype.onConnectionsChange;
