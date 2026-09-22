@@ -764,15 +764,18 @@ app.registerExtension({
                     // __gen3SectionData here avoids a stale widget-store value
                     // being sent to Python when the graph is queued.
                     const section = node.__gen3SectionData;
-                    console.log("[RPG Gen3 DNA UI DEBUG] serializeValue", {
-                        section: section?.id,
-                        variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
-                            id: v.id,
-                            selected: v.selected,
-                            weights: v.weights,
-                        }))),
-                        transportValueLength: String(transport.value ?? "").length,
-                    });
+                    console.log(
+                        "[RPG Gen3 DNA UI DEBUG] serializeValue",
+                        JSON.stringify({
+                            section: section?.id,
+                            variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
+                                id: v.id,
+                                selected: v.selected,
+                                weights: v.weights,
+                            }))),
+                            transportValueLength: String(transport.value ?? "").length,
+                        })
+                    );
                     return section && typeof section === "object"
                         ? JSON.stringify(section)
                         : String(transport.value ?? "");
