@@ -114,6 +114,16 @@ function applySection(node, section) {
         transport.callback?.(transport.value);
     }
 
+    console.log("[RPG Gen3 DNA APPLY DEBUG]", {
+        section: section?.id,
+        variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
+            id: v.id,
+            selected: v.selected,
+            weights: v.weights,
+        }))),
+        transport: transport?.value,
+    });
+
     node.__gen3SectionData = section;
 
     console.log("[RPG Gen3 DNA UI DEBUG] applySection", {
