@@ -69,6 +69,11 @@ class RPGCharacterDNAAssembler:
             if not isinstance(change, dict):
                 continue
 
+            print(
+                "[RPG Gen3 DNA ASSEMBLER INPUT]"
+                f" {input_name}={change!r}"
+            )
+
             section_id = change.get("id")
             if section_id not in DNA_SECTIONS:
                 continue
