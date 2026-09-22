@@ -53,6 +53,14 @@ class RPGCharacterDNAAssembler:
             sections = {}
             result["sections"] = sections
 
+        # Temporary execution diagnostics: prove which fixed change inputs
+        # actually reached the Python node before changing the frontend again.
+        print(
+            "[RPG Gen3 DNA ASSEMBLER DEBUG]"
+            f" change_keys={sorted(changes.keys())}"
+            f" change_ids={[(name, value.get("id") if isinstance(value, dict) else None) for name, value in sorted(changes.items())]}"
+        )
+
         for input_name in sorted(changes):
             if not input_name.startswith("change_"):
                 continue
@@ -65,6 +73,10 @@ class RPGCharacterDNAAssembler:
             if section_id not in DNA_SECTIONS:
                 continue
 
+            print(
+                "[RPG Gen3 DNA ASSEMBLER DEBUG]"
+                f" applying={input_name} section={section_id}"
+            )
             sections[section_id] = deepcopy(change)
 
         return (result,)
