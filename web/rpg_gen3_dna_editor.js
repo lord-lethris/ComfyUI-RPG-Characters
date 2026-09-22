@@ -760,22 +760,41 @@ app.registerExtension({
                 // avoids depending on transient node-side state during
                 // prompt construction.
                 transport.serializeValue = () => {
-                    // The visible editor state is authoritative. Reading
-                    // __gen3SectionData here avoids a stale widget-store value
-                    // being sent to Python when the graph is queued.
+                    // The visible editor state is authoritative. Log both
+                    // sources at the exact prompt-serialization boundary so
+                    // we can determine whether the browser state is being
+                    // replaced before ComfyUI builds the prompt.
                     const section = node.__gen3SectionData;
+                    let widgetValueParsed = null;
+                    try {
+                        const parsed = JSON.parse(String(transport.value ?? ""));
+                        widgetValueParsed = (parsed?.loci || []).flatMap(l =>
+                            (l?.variant_sets || []).map(v => ({
+                                id: v.id,
+                                selected: v.selected,
+                                weights: v.weights,
+                            }))
+                        );
+                    } catch {
+                        widgetValueParsed = null;
+                    }
+
                     console.log(
                         "[RPG Gen3 DNA UI DEBUG] serializeValue",
                         JSON.stringify({
                             section: section?.id,
-                            variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
-                                id: v.id,
-                                selected: v.selected,
-                                weights: v.weights,
-                            }))),
-                            transportValueLength: String(transport.value ?? "").length,
+                            authoritative: (section?.loci || []).flatMap(l =>
+                                (l?.variant_sets || []).map(v => ({
+                                    id: v.id,
+                                    selected: v.selected,
+                                    weights: v.weights,
+                                }))
+                            ),
+                            widgetValue: transport.value,
+                            widgetValueParsed,
                         })
                     );
+
                     return section && typeof section === "object"
                         ? JSON.stringify(section)
                         : String(transport.value ?? "");
