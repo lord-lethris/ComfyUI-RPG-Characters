@@ -755,6 +755,14 @@ app.registerExtension({
                 transport.options.hidden = false;
                 transport.computeSize = () => [0, -4];
 
+                // The editor UI keeps the authoritative live section on the node.
+                // Return that state explicitly during prompt serialization rather
+                // than relying on the STRING widget's cached value. This keeps the
+                // execution payload in sync with edits made by the DOM editor.
+                transport.serializeValue = () => JSON.stringify(
+                    node.__gen3SectionData ?? parseState(transport.value)
+                );
+
                 const restored = parseState(transport.value);
                 if (restored && restored.id) {
                     node.__gen3SectionData = restored;
