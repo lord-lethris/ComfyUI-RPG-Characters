@@ -54,36 +54,25 @@ function ensureChangeInput(node) {
 
 function compactDisconnectedChangeInputs(node) {
     const inputs = changeInputs(node);
-    if (inputs.length <= 1) {
+    if (!inputs.length) {
         ensureChangeInput(node);
         return;
     }
 
-    // Remove empty slots that sit before a later connected slot. This keeps
-    // the visible Change numbers contiguous while preserving the later links.
-    for (let i = inputs.length - 2; i >= 0; i--) {
-        if (inputs[i].link == null) {
-            const actualIndex = node.inputs.indexOf(inputs[i]);
-            if (actualIndex >= 0) node.removeInput(actualIndex);
-        }
-    }
-
-    // The backend declares a finite pool of dynamic slots so ComfyUI's V1
-    // execution layer knows about every socket. Keep only the connected
-    // changes plus one empty landing slot visible in the frontend.
-    inputs = changeInputs(node);
+    // The backend declares a finite pool of change inputs so legacy ComfyUI
+    // execution accepts every dynamically-created socket. Only show the
+    // connected changes plus one empty landing slot; keep the remaining
+    // declared sockets hidden so saved link indices stay stable.
     let lastConnected = -1;
     for (let i = 0; i < inputs.length; i++) {
         if (inputs[i].link != null) lastConnected = i;
     }
-    const keepCount = Math.max(1, lastConnected + 2);
-    for (let i = inputs.length - 1; i >= keepCount; i--) {
-        const input = inputs[i];
-        if (input?.link == null) {
-            const actualIndex = node.inputs.indexOf(input);
-            if (actualIndex >= 0) node.removeInput(actualIndex);
-        }
-    }
+
+    const visibleCount = Math.min(inputs.length, Math.max(1, lastConnected + 2));
+
+    inputs.forEach((input, index) => {
+        input.hidden = index >= visibleCount;
+    });
 
     ensureChangeInput(node);
 }
