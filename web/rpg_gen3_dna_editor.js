@@ -769,9 +769,19 @@ app.registerExtension({
                 // Return that state explicitly during prompt serialization rather
                 // than relying on the STRING widget's cached value. This keeps the
                 // execution payload in sync with edits made by the DOM editor.
-                transport.serializeValue = () => JSON.stringify(
-                    node.__gen3SectionData ?? parseState(transport.value)
-                );
+                transport.serializeValue = () => {
+                    const live = node.__gen3SectionData ?? parseState(transport.value);
+                    console.log("[RPG Gen3 DNA SERIALIZE DEBUG]", {
+                        section: live?.id,
+                        variants: (live?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
+                            id: v.id,
+                            selected: v.selected,
+                            weights: v.weights,
+                        }))),
+                        transport: transport.value,
+                    });
+                    return JSON.stringify(live);
+                };
 
                 const restored = parseState(transport.value);
                 if (restored && restored.id) {
