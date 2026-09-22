@@ -65,53 +65,27 @@ function getVisibleChangeCount(node) {
     return Math.min(inputs.length, Math.max(1, lastConnected + 2));
 }
 
-function compactDisconnectedChangeInputs(node) {
-    const inputs = changeInputs(node);
-    if (!inputs.length) {
-        ensureChangeInput(node);
-        return;
-    }
+function isVisibleInput(node, input) {
+    if (!isChangeInput(input)) return true;
 
-    // The backend declares a finite pool of change inputs so legacy ComfyUI
-    // execution accepts every dynamically-created socket. LiteGraph input
-    // slots do not support a real hidden flag, so the frontend keeps the
-    // complete input array for execution/link indices and filters only the
-    // unused tail during rendering/layout.
-    ensureChangeInput(node);
+    const number = Number(input.name.slice(CHANGE_PREFIX.length));
+    return number <= getVisibleChangeCount(node);
 }
 
-function withVisibleChangeInputs(node, callback) {
-    const visibleCount = getVisibleChangeCount(node);
-    const allInputs = [...(node.inputs || [])];
-    const allConcreteInputs = [...(node._concreteInputs || [])];
+function resizeToVisibleInputs(node) {
+    const visibleChangeCount = getVisibleChangeCount(node);
+    const totalVisibleInputs = 1 + visibleChangeCount; // character_info + changes
+    const rows = Math.max(totalVisibleInputs, node.outputs?.length || 1);
 
-    if (!node.inputs || !node._concreteInputs) {
-        return callback();
-    }
+    // This node has no widgets. Match LiteGraph's normal slot-based sizing
+    // while sizing from the visible socket count rather than the backend pool.
+    const slotStartY = node.constructor?.slot_start_y || 0;
+    const desiredHeight = slotStartY + rows * 20 + 6;
 
-    const isVisible = (input) => {
-        if (!isChangeInput(input)) return true;
-        const number = Number(input.name.slice(CHANGE_PREFIX.length));
-        return number <= visibleCount;
-    };
-
-    const visibleInputs = allInputs.filter(isVisible);
-    const visibleConcreteInputs = allConcreteInputs.filter((input, index) => {
-        const publicInput = allInputs[index];
-        return isVisible(publicInput);
-    });
-
-    node.inputs.splice(0, node.inputs.length, ...visibleInputs);
-    node._concreteInputs.splice(0, node._concreteInputs.length, ...visibleConcreteInputs);
-
-    try {
-        return callback();
-    } finally {
-        node.inputs.splice(0, node.inputs.length, ...allInputs);
-        node._concreteInputs.splice(0, node._concreteInputs.length, ...allConcreteInputs);
+    if (node.size?.[1] !== desiredHeight) {
+        node.setSize?.([node.size?.[0] || 200, desiredHeight]);
     }
 }
-
 app.registerExtension({
     name: EXTENSION_NAME,
 
@@ -133,27 +107,67 @@ app.registerExtension({
 
         const originalArrange = nodeType.prototype.arrange;
         nodeType.prototype.arrange = function () {
-            return withVisibleChangeInputs(this, () => originalArrange?.apply(this, arguments));
+            const result = originalArrange?.apply(this, arguments);
+            resizeToVisibleInputs(this);
+            return result;
         };
 
         const originalDrawSlots = nodeType.prototype.drawSlots;
-        nodeType.prototype.drawSlots = function () {
-            return withVisibleChangeInputs(this, () => originalDrawSlots?.apply(this, arguments));
+        nodeType.prototype.drawSlots = function (ctx, options) {
+            const { fromSlot, colorContext, editorAlpha, lowQuality } = options;
+
+            // Keep the complete input array intact so LiteGraph link indices
+            // remain stable. Only skip unused change sockets while rendering.
+            for (const [index, slot] of (this._concreteInputs || []).entries()) {
+                const input = this.inputs?.[index];
+                if (!isVisibleInput(this, input)) continue;
+
+                const isValidTarget = fromSlot && slot.isValidTarget(fromSlot);
+                const isMouseOverSlot = this._isMouseOverSlot(slot);
+
+                const isValid = !fromSlot || isValidTarget;
+                const highlight = isValid && isMouseOverSlot;
+
+                if (
+                    isMouseOverSlot ||
+                    isValidTarget ||
+                    !slot.isWidgetInputSlot ||
+                    this._isMouseOverWidget(this.getWidgetFromSlot(slot)) ||
+                    slot.isConnected ||
+                    slot.alwaysVisible
+                ) {
+                    ctx.globalAlpha = isValid ? editorAlpha : 0.4 * editorAlpha;
+                    slot.draw(ctx, {
+                        colorContext,
+                        lowQuality,
+                        highlight
+                    });
+                }
+            }
+
+            for (const slot of this._concreteOutputs || []) {
+                const isValidTarget = fromSlot && slot.isValidTarget(fromSlot);
+                const isMouseOverSlot = this._isMouseOverSlot(slot);
+
+                const isValid = !fromSlot || isValidTarget;
+                const highlight = isValid && isMouseOverSlot;
+
+                ctx.globalAlpha = isValid ? editorAlpha : 0.4 * editorAlpha;
+                slot.draw(ctx, {
+                    colorContext,
+                    lowQuality,
+                    highlight
+                });
+            }
+
+            ctx.globalAlpha = editorAlpha;
         };
 
         const originalGetInputOnPos = nodeType.prototype.getInputOnPos;
         nodeType.prototype.getInputOnPos = function (pos) {
-            const visibleCount = getVisibleChangeCount(this);
             const result = originalGetInputOnPos?.call(this, pos);
-            if (!result) return result;
-
-            const input = result;
-            if (isChangeInput(input)) {
-                const number = Number(input.name.slice(CHANGE_PREFIX.length));
-                if (number > visibleCount) return undefined;
-            }
-
-            return input;
+            if (!result || isVisibleInput(this, result)) return result;
+            return undefined;
         };
 
         const originalConnectionsChange = nodeType.prototype.onConnectionsChange;
