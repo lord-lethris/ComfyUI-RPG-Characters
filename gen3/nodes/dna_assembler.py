@@ -79,6 +79,14 @@ class RPGCharacterDNAAssembler:
             )
             sections[section_id] = deepcopy(change)
 
+        hair = sections.get("hair")
+        print(
+            "[RPG Gen3 DNA ASSEMBLER DEBUG]"
+            f" output_hair_values={hair.get("values") if isinstance(hair, dict) else None}"
+            f" output_hair_variants={hair.get("variant_sets") if isinstance(hair, dict) else None}"
+            f" output_hair_loci={hair.get("loci") if isinstance(hair, dict) else None}"
+        )
+
         return (result,)
 
 
