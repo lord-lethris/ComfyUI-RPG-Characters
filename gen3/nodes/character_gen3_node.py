@@ -134,26 +134,37 @@ class RPGCharacterGen3:
         loci = {}
         for locus_id, (label, selected, entry) in selected_entries.items():
             field = locus_id.split(":", 1)[0]
+            option_data = {
+                "identity:race": RACE_DATA,
+                "identity:ethnicity": ETHNICITY_DATA,
+                "identity:class": CLASS_DATA,
+                "anatomy:gender": GENDER_DATA,
+                "anatomy:age": AGE_DATA,
+                "hair:style": HAIR_STYLE_DATA,
+                "hair:colour": HAIR_COLOUR_DATA,
+                "facial_hair:style": BEARD_STYLE_DATA,
+                "facial_hair:colour": BEARD_COLOUR_DATA,
+                "clothing:style": CLOTHES_STYLE_DATA,
+                "equipment:augmentations": AUGMENT_DATA,
+                "expression:emotion": EMOTION_DATA,
+                "scene:scene": SCENE_DATA,
+            }[locus_id]
             locus = {
                 "id": locus_id,
                 "label": label,
-                "options": list({
-                    "identity:race": RACE_DATA,
-                    "identity:ethnicity": ETHNICITY_DATA,
-                    "identity:class": CLASS_DATA,
-                    "anatomy:gender": GENDER_DATA,
-                    "anatomy:age": AGE_DATA,
-                    "hair:style": HAIR_STYLE_DATA,
-                    "hair:colour": HAIR_COLOUR_DATA,
-                    "facial_hair:style": BEARD_STYLE_DATA,
-                    "facial_hair:colour": BEARD_COLOUR_DATA,
-                    "clothing:style": CLOTHES_STYLE_DATA,
-                    "equipment:augmentations": AUGMENT_DATA,
-                    "expression:emotion": EMOTION_DATA,
-                    "scene:scene": SCENE_DATA,
-                }[locus_id].keys()),
+                "options": list(option_data.keys()),
                 "selected": selected,
                 "variant_sets": _extract_variant_sets(entry, locus_id),
+                "option_prompts": {
+                    key: str(value.get("prompt", ""))
+                    for key, value in option_data.items()
+                    if isinstance(value, dict)
+                },
+                "option_negative_prompts": {
+                    key: str(value.get("negative_prompt", ""))
+                    for key, value in option_data.items()
+                    if isinstance(value, dict) and value.get("negative_prompt")
+                },
             }
             if locus_id == "expression:emotion":
                 locus["controls"] = {
