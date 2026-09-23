@@ -842,6 +842,16 @@ app.registerExtension({
                 getMinHeight() { return node.__gen3EditorHeight || 50; },
                 getMaxHeight() { return node.__gen3EditorHeight || 50; },
             });
+
+            // ComfyUI frontend versions have used both the legacy
+            // widget.computeSize() path and the newer computeLayoutSize()
+            // path when calculating a node's minimum size. Keep both paths
+            // tied to the same live editor height so a temporary Sculpt
+            // expansion cannot become a permanent node minimum.
+            editorWidget.computeSize = () => [
+                Math.max(300, node.size?.[0] || 300),
+                node.__gen3EditorHeight || 50,
+            ];
             editorWidget.computeLayoutSize = () => ({
                 minHeight: node.__gen3EditorHeight || 50,
                 maxHeight: node.__gen3EditorHeight || 50,
