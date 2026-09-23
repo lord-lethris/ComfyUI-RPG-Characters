@@ -308,6 +308,51 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(result["loci"][0]["selected"], "Short")
         self.assertEqual(result["source_signature"], signature)
 
+    def test_editor_preserves_variant_set_state(self):
+        import json
+
+        signature = make_source_signature("clothing", {"clothes_style": "Druidic"})
+        source = {
+            "id": "clothing",
+            "values": {"style": "Druidic"},
+            "traits": ["Druidic"],
+            "loci": [{
+                "id": "clothing:style",
+                "label": "Clothing Style",
+                "options": ["Druidic"],
+                "selected": "Druidic",
+                "variant_sets": [{
+                    "id": "clothing:style:variant:0",
+                    "label": "Variant 1",
+                    "options": ["forest green", "moss green", "olive"],
+                    "selected": "forest green",
+                    "weights": {"0": 1.0},
+                    "mode": "random",
+                }],
+            }],
+            "source_signature": signature,
+            "source_inputs": {"clothes_style": "Druidic"},
+        }
+        edited = json.loads(json.dumps(source))
+        variant = edited["loci"][0]["variant_sets"][0]
+        variant["selected"] = "moss green"
+        variant["weights"] = {"0": 0.0008, "1": 0.9983, "2": 0.0009}
+        variant["mode"] = "sculpted"
+
+        result = RPGCharacterDNAEditor().edit(
+            source, "Edit", 1, json.dumps(edited)
+        )["result"][0]
+
+        persisted = result["loci"][0]["variant_sets"][0]
+        self.assertEqual(persisted["selected"], "moss green")
+        self.assertEqual(persisted["weights"]["1"], 0.9983)
+        self.assertEqual(persisted["mode"], "sculpted")
+        self.assertEqual(
+            persisted["options"],
+            ["forest green", "moss green", "olive"],
+        )
+
+
     def test_editor_preserves_expression_control_values(self):
         import json
 
