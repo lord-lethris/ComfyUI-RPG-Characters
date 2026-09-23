@@ -721,6 +721,16 @@ function refreshEditorHeight(node) {
     node.setDirtyCanvas?.(true, true);
 }
 
+// ComfyUI restores widgets before the DOM widget has necessarily completed layout.
+// Re-measure on the next couple of animation frames so scrollHeight reflects the
+// restored editor content rather than the tiny size the node had during configure.
+function scheduleEditorResize(node) {
+    requestAnimationFrame(() => {
+        refreshEditorHeight(node);
+        requestAnimationFrame(() => refreshEditorHeight(node));
+    });
+}
+
 app.registerExtension({
     name: EXTENSION_NAME,
 
@@ -788,6 +798,7 @@ app.registerExtension({
 
             node.__gen3EditorContainer = container;
             renderEditor(node);
+            scheduleEditorResize(node);
         };
 
         const originalConfigure = nodeType.prototype.onConfigure;
@@ -802,6 +813,10 @@ app.registerExtension({
             if (restored?.id) {
                 this.__gen3SectionData = restored;
                 renderEditor(this);
+
+                // The first measurement can happen before the restored DOM widget
+                // has been laid out. Re-measure after ComfyUI has painted it.
+                scheduleEditorResize(this);
             }
         };
 
