@@ -514,7 +514,6 @@ function renderSculptField(node, section, locus, host) {
     cancel.onclick = event => {
         event.stopPropagation();
         host.innerHTML = "";
-        restoreCompactEditorHeight(node);
     };
 
     accept.onclick = event => {
@@ -540,9 +539,10 @@ function renderSculptField(node, section, locus, host) {
 
         applySection(node, section);
         renderEditor(node);
-        // The sculptor is now closed by the re-render. Return to the compact
-        // editor size rather than carrying the temporary sculpt height forward.
-        restoreCompactEditorHeight(node);
+        requestAnimationFrame(() => {
+            const size = node.computeSize?.();
+            if (size) node.setSize?.([Math.max(node.size[0], size[0]), size[1]]);
+        });
     };
 
     host.appendChild(field);
@@ -617,21 +617,14 @@ function renderEditor(node) {
                 const existing = card.querySelector(".gen3-inline-sculpt");
                 if (existing) {
                     existing.remove();
-                    restoreCompactEditorHeight(node);
+                    refreshEditorHeight(node);
                     return;
                 }
-
-                // Capture the compact editor height before adding the sculptor.
-                refreshEditorHeight(node, { compact: true });
                 const sculptHost = document.createElement("div");
                 sculptHost.className = "gen3-inline-sculpt";
                 card.appendChild(sculptHost);
                 renderSculptField(node, section, target, sculptHost);
-                requestAnimationFrame(() => {
-                    node.__gen3EditorExpanded = true;
-                    node.__gen3ExpandedEditorHeight = node.__gen3EditorContainer?.scrollHeight + 4;
-                    refreshEditorHeight(node, { expanded: true });
-                });
+                refreshEditorHeight(node);
             };
             actions.appendChild(sculpt);
         }
@@ -705,83 +698,27 @@ function renderEditor(node) {
     refreshEditorHeight(node);
 }
 
-function refreshEditorHeight(node, options = {}) {
+function refreshEditorHeight(node) {
     const container = node.__gen3EditorContainer;
     if (!container) return;
 
-    const forceCompact = options.compact === true;
-    const forceExpanded = options.expanded === true;
-
-    // Measure natural content without the previous minimum influencing
-    // scrollHeight. This is the compact editor's true height.
+    // Measure the natural DOM height.  Do not leave the previous minHeight
+    // in place while measuring: scrollHeight includes it and would make the
+    // node grow a few pixels every time the graph is executed.
     const previousMinHeight = container.style.minHeight;
     container.style.minHeight = "0px";
-    const naturalHeight = Math.max(50, container.scrollHeight + 4);
+    const height = Math.max(50, container.scrollHeight + 4);
     container.style.minHeight = previousMinHeight || "";
 
-    node.__gen3CompactEditorHeight = naturalHeight;
-
-    if (forceCompact) {
-        node.__gen3EditorExpanded = false;
-    } else if (forceExpanded) {
-        node.__gen3EditorExpanded = true;
-    }
-
-    const height = node.__gen3EditorExpanded
-        ? Math.max(naturalHeight, node.__gen3ExpandedEditorHeight || naturalHeight)
-        : naturalHeight;
-
     node.__gen3EditorHeight = height;
-    container.style.minHeight = height + "px";
 
+    // The DOM widget owns this part of the node's height.  Don't use the
+    // existing node.size[1] as a lower bound or it becomes a ratchet.
+    container.style.minHeight = height + "px";
     const width = Math.max(node.size[0], 320);
     const headerHeight = node.__gen3EditorHeaderHeight || 120;
     node.setSize?.([width, headerHeight + height]);
     node.setDirtyCanvas?.(true, true);
-}
-
-function restoreCompactEditorHeight(node) {
-    node.__gen3EditorExpanded = false;
-    const compact = node.__gen3CompactEditorHeight || node.__gen3EditorHeight || 50;
-    node.__gen3EditorHeight = compact;
-
-    const container = node.__gen3EditorContainer;
-    if (container) {
-        container.style.minHeight = compact + "px";
-    }
-
-    const width = Math.max(node.size[0], 320);
-    const headerHeight = node.__gen3EditorHeaderHeight || 120;
-    node.setSize?.([width, headerHeight + compact]);
-    node.setDirtyCanvas?.(true, true);
-
-    // ComfyUI may apply widget layout constraints on the next layout pass.
-    requestAnimationFrame(() => {
-        node.__gen3EditorHeight = node.__gen3CompactEditorHeight || compact;
-        if (node.__gen3EditorContainer) {
-            node.__gen3EditorContainer.style.minHeight =
-                node.__gen3EditorHeight + "px";
-        }
-        node.setSize?.([width, headerHeight + node.__gen3EditorHeight]);
-        node.setDirtyCanvas?.(true, true);
-    });
-}
-
-function scheduleEditorResize(node) {
-    requestAnimationFrame(() => {
-        refreshEditorHeight(node);
-        requestAnimationFrame(() => refreshEditorHeight(node));
-    });
-}
-
-// ComfyUI restores widgets before the DOM widget has necessarily completed layout.
-// Re-measure on the next couple of animation frames so scrollHeight reflects the
-// restored editor content rather than the tiny size the node had during configure.
-function scheduleEditorResize(node) {
-    requestAnimationFrame(() => {
-        refreshEditorHeight(node);
-        requestAnimationFrame(() => refreshEditorHeight(node));
-    });
 }
 
 app.registerExtension({
@@ -851,38 +788,20 @@ app.registerExtension({
 
             node.__gen3EditorContainer = container;
             renderEditor(node);
-            scheduleEditorResize(node);
         };
 
         const originalConfigure = nodeType.prototype.onConfigure;
         nodeType.prototype.onConfigure = function (info) {
+            // ComfyUI restores serialized widget values during configure, so
+            // this is the first reliable point at which the saved
+            // edited_section value can be used to rebuild the DOM editor.
             originalConfigure?.apply(this, arguments);
 
-            const hydrateRestoredSection = () => {
-                const transport = getWidget(this, "edited_section");
-                const restored = parseState(transport?.value);
-
-                if (!restored?.id) return false;
-
-                // ComfyUI can restore widget values slightly after onConfigure.
-                // Treat the serialized STRING widget as the source of truth and
-                // hydrate the DOM editor as soon as the restored value exists.
+            const transport = getWidget(this, "edited_section");
+            const restored = parseState(transport?.value);
+            if (restored?.id) {
                 this.__gen3SectionData = restored;
                 renderEditor(this);
-                scheduleEditorResize(this);
-                return true;
-            };
-
-            if (!hydrateRestoredSection()) {
-                // Give ComfyUI a few paint/layout opportunities to finish
-                // restoring widget state before giving up.
-                requestAnimationFrame(() => {
-                    if (hydrateRestoredSection()) return;
-                    requestAnimationFrame(() => {
-                        if (hydrateRestoredSection()) return;
-                        setTimeout(hydrateRestoredSection, 0);
-                    });
-                });
             }
         };
 
