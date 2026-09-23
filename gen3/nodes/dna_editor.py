@@ -101,9 +101,15 @@ class RPGCharacterDNAEditor:
             source_locus = source_loci.get(locus_id)
             merged = deepcopy(source_locus or {})
             merged.update(deepcopy(persisted_locus))
-            for key in ("label", "options", "controls"):
+            for key in ("label", "options"):
                 if source_locus and key in source_locus:
                     merged[key] = deepcopy(source_locus[key])
+
+            if source_locus and "controls" in source_locus:
+                merged["controls"] = RPGCharacterDNAEditor._merge_control_metadata(
+                    source_locus["controls"],
+                    persisted_locus.get("controls", {}),
+                )
             merged_loci.append(merged)
             source_loci.pop(locus_id, None)
 
@@ -111,6 +117,28 @@ class RPGCharacterDNAEditor:
             merged_loci.append(deepcopy(source_locus))
 
         result["loci"] = merged_loci
+        return result
+
+    @staticmethod
+    def _merge_control_metadata(source_controls, persisted_controls):
+        """Refresh control definitions while preserving editor-owned values."""
+        result = deepcopy(source_controls or {})
+        persisted_controls = persisted_controls or {}
+
+        for control_id, persisted_control in persisted_controls.items():
+            if not isinstance(persisted_control, dict):
+                continue
+            source_control = result.get(control_id)
+            if not isinstance(source_control, dict):
+                result[control_id] = deepcopy(persisted_control)
+                continue
+
+            # Control geometry/definition belongs to the source, but live
+            # values belong to the editor and must survive execution.
+            for key in ("x_value", "y_value", "value", "values"):
+                if key in persisted_control:
+                    source_control[key] = deepcopy(persisted_control[key])
+
         return result
 
     @staticmethod
