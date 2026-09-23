@@ -514,23 +514,7 @@ function renderSculptField(node, section, locus, host) {
     cancel.onclick = event => {
         event.stopPropagation();
         event.preventDefault();
-        // Remove the actual Sculpt host, not just its contents. Leaving the
-        // empty host in the card makes the next Sculpt click think the
-        // editor is still open, requiring a second click.
-        host.remove();
-
-        node.__gen3SculptOpenCount = Math.max(
-            0,
-            (node.__gen3SculptOpenCount || 1) - 1
-        );
-
-        if (node.__gen3SculptOpenCount === 0) {
-            const compact = node.__gen3SculptCompactHeight || node.__gen3EditorHeight;
-            node.__gen3SculptCompactHeight = null;
-            setEditorHeight(node, compact);
-        } else {
-            refreshEditorHeight(node);
-        }
+        host.__gen3CloseModal?.();
     };
 
     accept.onclick = event => {
@@ -555,20 +539,8 @@ function renderSculptField(node, section, locus, host) {
         }
 
         applySection(node, section);
-        node.__gen3SculptOpenCount = 0;
-        node.__gen3SculptCompactHeight = null;
+        host.__gen3CloseModal?.();
         renderEditor(node);
-
-        // The Sculpt panel has just been removed by renderEditor(), but
-        // LiteGraph can perform another widget/layout pass after this click.
-        // Let that pass settle, then measure and apply the compact height
-        // again. This mirrors the two-frame sizing correction used after
-        // workflow graph restoration and prevents the old Sculpt height from
-        // becoming the node's new minimum.
-        requestAnimationFrame(() => {
-            refreshEditorHeight(node);
-            requestAnimationFrame(() => refreshEditorHeight(node));
-        });
     };
 
     host.appendChild(field);
@@ -640,37 +612,69 @@ function renderEditor(node) {
             sculpt.style.flex = "1";
             sculpt.onclick = event => {
                 event.stopPropagation();
-                const existing = card.querySelector(".gen3-inline-sculpt");
-                if (existing) {
-                    existing.remove();
-                    node.__gen3SculptOpenCount = Math.max(
-                        0,
-                        (node.__gen3SculptOpenCount || 1) - 1
-                    );
 
-                    if (node.__gen3SculptOpenCount === 0) {
-                        const compact = node.__gen3SculptCompactHeight || node.__gen3EditorHeight;
-                        node.__gen3SculptCompactHeight = null;
-                        setEditorHeight(node, compact);
-                    } else {
-                        refreshEditorHeight(node);
+                // Sculpt is a temporary workspace, not part of the LiteGraph
+                // node layout. Keeping it in a modal means the DNA node never
+                // has to grow and later fight LiteGraph to shrink again.
+                const backdrop = document.createElement("div");
+                backdrop.className = "gen3-sculpt-modal-backdrop";
+                backdrop.style.cssText = [
+                    "position:fixed",
+                    "inset:0",
+                    "z-index:100000",
+                    "display:flex",
+                    "align-items:center",
+                    "justify-content:center",
+                    "background:rgba(0,0,0,.58)",
+                    "backdrop-filter:blur(3px)",
+                    "padding:24px",
+                    "box-sizing:border-box",
+                ].join(";");
+
+                const modal = document.createElement("div");
+                modal.style.cssText = [
+                    "width:min(620px,calc(100vw - 48px))",
+                    "max-height:min(720px,calc(100vh - 48px))",
+                    "overflow:auto",
+                    "box-sizing:border-box",
+                    "padding:16px",
+                    "background:var(--comfy-menu-bg,#202020)",
+                    "color:var(--input-text,#ddd)",
+                    "border:1px solid rgba(255,255,255,.14)",
+                    "border-radius:10px",
+                    "box-shadow:0 20px 70px rgba(0,0,0,.55)",
+                    "font-family:Arial,sans-serif",
+                ].join(";");
+
+                const heading=document.createElement("div");
+                heading.style.cssText="font-size:14px;font-weight:700;margin-bottom:10px";
+                heading.textContent="🧬 Sculpt " + (target.label || target.id || "Variant");
+                modal.appendChild(heading);
+
+                const sculptHost=document.createElement("div");
+                sculptHost.className="gen3-modal-sculpt-host";
+                modal.appendChild(sculptHost);
+                backdrop.appendChild(modal);
+                document.body.appendChild(backdrop);
+
+                const closeModal=()=>{
+                    backdrop.remove();
+                    document.removeEventListener("keydown",onKeyDown,true);
+                };
+                const onKeyDown=keyEvent=>{
+                    if(keyEvent.key==="Escape"){
+                        keyEvent.preventDefault();
+                        closeModal();
                     }
-                    return;
-                }
+                };
 
-                if ((node.__gen3SculptOpenCount || 0) === 0) {
-                    // Snapshot the true compact editor height once. This
-                    // value remains untouched while one or more Sculpt
-                    // panels are open.
-                    node.__gen3SculptCompactHeight = node.__gen3EditorHeight;
-                }
-                node.__gen3SculptOpenCount = (node.__gen3SculptOpenCount || 0) + 1;
+                sculptHost.__gen3CloseModal=closeModal;
+                backdrop.addEventListener("pointerdown",keyEvent=>{
+                    if(keyEvent.target===backdrop) closeModal();
+                });
+                document.addEventListener("keydown",onKeyDown,true);
 
-                const sculptHost = document.createElement("div");
-                sculptHost.className = "gen3-inline-sculpt";
-                card.appendChild(sculptHost);
                 renderSculptField(node, section, target, sculptHost);
-                refreshEditorHeight(node);
             };
             actions.appendChild(sculpt);
         }
