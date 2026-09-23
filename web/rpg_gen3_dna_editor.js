@@ -886,6 +886,18 @@ app.registerExtension({
             node.__gen3EditorContainer = container;
             node.__gen3EditorWidget = editorWidget;
             node.__gen3SculptOpenCount = 0;
+
+            // The restored workflow can finish laying out the DOM after
+            // onConfigure/onAfterGraphConfigured have already run. Observe
+            // the actual editor content so the node height follows the real
+            // rendered size instead of relying on a fixed number of frames.
+            if (typeof ResizeObserver !== "undefined") {
+                node.__gen3EditorResizeObserver = new ResizeObserver(() => {
+                    refreshEditorHeight(node);
+                });
+                node.__gen3EditorResizeObserver.observe(container);
+            }
+
             renderEditor(node);
         };
 
