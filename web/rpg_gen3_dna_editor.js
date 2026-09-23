@@ -809,6 +809,25 @@ app.registerExtension({
             }
         };
 
+        const originalAfterGraphConfigured = nodeType.prototype.onAfterGraphConfigured;
+        nodeType.prototype.onAfterGraphConfigured = function () {
+            originalAfterGraphConfigured?.apply(this, arguments);
+
+            // Graph configuration restores the saved node size after
+            // onConfigure(). Re-render from the restored transport and then
+            // measure the DOM once the graph's saved geometry has settled.
+            const transport = getWidget(this, "edited_section");
+            const restored = parseState(transport?.value);
+            if (restored?.id) {
+                this.__gen3SectionData = restored;
+                renderEditor(this);
+                requestAnimationFrame(() => {
+                    refreshEditorHeight(this);
+                    requestAnimationFrame(() => refreshEditorHeight(this));
+                });
+            }
+        };
+
         const originalExecuted = nodeType.prototype.onExecuted;
         nodeType.prototype.onExecuted = function (message) {
             originalExecuted?.apply(this, arguments);
