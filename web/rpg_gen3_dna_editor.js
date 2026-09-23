@@ -113,38 +113,9 @@ function applySection(node, section) {
         const serialized = JSON.stringify(section);
         transport.value = serialized;
         transport.callback?.(serialized);
-        // Keep ComfyUI's resolved widget input in sync as well.  The frontend
-        // prompt builder performs a later resolveInput() pass after
-        // serializeValue(); if widgetInfo still contains the old cached value,
-        // that pass can overwrite the freshly serialized DNA.
-        if (transport.options) {
-            transport.options.value = serialized;
-        }
-        if (transport.inputEl) {
-            transport.inputEl.value = serialized;
-        }
     }
 
-    console.log("[RPG Gen3 DNA APPLY DEBUG]", {
-        section: section?.id,
-        variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
-            id: v.id,
-            selected: v.selected,
-            weights: v.weights,
-        }))),
-        transport: transport?.value,
-    });
-
     node.__gen3SectionData = section;
-
-    console.log("[RPG Gen3 DNA UI DEBUG] applySection", {
-        section: section?.id,
-        variants: (section?.loci || []).flatMap(l => (l?.variant_sets || []).map(v => ({
-            id: v.id,
-            selected: v.selected,
-            weights: v.weights,
-        }))),
-    });
 
     const revision = getWidget(node, "revision");
     const previous = Number(revision?.value ?? 0);
@@ -782,17 +753,6 @@ app.registerExtension({
                 // execution payload in sync with edits made by the DOM editor.
                 transport.serializeValue = () => {
                     const live = node.__gen3SectionData ?? parseState(transport.value);
-                    const input = node.inputs?.find(i => i.name === "edited_section");
-                    const inputWidget = input?.widget;
-                    const variant = live?.loci?.flatMap(l => l?.variant_sets || [])?.[0];
-                    console.warn(
-                        "[RPG Gen3 DNA SERIALIZE DEBUG]",
-                        "selected=", variant?.selected,
-                        "weights=", JSON.stringify(variant?.weights),
-                        "widget=", transport.value?.includes('\\"large\\"') ? "contains-large" : "no-large",
-                        "inputWidgetSame=", inputWidget === transport,
-                        "inputWidgetValue=", inputWidget?.value?.includes?.('\\"large\\"') ? "contains-large" : inputWidget?.value,
-                    );
                     return JSON.stringify(live);
                 };
 
