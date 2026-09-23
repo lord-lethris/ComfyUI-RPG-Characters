@@ -1,8 +1,45 @@
 """Stable schema definitions for RPG Character Gen 3 DNA.
 
-The schema is deliberately model-independent.  Values describe the character;
-downstream nodes decide how those values are rendered into prompts, control
-images, H3 instructions, or other model-specific representations.
+The DNA contract is deliberately model-independent and JSON-safe.  DNA describes
+the character; downstream nodes decide how those values are rendered.
+
+Ownership
+---------
+Character Gen 3 owns source/default metadata and definitions:
+    id, label, description, values, traits, options, variant definitions,
+    control definitions, source, source_inputs, source_signature.
+
+DNA Editor owns user-authored locus state:
+    selected, variant weights/mode, and live control values.
+
+DNA Assembler owns section replacement.  It does not reinterpret or mutate
+the contents of a section.
+
+Prompt Builder and other downstream consumers are read-only with respect to
+DNA.  They may derive representations from it, but must not modify the DNA
+document.
+
+Document contract
+-----------------
+A Character DNA document contains:
+    dna_version, type, seed, source, selections, sections
+
+Every section contains:
+    id, label, description, values, traits, loci, source, source_inputs,
+    source_signature
+
+Every locus contains:
+    id, label, options, selected, variant_sets, controls
+
+A variant set contains:
+    id, label, options, selected, weights, mode
+
+A control contains a definition (for example x/y ranges) plus editor-owned
+live values such as x_value/y_value or value/values.
+
+Empty sections are valid and retain the same structural keys.  A source
+signature may be None for an unpopulated standalone section; populated Gen 3
+sections receive a deterministic signature.
 """
 
 DNA_SECTION_DEFINITIONS = {
@@ -61,6 +98,36 @@ DNA_SECTION_DEFINITIONS = {
 }
 
 DNA_SECTIONS = tuple(DNA_SECTION_DEFINITIONS.keys())
+
+DNA_SECTION_KEYS = (
+    "id",
+    "label",
+    "description",
+    "values",
+    "traits",
+    "loci",
+    "source",
+    "source_inputs",
+    "source_signature",
+)
+
+DNA_LOCUS_KEYS = (
+    "id",
+    "label",
+    "options",
+    "selected",
+    "variant_sets",
+    "controls",
+)
+
+DNA_VARIANT_SET_KEYS = (
+    "id",
+    "label",
+    "options",
+    "selected",
+    "weights",
+    "mode",
+)
 
 
 def get_section_definition(section_id):
