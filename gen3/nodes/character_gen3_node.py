@@ -23,6 +23,31 @@ from ...rpg_character_data.rpg_scene_data import SCENE_DATA
 VARIANT_PATTERN = re.compile(r"\{([^{}]+)\}")
 
 
+def _variant_label(prompt, match, index):
+    """Give prompt variants a human-readable label from nearby context."""
+    context = prompt[match.end():match.end() + 80].lower()
+
+    # The source prompts commonly place the thing being varied immediately
+    # after the {A|B|C} expression. Keep this deliberately conservative so
+    # labels remain descriptive without pretending to understand arbitrary
+    # prompt prose.
+    labels = (
+        ("eye", "Eye Colour"),
+        ("eyes", "Eye Colour"),
+        ("skin", "Skin Tone"),
+        ("hair", "Hair"),
+        ("face shape", "Face Shape"),
+        ("facial", "Facial Features"),
+        ("lips", "Lip Shape"),
+        ("nose", "Nose Shape"),
+    )
+    for token, label in labels:
+        if token in context:
+            return label
+
+    return f"Variant {index + 1}"
+
+
 def _extract_variant_sets(entry, prefix):
     """Expose the internal prompt variants as structured DNA variant sets."""
     prompt = str(entry.get("prompt", "")) if isinstance(entry, dict) else ""
@@ -33,7 +58,7 @@ def _extract_variant_sets(entry, prefix):
             continue
         variant_sets.append({
             "id": f"{prefix}:variant:{index}",
-            "label": f"Variant {len(variant_sets) + 1}",
+            "label": _variant_label(prompt, match, len(variant_sets)),
             "options": options,
             "selected": options[0],
             "weights": {"0": 1.0},
