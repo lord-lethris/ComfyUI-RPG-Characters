@@ -645,6 +645,9 @@ function renderEditor(node) {
                 }
 
                 if ((node.__gen3SculptOpenCount || 0) === 0) {
+                    // Snapshot the true compact editor height once. This
+                    // value remains untouched while one or more Sculpt
+                    // panels are open.
                     node.__gen3SculptCompactHeight = node.__gen3EditorHeight;
                 }
                 node.__gen3SculptOpenCount = (node.__gen3SculptOpenCount || 0) + 1;
@@ -753,7 +756,7 @@ function refreshEditorHeight(node) {
     const container = node.__gen3EditorContainer;
     if (!container) return;
 
-    // Measure the natural DOM height.  Do not leave the previous minHeight
+    // Measure the natural DOM height. Do not leave the previous minHeight
     // in place while measuring: scrollHeight includes it and would make the
     // node grow a few pixels every time the graph is executed.
     const previousMinHeight = container.style.minHeight;
@@ -763,7 +766,15 @@ function refreshEditorHeight(node) {
 
     node.__gen3EditorHeight = height;
 
-    // The DOM widget owns this part of the node's height.  Don't use the
+    // While Sculpt is open, keep the original compact height separately.
+    // __gen3EditorHeight is deliberately allowed to track the current
+    // expanded DOM height; __gen3SculptCompactHeight is the immutable
+    // restore target until the last Sculpt editor closes.
+    if ((node.__gen3SculptOpenCount || 0) === 0) {
+        node.__gen3SculptCompactHeight = null;
+    }
+
+    // The DOM widget owns this part of the node's height. Don't use the
     // existing node.size[1] as a lower bound or it becomes a ratchet.
     container.style.minHeight = height + "px";
     const width = Math.max(node.size[0], 320);
