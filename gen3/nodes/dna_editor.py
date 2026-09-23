@@ -101,7 +101,7 @@ class RPGCharacterDNAEditor:
             source_locus = source_loci.get(locus_id)
             merged = deepcopy(source_locus or {})
             merged.update(deepcopy(persisted_locus))
-            for key in ("label", "options"):
+            for key in ("label", "options", "option_prompts", "option_negative_prompts"):
                 if source_locus and key in source_locus:
                     merged[key] = deepcopy(source_locus[key])
 
