@@ -5,6 +5,10 @@ character data tables and does not mutate the DNA document.
 
 Source prompt mappings live on each locus so downstream prompt consumers can
 operate independently of the source data implementation.
+
+Prompt Builder v1.1 additionally renders:
+- sculpted variant weights using standard ComfyUI prompt-weight syntax
+- semantic expression-control descriptors from 2D controls
 """
 
 import re
@@ -31,8 +35,8 @@ class RPGCharacterDNAPromptBuilder:
     FUNCTION = "build"
     CATEGORY = "RPG/Gen 3/Prompt"
     DESCRIPTION = (
-        "Builds model-independent positive and negative prompts from "
-        "Character DNA without modifying the DNA."
+        "Builds prompts from Character DNA without modifying the DNA. "
+        "Supports selected variants, sculpted weights and expression controls."
     )
 
     def build(self, CHARACTER_INFO):
@@ -60,10 +64,12 @@ class RPGCharacterDNAPromptBuilder:
                     continue
 
                 positive = self._resolve_locus_prompt(locus, selected)
+                positive_controls = self._resolve_locus_controls(locus)
                 negative = self._resolve_locus_negative_prompt(locus, selected)
 
                 if positive:
                     positive_parts.append(positive)
+                positive_parts.extend(positive_controls)
                 if negative:
                     negative_parts.append(negative)
 
@@ -75,7 +81,11 @@ class RPGCharacterDNAPromptBuilder:
     @classmethod
     def _resolve_locus_prompt(cls, locus, selected):
         option_prompts = locus.get("option_prompts", {})
-        prompt = option_prompts.get(selected, "") if isinstance(option_prompts, dict) else ""
+        prompt = (
+            option_prompts.get(selected, "")
+            if isinstance(option_prompts, dict)
+            else ""
+        )
 
         if not prompt:
             prompt = str(selected)
@@ -89,8 +99,8 @@ class RPGCharacterDNAPromptBuilder:
             return ""
         return str(negative_prompts.get(selected, "") or "").strip()
 
-    @staticmethod
-    def _resolve_variants(prompt, variant_sets):
+    @classmethod
+    def _resolve_variants(cls, prompt, variant_sets):
         if not prompt:
             return ""
 
@@ -112,6 +122,12 @@ class RPGCharacterDNAPromptBuilder:
             if not isinstance(variant, dict):
                 return match.group(0)
 
+            mode = str(variant.get("mode", "selected") or "selected").lower()
+            if mode == "sculpted":
+                weighted = cls._render_sculpted_variant(variant)
+                if weighted:
+                    return weighted
+
             selected = variant.get("selected")
             if selected:
                 return str(selected)
@@ -123,6 +139,136 @@ class RPGCharacterDNAPromptBuilder:
             return match.group(0)
 
         return VARIANT_PATTERN.sub(replace, str(prompt)).strip()
+
+    @staticmethod
+    def _render_sculpted_variant(variant):
+        options = variant.get("options", [])
+        weights = variant.get("weights", {})
+
+        if not isinstance(options, list) or not isinstance(weights, dict):
+            return ""
+
+        rendered = []
+        for index, option in enumerate(options):
+            raw_weight = weights.get(str(index), weights.get(index))
+            try:
+                weight = float(raw_weight)
+            except (TypeError, ValueError):
+                continue
+
+            if weight <= 0:
+                continue
+
+            rendered.append(f"({option}:{weight:.3f})")
+
+        return " ".join(rendered)
+
+    @classmethod
+    def _resolve_locus_controls(cls, locus):
+        controls = locus.get("controls", {})
+        if not isinstance(controls, dict):
+            return []
+
+        rendered = []
+        for control in controls.values():
+            if not isinstance(control, dict):
+                continue
+
+            control_type = str(control.get("type", "") or "").lower()
+            if control_type == "expression_2d":
+                descriptor = cls._render_expression_2d(control)
+                if descriptor:
+                    rendered.append(descriptor)
+
+        return rendered
+
+    @classmethod
+    def _render_expression_2d(cls, control):
+        x_value = cls._numeric_control_value(control.get("x_value"))
+        y_value = cls._numeric_control_value(control.get("y_value"))
+        if x_value is None and y_value is None:
+            return ""
+
+        descriptors = []
+
+        x_axis = control.get("x", {})
+        y_axis = control.get("y", {})
+        x_label = str(x_axis.get("label", "") if isinstance(x_axis, dict) else "").lower()
+        y_label = str(y_axis.get("label", "") if isinstance(y_axis, dict) else "").lower()
+
+        if x_value is not None:
+            descriptors.append(
+                cls._describe_expression_axis(
+                    x_value,
+                    x_label,
+                    negative_label="frown",
+                    positive_label="smile",
+                )
+            )
+
+        if y_value is not None:
+            descriptors.append(
+                cls._describe_expression_axis(
+                    y_value,
+                    y_label,
+                    negative_label="closed",
+                    positive_label="open",
+                    minimum=0.0,
+                    maximum=1.0,
+                )
+            )
+
+        return ", ".join(value for value in descriptors if value)
+
+    @staticmethod
+    def _describe_expression_axis(
+        value,
+        label,
+        negative_label,
+        positive_label,
+        minimum=-1.0,
+        maximum=1.0,
+    ):
+        midpoint = (minimum + maximum) / 2.0
+        span = maximum - minimum
+        if span <= 0:
+            return ""
+
+        normalized = (value - minimum) / span
+        normalized = max(0.0, min(1.0, normalized))
+
+        if label == "smile":
+            if normalized < 0.20:
+                return "pronounced frown"
+            if normalized < 0.40:
+                return "frown"
+            if normalized < 0.60:
+                return "neutral mouth"
+            if normalized < 0.80:
+                return "smiling"
+            return "broad smile"
+
+        if label == "open":
+            if normalized < 0.15:
+                return "mouth closed"
+            if normalized < 0.45:
+                return "mouth slightly open"
+            if normalized < 0.75:
+                return "mouth open"
+            return "mouth wide open"
+
+        if normalized < 0.33:
+            return f"{negative_label} {label}".strip()
+        if normalized > 0.67:
+            return f"{positive_label} {label}".strip()
+        return f"neutral {label}".strip()
+
+    @staticmethod
+    def _numeric_control_value(value):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
 
     @staticmethod
     def _join_parts(parts):
