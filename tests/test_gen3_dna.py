@@ -129,6 +129,23 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(mouth["x_value"], 0.0)
         self.assertEqual(mouth["y_value"], 0.0)
 
+    def test_gen3_variant_labels_describe_prompt_context(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+        values["ethnicity"] = "British"
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        ethnicity = dna["sections"]["identity"]["loci"][1]
+        variant = ethnicity["variant_sets"][0]
+
+        self.assertEqual(variant["label"], "Eye Colour")
+        self.assertEqual(variant["options"], ["blue", "green", "brown"])
+
     def test_gen3_loci_include_source_prompt_mappings(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
