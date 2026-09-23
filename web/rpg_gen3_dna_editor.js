@@ -514,6 +514,10 @@ function renderSculptField(node, section, locus, host) {
     cancel.onclick = event => {
         event.stopPropagation();
         host.innerHTML = "";
+
+        // Sculpting temporarily adds a large DOM subtree. Re-measure now that
+        // it has gone so the editor can return to its compact height.
+        requestAnimationFrame(() => refreshEditorHeight(node));
     };
 
     accept.onclick = event => {
