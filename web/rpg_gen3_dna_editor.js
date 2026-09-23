@@ -558,6 +558,17 @@ function renderSculptField(node, section, locus, host) {
         node.__gen3SculptOpenCount = 0;
         node.__gen3SculptCompactHeight = null;
         renderEditor(node);
+
+        // The Sculpt panel has just been removed by renderEditor(), but
+        // LiteGraph can perform another widget/layout pass after this click.
+        // Let that pass settle, then measure and apply the compact height
+        // again. This mirrors the two-frame sizing correction used after
+        // workflow graph restoration and prevents the old Sculpt height from
+        // becoming the node's new minimum.
+        requestAnimationFrame(() => {
+            refreshEditorHeight(node);
+            requestAnimationFrame(() => refreshEditorHeight(node));
+        });
     };
 
     host.appendChild(field);
