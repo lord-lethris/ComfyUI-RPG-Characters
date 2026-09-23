@@ -118,6 +118,8 @@ DNA_LOCUS_KEYS = (
     "selected",
     "variant_sets",
     "controls",
+    "option_prompts",
+    "option_negative_prompts",
 )
 
 DNA_VARIANT_SET_KEYS = (
