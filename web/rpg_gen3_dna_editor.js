@@ -514,6 +514,9 @@ function renderSculptField(node, section, locus, host) {
     cancel.onclick = event => {
         event.stopPropagation();
         host.innerHTML = "";
+        // Closing a sculptor removes a large DOM subtree. Re-measure the
+        // editor so the node can return to its compact height.
+        refreshEditorHeight(node);
     };
 
     accept.onclick = event => {
