@@ -308,6 +308,52 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(result["loci"][0]["selected"], "Short")
         self.assertEqual(result["source_signature"], signature)
 
+    def test_editor_preserves_expression_control_values(self):
+        import json
+
+        signature = make_source_signature("expression", {"emotion": "Hope"})
+        source = {
+            "id": "expression",
+            "values": {"emotion": "Hope"},
+            "traits": ["Hope"],
+            "loci": [{
+                "id": "expression:emotion",
+                "label": "Emotion",
+                "options": ["Hope", "Joy"],
+                "selected": "Hope",
+                "variant_sets": [],
+                "controls": {
+                    "mouth": {
+                        "label": "Mouth",
+                        "type": "expression_2d",
+                        "x": {"label": "Smile", "min": -1.0, "max": 1.0},
+                        "y": {"label": "Open", "min": 0.0, "max": 1.0},
+                        "x_value": 0.0,
+                        "y_value": 0.0,
+                    }
+                },
+            }],
+            "source_signature": signature,
+            "source_inputs": {"emotion": "Hope"},
+        }
+        edited = json.loads(json.dumps(source))
+        edited["loci"][0]["controls"]["mouth"]["x_value"] = 0.75
+        edited["loci"][0]["controls"]["mouth"]["y_value"] = 0.8
+
+        result = RPGCharacterDNAEditor().edit(
+            source, "Edit", 1, json.dumps(edited)
+        )["result"][0]
+
+        mouth = result["loci"][0]["controls"]["mouth"]
+        self.assertEqual(mouth["x_value"], 0.75)
+        self.assertEqual(mouth["y_value"], 0.8)
+        self.assertEqual(mouth["x"]["min"], -1.0)
+        self.assertEqual(mouth["x"]["max"], 1.0)
+        self.assertEqual(mouth["y"]["min"], 0.0)
+        self.assertEqual(mouth["y"]["max"], 1.0)
+        self.assertEqual(mouth["type"], "expression_2d")
+
+
     def test_editor_resets_edits_when_source_signature_changes(self):
         import json
 
