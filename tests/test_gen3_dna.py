@@ -33,6 +33,7 @@ from _rpg_characters_test.gen3.nodes.dna_editor import RPGCharacterDNAEditor
 from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
 from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
 from _rpg_characters_test.gen3.nodes.dna_assembler import RPGCharacterDNAAssembler
+from _rpg_characters_test.gen3.nodes.dna_prompt_builder import RPGCharacterDNAPromptBuilder
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -127,6 +128,69 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(mouth["type"], "expression_2d")
         self.assertEqual(mouth["x_value"], 0.0)
         self.assertEqual(mouth["y_value"], 0.0)
+
+    def test_gen3_loci_include_source_prompt_mappings(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        hair = dna["sections"]["hair"]["loci"][0]
+
+        self.assertIn("option_prompts", hair)
+        self.assertIn(values["hair_style"], hair["option_prompts"])
+        self.assertTrue(hair["option_prompts"][values["hair_style"]])
+
+    def test_prompt_builder_resolves_selected_values_and_variants(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+        values["hair_style"] = "Afro"
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        hair = dna["sections"]["hair"]["loci"][0]
+        hair["variant_sets"][0]["selected"] = "large"
+        hair["variant_sets"][1]["selected"] = "softly textured"
+
+        original = __import__("copy").deepcopy(dna)
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertIn("large Afro hair", positive)
+        self.assertIn("softly textured", positive)
+        self.assertEqual(dna, original)
+        self.assertIsInstance(negative, str)
+
+    def test_prompt_builder_falls_back_to_selected_value(self):
+        dna = make_character_dna(
+            sections={
+                "pose": {
+                    "values": {},
+                    "traits": [],
+                    "loci": [{
+                        "id": "pose:test",
+                        "label": "Pose",
+                        "options": ["heroic stance"],
+                        "selected": "heroic stance",
+                        "variant_sets": [],
+                        "controls": {},
+                    }],
+                },
+            },
+        )
+
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertEqual(positive, "heroic stance")
+        self.assertEqual(negative, "")
+
 
     def test_gen3_source_signatures_only_change_affected_sections(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
