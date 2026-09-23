@@ -514,7 +514,10 @@ function renderSculptField(node, section, locus, host) {
     cancel.onclick = event => {
         event.stopPropagation();
         event.preventDefault();
-        host.innerHTML = "";
+        // Remove the actual Sculpt host, not just its contents. Leaving the
+        // empty host in the card makes the next Sculpt click think the
+        // editor is still open, requiring a second click.
+        host.remove();
 
         node.__gen3SculptOpenCount = Math.max(
             0,
@@ -765,6 +768,13 @@ function refreshEditorHeight(node) {
     container.style.minHeight = previousMinHeight || "";
 
     node.__gen3EditorHeight = height;
+
+    // Keep the DOM widget's live height in sync with the measured editor.
+    // Without this, ComfyUI can retain the previous expanded Sculpt height
+    // even after the DOM has returned to its compact content.
+    if (node.__gen3EditorWidget) {
+        node.__gen3EditorWidget.computedHeight = height;
+    }
 
     // While Sculpt is open, keep the original compact height separately.
     // __gen3EditorHeight is deliberately allowed to track the current
