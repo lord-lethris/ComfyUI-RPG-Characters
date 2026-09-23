@@ -40,6 +40,8 @@ def make_empty_section(section_id):
         "traits": [],
         "loci": [],
         "source": None,
+        "source_inputs": {},
+        "source_signature": None,
     }
 
 
