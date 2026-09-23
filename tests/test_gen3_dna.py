@@ -107,6 +107,7 @@ class TestGen3DNA(unittest.TestCase):
 
         clothing = dna["sections"]["clothing"]["loci"][0]
         self.assertEqual(clothing["selected"], values["clothes_style"])
+        self.assertTrue(all(key in clothing for key in DNA_LOCUS_KEYS))
         self.assertGreaterEqual(len(clothing["variant_sets"]), 2)
         self.assertEqual(
             clothing["variant_sets"][0]["options"],
@@ -116,6 +117,9 @@ class TestGen3DNA(unittest.TestCase):
             clothing["variant_sets"][1]["options"],
             ["brown leather", "woven hemp", "wooden", "bronze"],
         )
+
+        for variant in clothing["variant_sets"]:
+            self.assertTrue(all(key in variant for key in DNA_VARIANT_SET_KEYS))
 
         expression = dna["sections"]["expression"]["loci"][0]
         self.assertIn("controls", expression)
