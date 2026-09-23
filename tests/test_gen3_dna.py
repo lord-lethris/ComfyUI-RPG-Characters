@@ -23,7 +23,12 @@ from _rpg_characters_test.gen3.dna.character_dna import (
     make_character_dna,
     make_source_signature,
 )
-from _rpg_characters_test.gen3.dna.dna_schema import DNA_SECTIONS
+from _rpg_characters_test.gen3.dna.dna_schema import (
+    DNA_SECTIONS,
+    DNA_SECTION_KEYS,
+    DNA_LOCUS_KEYS,
+    DNA_VARIANT_SET_KEYS,
+)
 from _rpg_characters_test.gen3.nodes.dna_editor import RPGCharacterDNAEditor
 from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
 from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
@@ -43,6 +48,13 @@ class TestGen3DNA(unittest.TestCase):
             self.assertEqual(section["id"], section_id)
             self.assertIsInstance(section["values"], dict)
             self.assertIsInstance(section["traits"], list)
+
+        for section_id in DNA_SECTIONS:
+            section = dna["sections"][section_id]
+            self.assertTrue(all(key in section for key in DNA_SECTION_KEYS))
+            self.assertEqual(section["source_inputs"], {})
+            self.assertIsNone(section["source_signature"])
+
 
     def test_pipe_routes_each_section(self):
         dna = make_character_dna(
