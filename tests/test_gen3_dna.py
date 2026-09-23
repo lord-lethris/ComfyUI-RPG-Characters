@@ -168,6 +168,69 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(dna, original)
         self.assertIsInstance(negative, str)
 
+    def test_prompt_builder_renders_sculpted_variant_weights(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+        values["clothes_style"] = "AD&D - Mage Robes"
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        clothing = dna["sections"]["clothing"]["loci"][0]
+
+        first_variant = clothing["variant_sets"][0]
+        first_variant["selected"] = "green"
+        first_variant["weights"] = {
+            "1": 0.22433293215117625,
+            "5": 0.23202471900969102,
+            "6": 0.5436423488391326,
+        }
+        first_variant["mode"] = "sculpted"
+
+        second_variant = clothing["variant_sets"][1]
+        second_variant["selected"] = "gold"
+        second_variant["weights"] = {"0": 1.0}
+        second_variant["mode"] = "random"
+
+        original = __import__("copy").deepcopy(dna)
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertIn("(silver:0.224)", positive)
+        self.assertIn("(blue:0.232)", positive)
+        self.assertIn("(green:0.544)", positive)
+        self.assertIn("gold embroidered fabric and sash", positive)
+        self.assertNotIn("wearing green flowing fantasy mage robes", positive)
+        self.assertEqual(dna, original)
+        self.assertIsInstance(negative, str)
+
+    def test_prompt_builder_renders_expression_control_descriptors(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+        values["emotion"] = "Hope"
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        expression = dna["sections"]["expression"]["loci"][0]
+        mouth = expression["controls"]["mouth"]
+        mouth["x_value"] = 0.973
+        mouth["y_value"] = 0.809
+
+        original = __import__("copy").deepcopy(dna)
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertIn("showing the expression of Hope", positive)
+        self.assertIn("broad smile", positive)
+        self.assertIn("mouth wide open", positive)
+        self.assertEqual(dna, original)
+        self.assertIsInstance(negative, str)
+
     def test_prompt_builder_falls_back_to_selected_value(self):
         dna = make_character_dna(
             sections={
