@@ -513,11 +513,21 @@ function renderSculptField(node, section, locus, host) {
 
     cancel.onclick = event => {
         event.stopPropagation();
+        event.preventDefault();
         host.innerHTML = "";
 
-        // Sculpting temporarily adds a large DOM subtree. Re-measure now that
-        // it has gone so the editor can return to its compact height.
-        requestAnimationFrame(() => refreshEditorHeight(node));
+        node.__gen3SculptOpenCount = Math.max(
+            0,
+            (node.__gen3SculptOpenCount || 1) - 1
+        );
+
+        if (node.__gen3SculptOpenCount === 0) {
+            const compact = node.__gen3SculptCompactHeight || node.__gen3EditorHeight;
+            node.__gen3SculptCompactHeight = null;
+            setEditorHeight(node, compact);
+        } else {
+            refreshEditorHeight(node);
+        }
     };
 
     accept.onclick = event => {
@@ -542,11 +552,9 @@ function renderSculptField(node, section, locus, host) {
         }
 
         applySection(node, section);
+        node.__gen3SculptOpenCount = 0;
+        node.__gen3SculptCompactHeight = null;
         renderEditor(node);
-        requestAnimationFrame(() => {
-            const size = node.computeSize?.();
-            if (size) node.setSize?.([Math.max(node.size[0], size[0]), size[1]]);
-        });
     };
 
     host.appendChild(field);
@@ -621,9 +629,26 @@ function renderEditor(node) {
                 const existing = card.querySelector(".gen3-inline-sculpt");
                 if (existing) {
                     existing.remove();
-                    refreshEditorHeight(node);
+                    node.__gen3SculptOpenCount = Math.max(
+                        0,
+                        (node.__gen3SculptOpenCount || 1) - 1
+                    );
+
+                    if (node.__gen3SculptOpenCount === 0) {
+                        const compact = node.__gen3SculptCompactHeight || node.__gen3EditorHeight;
+                        node.__gen3SculptCompactHeight = null;
+                        setEditorHeight(node, compact);
+                    } else {
+                        refreshEditorHeight(node);
+                    }
                     return;
                 }
+
+                if ((node.__gen3SculptOpenCount || 0) === 0) {
+                    node.__gen3SculptCompactHeight = node.__gen3EditorHeight;
+                }
+                node.__gen3SculptOpenCount = (node.__gen3SculptOpenCount || 0) + 1;
+
                 const sculptHost = document.createElement("div");
                 sculptHost.className = "gen3-inline-sculpt";
                 card.appendChild(sculptHost);
@@ -700,6 +725,28 @@ function renderEditor(node) {
     container.appendChild(footer);
 
     refreshEditorHeight(node);
+}
+
+function setEditorHeight(node, height) {
+    const safeHeight = Math.max(50, Number(height) || 50);
+    node.__gen3EditorHeight = safeHeight;
+
+    const container = node.__gen3EditorContainer;
+    if (container) {
+        container.style.minHeight = safeHeight + "px";
+    }
+
+    // DOM widgets use this value as their current layout height. Keeping it
+    // in sync with the min/max callbacks lets LiteGraph shrink immediately
+    // after a temporary Sculpt expansion.
+    if (node.__gen3EditorWidget) {
+        node.__gen3EditorWidget.computedHeight = safeHeight;
+    }
+
+    const width = Math.max(node.size[0], 320);
+    const headerHeight = node.__gen3EditorHeaderHeight || 120;
+    node.setSize?.([width, headerHeight + safeHeight]);
+    node.setDirtyCanvas?.(true, true);
 }
 
 function refreshEditorHeight(node) {
@@ -791,6 +838,8 @@ app.registerExtension({
             });
 
             node.__gen3EditorContainer = container;
+            node.__gen3EditorWidget = editorWidget;
+            node.__gen3SculptOpenCount = 0;
             renderEditor(node);
         };
 
