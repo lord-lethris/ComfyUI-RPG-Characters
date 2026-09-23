@@ -78,30 +78,6 @@ class RPGCharacterDNAEditor:
                 # edited_section payloads saved in workflows.
                 result = self._merge_locus_metadata(DNA_SECTION, result)
 
-        # Temporary execution diagnostics: inspect the exact section returned
-        # from Python, immediately before it is handed to ComfyUI's execution
-        # output system. This distinguishes editor-output problems from
-        # downstream assembler/cache problems.
-        variant_summary = []
-        for locus in result.get("loci", []) if isinstance(result, dict) else []:
-            if not isinstance(locus, dict):
-                continue
-            for variant in locus.get("variant_sets", []):
-                if not isinstance(variant, dict):
-                    continue
-                variant_summary.append((
-                    variant.get("id"),
-                    variant.get("selected"),
-                    variant.get("weights"),
-                ))
-        print(
-            "[RPG Gen3 DNA EDITOR DEBUG]"
-            f" section={section}"
-            f" revision={revision}"
-            f" values={result.get('values') if isinstance(result, dict) else None}"
-            f" variants={variant_summary}"
-        )
-
         # Always return the authoritative section to the frontend so the
         # graphical editor can stay in sync after execution.
         return {
