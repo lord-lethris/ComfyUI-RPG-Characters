@@ -790,6 +790,21 @@ app.registerExtension({
             renderEditor(node);
         };
 
+        const originalConfigure = nodeType.prototype.onConfigure;
+        nodeType.prototype.onConfigure = function (info) {
+            // ComfyUI restores serialized widget values during configure, so
+            // this is the first reliable point at which the saved
+            // edited_section value can be used to rebuild the DOM editor.
+            originalConfigure?.apply(this, arguments);
+
+            const transport = getWidget(this, "edited_section");
+            const restored = parseState(transport?.value);
+            if (restored?.id) {
+                this.__gen3SectionData = restored;
+                renderEditor(this);
+            }
+        };
+
         const originalExecuted = nodeType.prototype.onExecuted;
         nodeType.prototype.onExecuted = function (message) {
             originalExecuted?.apply(this, arguments);
@@ -799,16 +814,21 @@ app.registerExtension({
             if (section && typeof section === "object") {
                 const transport = getWidget(this, "edited_section");
                 const persisted = parseState(transport?.value);
+
+                // If the workflow was restored, the saved transport can already
+                // contain a valid section while the DOM editor has not yet been
+                // hydrated. Recover that state before applying execution output.
+                if (!this.__gen3SectionData?.id && persisted?.id) {
+                    this.__gen3SectionData = persisted;
+                    renderEditor(this);
+                }
+
                 const incomingSignature = section.source_signature;
                 const persistedSignature = persisted.source_signature;
 
                 // A source-signature change is an upstream reset, not a local
-                // edit. Replace the hidden workflow transport without bumping
-                // revision or firing a graph-change callback.
-                // Execution is not itself a source change. If the upstream
-                // signature is unchanged, preserve the editor's local DNA
-                // state exactly as-is. Only a genuine upstream change replaces
-                // the local section.
+                // edit. Replace the workflow transport and DOM state without
+                // treating execution itself as a source change.
                 if (incomingSignature && persistedSignature !== incomingSignature) {
                     if (transport) {
                         transport.value = JSON.stringify(section);
