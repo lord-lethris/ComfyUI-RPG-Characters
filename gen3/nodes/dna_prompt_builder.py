@@ -197,6 +197,10 @@ class RPGCharacterDNAPromptBuilder:
         negative_prompts = locus.get("option_negative_prompts", {})
         if not isinstance(negative_prompts, dict):
             return ""
+
+        if locus.get("id") == "facial_hair:style" and selected == "No Beard":
+            return "beard, moustache, mustache, goatee, sideburns, stubble, facial hair"
+
         return str(negative_prompts.get(selected, "") or "").strip()
 
     @classmethod
