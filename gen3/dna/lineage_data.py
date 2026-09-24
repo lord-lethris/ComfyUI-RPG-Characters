@@ -26,27 +26,23 @@ LINEAGE_DATA = {
         "body_plan": {
             "posture": "bipedal", "body": "elven humanoid", "head": "elven",
             "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
-            "hair_allowed": True, "facial_hair_allowed": True,
+            "hair_allowed": True, "facial_hair_allowed": False,
         },
-        "negative_prompt": "human-only anatomy, animal muzzle, scales",
+        "negative_prompt": "human-only anatomy, animal muzzle, scales, facial hair, body hair",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
-    "body_plan": {
-        "posture": "bipedal", "body": "fantasy humanoid", "head": "humanoid",
-        "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
-        "hair_allowed": True, "facial_hair_allowed": True,
-    },
         "traits": {"ears": "pointed elven ears", "eyes": "humanoid", "nose": "humanoid", "mouth": "humanoid", "skin": "skin"},
     },
     "Tiefling": {
         "category": "humanoid", "body_type": "infernal humanoid", "heritage_compatible": True,
         "prompt": "a tiefling character",
         "body_plan": {
-            "posture": "bipedal", "body": "infernal humanoid", "head": "humanoid with infernal features",
+            "posture": "bipedal", "body": "human-proportioned infernal humanoid", "head": "humanoid with infernal features",
             "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "build": "human-proportioned medium build",
             "hair_allowed": True, "facial_hair_allowed": True,
         },
-        "negative_prompt": "ordinary human, missing horns, missing tail",
+        "negative_prompt": "ordinary human, missing horns, missing tail, dwarf, dwarven proportions, squat body, stocky dwarf-like build",
         "features": {"horns": True, "tail": True, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
         "traits": {"ears": "humanoid ears", "eyes": "infernal eyes", "nose": "humanoid", "mouth": "humanoid", "skin": "infernal skin"},
@@ -187,6 +183,34 @@ LINEAGE_DATA = {
         "traits": {"ears": "reptilian", "eyes": "reptilian eyes", "nose": "reptilian snout", "mouth": "reptilian mouth", "skin": "scales"},
         "feature_loci": {"scale_pattern": ["fine", "pebbled", "overlapping"]},
     },
+    "Halfling": {
+        "category": "humanoid", "body_type": "halfling humanoid", "heritage_compatible": True,
+        "prompt": "a halfling character",
+        "body_plan": {
+            "posture": "bipedal", "body": "small halfling humanoid", "head": "halfling",
+            "limbs": "humanoid", "hands": "small humanoid hands", "feet": "small humanoid feet",
+            "build": "small and sturdy",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
+        "negative_prompt": "giant proportions, dwarf body, animal muzzle",
+        "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
+        "face_model": "humanoid", "face_allowed": True,
+        "traits": {"ears": "rounded humanoid ears", "eyes": "humanoid", "nose": "humanoid", "mouth": "humanoid", "skin": "skin"},
+    },
+    "Gnome": {
+        "category": "humanoid", "body_type": "gnomish humanoid", "heritage_compatible": True,
+        "prompt": "a gnome character",
+        "body_plan": {
+            "posture": "bipedal", "body": "small gnomish humanoid", "head": "gnomish",
+            "limbs": "humanoid", "hands": "small humanoid hands", "feet": "small humanoid feet",
+            "build": "small and compact",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
+        "negative_prompt": "giant proportions, dwarf body, animal muzzle",
+        "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
+        "face_model": "gnomish", "face_allowed": True,
+        "traits": {"ears": "pointed ears", "eyes": "large gnomish eyes", "nose": "prominent gnomish nose", "mouth": "humanoid", "skin": "skin"},
+    },
     "Aarakocra": {
         "category": "avian", "body_type": "avian humanoid", "heritage_compatible": False,
         "prompt": "an aarakocra character",
@@ -220,5 +244,23 @@ DEFAULT_LINEAGE = {
     "traits": {"ears": "humanoid ears", "eyes": "humanoid", "nose": "humanoid", "mouth": "humanoid", "skin": "skin"},
 }
 
+LINEAGE_ALIASES = {
+    "High Elf": "Elf",
+    "Wood Elf": "Elf",
+    "Dark Elf (Drow)": "Elf",
+    "Wild Elf (Grugach)": "Elf",
+    "Aquatic Elf": "Elf",
+    "Hill Dwarf": "Dwarf",
+    "Mountain Dwarf": "Dwarf",
+    "Duergar (Gray Dwarf)": "Dwarf",
+    "Hairfoot Halfling": "Halfling",
+    "Stout Halfling": "Halfling",
+    "Tallfellow Halfling": "Halfling",
+    "Rock Gnome": "Gnome",
+    "Forest Gnome": "Gnome",
+    "Deep Gnome (Svirfneblin)": "Gnome",
+}
+
 def get_lineage(race):
-    return LINEAGE_DATA.get(race, DEFAULT_LINEAGE)
+    key = LINEAGE_ALIASES.get(race, race)
+    return LINEAGE_DATA.get(key, DEFAULT_LINEAGE)
