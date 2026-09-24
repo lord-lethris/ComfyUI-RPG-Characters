@@ -4,6 +4,7 @@ import re
 
 from ..dna.character_dna import make_character_dna, make_source_signature
 from ..dna.dna_schema import DNA_SECTIONS
+from ..dna.face_data import FACE_LOCUS_DATA
 
 from ...rpg_character_data.rpg_race_data import RACE_DATA
 from ...rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
@@ -46,6 +47,25 @@ def _variant_label(prompt, match, index):
             return label
 
     return f"Variant {index + 1}"
+
+
+def _select_face_options(seed, context):
+    """Choose a stable default face from the character seed/context."""
+    selected = {}
+    for locus_id, definition in FACE_LOCUS_DATA.items():
+        options = list(definition["options"].keys())
+        if not options:
+            continue
+        signature = make_source_signature(
+            f"face:{locus_id}",
+            {
+                "seed": seed,
+                **context,
+            },
+        )
+        index = int(signature[:8], 16) % len(options)
+        selected[locus_id] = options[index]
+    return selected
 
 
 def _extract_variant_sets(entry, prefix):
@@ -118,6 +138,17 @@ class RPGCharacterGen3:
         scene,
         dna_seed=-1,
     ):
+        face_context = {
+            "race": race,
+            "ethnicity": ethnicity,
+            "gender": gender,
+            "age": age,
+        }
+        face_selections = _select_face_options(
+            None if int(dna_seed) < 0 else int(dna_seed),
+            face_context,
+        )
+
         selections = {
             "race": race,
             "ethnicity": ethnicity,
@@ -132,6 +163,7 @@ class RPGCharacterGen3:
             "augmentations": augmentations,
             "emotion": emotion,
             "scene": scene,
+            "face": dict(face_selections),
         }
 
         # Keep the first Gen 3 implementation intentionally conservative:
@@ -204,6 +236,29 @@ class RPGCharacterGen3:
                 }
             loci.setdefault(field, []).append(locus)
 
+        face_loci = []
+        for locus_id, definition in FACE_LOCUS_DATA.items():
+            options = list(definition["options"].keys())
+            selected = face_selections.get(locus_id)
+            option_data = definition["options"]
+            face_loci.append({
+                "id": f"face:{locus_id}",
+                "label": definition["label"],
+                "options": options,
+                "selected": selected,
+                "variant_sets": [],
+                "option_prompts": {
+                    key: str(value.get("prompt", ""))
+                    for key, value in option_data.items()
+                    if isinstance(value, dict)
+                },
+                "option_negative_prompts": {
+                    key: str(value.get("negative_prompt", ""))
+                    for key, value in option_data.items()
+                    if isinstance(value, dict) and value.get("negative_prompt")
+                },
+            })
+
         sections = {
             "identity": {
                 "values": {
@@ -259,6 +314,13 @@ class RPGCharacterGen3:
             },
         }
 
+        sections["face"] = {
+            "values": dict(face_selections),
+            "traits": list(face_selections.values()),
+            "source": "gen3_face_data",
+            "loci": face_loci,
+        }
+
         # Explicitly retain stable empty sections for downstream editors.
         for section_id in DNA_SECTIONS:
             sections.setdefault(section_id, {})
@@ -276,7 +338,10 @@ class RPGCharacterGen3:
             "equipment": {"augmentations": augmentations},
             "expression": {"emotion": emotion},
             "scene": {"scene": scene},
-            "face": {},
+            "face": {
+                "seed": None if int(dna_seed) < 0 else int(dna_seed),
+                **face_context,
+            },
             "skin": {},
             "armour": {},
             "pose": {},
