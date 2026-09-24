@@ -39,6 +39,7 @@ LINEAGE_DATA = {
         "body_plan": {
             "posture": "bipedal", "body": "human-proportioned infernal humanoid", "head": "infernal humanoid head",
             "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "tail": "thick infernal tail",
             "build": "human-proportioned medium build",
             "hair_allowed": True, "facial_hair_allowed": True,
         },
