@@ -58,6 +58,13 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
 
     genome = {
         "version": GENOME_VERSION,
+        "lineage": {
+            "prompt": lineage_data.get("prompt", ""),
+            "negative_prompt": lineage_data.get("negative_prompt", ""),
+            "features": dict(lineage_data.get("features", {})),
+            "traits": dict(lineage_data.get("traits", {})),
+            "face_model": lineage_data.get("face_model"),
+        },
         "identity": {
             "lineage": lineage,
             "heritage": heritage,
