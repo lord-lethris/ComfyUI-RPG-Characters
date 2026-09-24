@@ -55,7 +55,23 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
         species_traits[locus] = _choice(seed_material, f"species:{locus}", options)
 
     compatible_heritage = bool(lineage_data.get("heritage_compatible", False))
-    heritage_phenotype = heritage_data.get("phenotype_prompt", "") if compatible_heritage else ""
+    heritage_components = (
+        dict(heritage_data.get("components", {}))
+        if compatible_heritage and isinstance(heritage_data.get("components", {}), dict)
+        else {}
+    )
+    protected_components = set(lineage_data.get("heritage_protected_components", []))
+    heritage_components = {
+        key: value for key, value in heritage_components.items()
+        if key not in protected_components
+    }
+    for key, value in lineage_data.get("heritage_component_overrides", {}).items():
+        heritage_components[key] = value
+    heritage_phenotype = (
+        ", ".join(str(value) for value in heritage_components.values())
+        if heritage_components
+        else ""
+    )
 
     genome = {
         "version": GENOME_VERSION,
@@ -83,6 +99,7 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
         },
         "phenotype": {
             "heritage": heritage_phenotype,
+            "heritage_components": heritage_components,
             "body_plan": body_plan,
             "anatomy": {
                 "head": body_plan.get("head"),
