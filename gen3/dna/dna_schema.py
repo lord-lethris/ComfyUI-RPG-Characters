@@ -22,7 +22,7 @@ document.
 Document contract
 -----------------
 A Character DNA document contains:
-    dna_version, type, seed, source, selections, sections
+    dna_version, type, seed, source, selections, genome, sections
 
 Every section contains:
     id, label, description, values, traits, loci, source, source_inputs,
