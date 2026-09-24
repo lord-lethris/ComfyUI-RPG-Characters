@@ -48,6 +48,7 @@ class RPGCharacterDNAPromptBuilder:
         species_traits = genome.get("species_traits", {})
         phenotype = genome.get("phenotype", {})
         lineage_data = cls._lineage_snapshot(genome)
+        body_plan = phenotype.get("body_plan", {})
 
         positive = []
         negative = []
@@ -55,17 +56,33 @@ class RPGCharacterDNAPromptBuilder:
         if lineage_data.get("prompt"):
             positive.append(lineage_data["prompt"])
 
+        anatomy = []
+        for key in ("posture", "body", "head", "limbs", "hands", "feet", "wings", "tail"):
+            value = body_plan.get(key)
+            if value:
+                anatomy.append(str(value))
+
+        if anatomy:
+            positive.append(", ".join(anatomy) + " anatomy")
+
+        # Species-specific traits are rendered as modifiers of the body plan,
+        # not as a disconnected list of boolean facts.
+        horn_type = species_traits.get("horn_type")
+        if horn_type:
+            positive.append(f"{horn_type} horns")
+
+        wing_type = species_traits.get("wing_type")
+        if wing_type and not body_plan.get("wings"):
+            positive.append(f"{wing_type} wings")
+
+        scale_pattern = species_traits.get("scale_pattern")
+        if scale_pattern:
+            positive.append(f"{scale_pattern} scales")
+
         heritage = identity.get("heritage")
         if heritage and identity.get("heritage_compatible") and phenotype.get("heritage"):
             positive.append(f"{heritage} heritage")
             positive.append(phenotype["heritage"])
-
-        for key, value in species_traits.items():
-            if isinstance(value, dict):
-                if value.get("present"):
-                    positive.append(f"with {key.replace('_', ' ')}")
-            elif value:
-                positive.append(f"{key.replace('_', ' ')}: {value}")
 
         if lineage_data.get("negative_prompt"):
             negative.append(lineage_data["negative_prompt"])
@@ -104,13 +121,23 @@ class RPGCharacterDNAPromptBuilder:
                 continue
 
             for locus in section.get("loci", []):
-                if locus.get("id") in {"identity:race", "identity:ethnicity"}:
+                locus_id = locus.get("id")
+                if locus_id in {"identity:race", "identity:ethnicity"}:
+                    continue
+
+                genome = CHARACTER_INFO.get("genome") or {}
+                phenotype = genome.get("phenotype", {}) if isinstance(genome, dict) else {}
+                if locus_id.startswith("hair:") and not phenotype.get("hair_allowed", True):
+                    continue
+                if locus_id.startswith("facial_hair:") and not phenotype.get("facial_hair_allowed", True):
                     continue
                 if not isinstance(locus, dict):
                     continue
 
                 selected = locus.get("selected")
                 if not selected:
+                    continue
+                if locus_id == "identity:class" and str(selected).strip().lower() == "no class":
                     continue
 
                 positive = self._resolve_locus_prompt(locus, selected)
@@ -238,6 +265,8 @@ class RPGCharacterDNAPromptBuilder:
         x_value = cls._numeric_control_value(control.get("x_value"))
         y_value = cls._numeric_control_value(control.get("y_value"))
         if x_value is None and y_value is None:
+            return ""
+        if x_value == 0.0 and y_value == 0.0:
             return ""
 
         descriptors = []
