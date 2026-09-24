@@ -38,6 +38,8 @@ from _rpg_characters_test.gen3.dna.face_data import FACE_LOCUS_DATA
 from _rpg_characters_test.gen3.dna.lineage_data import get_lineage
 from _rpg_characters_test.gen3.dna.heritage_data import get_heritage
 from _rpg_characters_test.gen3.dna.genome import make_genome
+from _rpg_characters_test.gen3.nodes.render_intent import RPGCharacterRenderIntent
+from _rpg_characters_test.gen3.render.render_intent import make_render_intent
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -900,6 +902,65 @@ class TestGen3DNA(unittest.TestCase):
 
         self.assertFalse(genome["identity"]["heritage_compatible"])
         self.assertEqual(genome["phenotype"]["heritage"], "")
+
+
+    def test_gen3_character_portrait_render_intent_is_separate_from_dna(self):
+        dna = make_character_dna(seed=1234)
+        intent = make_render_intent("character_portrait")
+
+        self.assertEqual(intent["type"], "RPG_CHARACTER_RENDER_INTENT")
+        self.assertEqual(intent["id"], "character_portrait")
+        self.assertEqual(intent["framing"], "head and shoulders with upper torso visible")
+        self.assertEqual(intent["subject"], "single character")
+        self.assertNotIn("render_intent", dna)
+        self.assertNotIn("positive_prompt", dna)
+        self.assertNotIn("negative_prompt", dna)
+
+    def test_gen3_render_intent_node_returns_character_portrait(self):
+        inputs = RPGCharacterRenderIntent.INPUT_TYPES()["required"]["intent"][0]
+        self.assertIn("Character Portrait", inputs)
+
+        result = RPGCharacterRenderIntent().create("Character Portrait")[0]
+
+        self.assertEqual(result["type"], "RPG_CHARACTER_RENDER_INTENT")
+        self.assertEqual(result["id"], "character_portrait")
+        self.assertIn("head and shoulders", result["positive_prompt"])
+        self.assertIn("full body", result["negative_prompt"])
+
+    def test_gen3_prompt_builder_applies_render_intent_without_mutating_dna(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["gender"] = "Male"
+        values["age"] = "Mid Adult"
+        values["beard_style"] = "No Beard"
+        values["dna_seed"] = 31415
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        original_dna = __import__("copy").deepcopy(dna)
+        intent = make_render_intent("character_portrait")
+
+        positive_without, negative_without = RPGCharacterDNAPromptBuilder().build(dna)
+        positive_with, negative_with = RPGCharacterDNAPromptBuilder().build(
+            dna,
+            intent,
+        )
+
+        self.assertEqual(dna, original_dna)
+        self.assertNotIn("head and shoulders", positive_without)
+        self.assertIn("head and shoulders", positive_with)
+        self.assertIn("upper torso visible", positive_with)
+        self.assertIn("full body", negative_with)
+        self.assertIn("beard", negative_with.lower())
+        self.assertIn("clean-shaven face", positive_with)
+        self.assertEqual(
+            positive_with.count("head and shoulders"),
+            1,
+        )
 
 if __name__ == "__main__":
     unittest.main()
