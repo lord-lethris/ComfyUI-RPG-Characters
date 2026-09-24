@@ -1007,6 +1007,8 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("clean-shaven face", flux_positive)
         self.assertIn("head-and-shoulders", flux_positive)
         self.assertIn("fantasy art", flux_positive)
+        self.assertNotIn("beard", flux_positive.lower())
+        self.assertNotIn("moustache", flux_positive.lower())
 
         self.assertIn("(close-up head-and-shoulders:1.25)", sdxl_positive)
         self.assertIn("(completely clean-shaven face:1.30)", sdxl_positive)
@@ -1017,8 +1019,10 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("clean-shaven face", z_positive)
         self.assertIn("must not contain", z_positive.lower())
 
+        self.assertEqual(krea_negative, "")
         self.assertIn("clean-shaven face", krea_positive)
-        self.assertTrue(krea_negative)
+        self.assertNotIn("beard", krea_positive.lower())
+        self.assertNotIn("moustache", krea_positive.lower())
 
     def test_gen3_character_portrait_render_intent_is_separate_from_dna(self):
         dna = make_character_dna(seed=1234)
