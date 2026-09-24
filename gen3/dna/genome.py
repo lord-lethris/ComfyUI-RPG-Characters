@@ -42,6 +42,7 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
 
     features = lineage_data.get("features", {})
     feature_loci = lineage_data.get("feature_loci", {})
+    body_plan = dict(lineage_data.get("body_plan", {}))
 
     species_traits = {}
     for feature, enabled in features.items():
@@ -64,6 +65,7 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
             "features": dict(lineage_data.get("features", {})),
             "traits": dict(lineage_data.get("traits", {})),
             "face_model": lineage_data.get("face_model"),
+            "body_plan": body_plan,
         },
         "identity": {
             "lineage": lineage,
@@ -81,6 +83,18 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
         },
         "phenotype": {
             "heritage": heritage_phenotype,
+            "body_plan": body_plan,
+            "anatomy": {
+                "head": body_plan.get("head"),
+                "body": body_plan.get("body"),
+                "limbs": body_plan.get("limbs"),
+                "hands": body_plan.get("hands"),
+                "feet": body_plan.get("feet"),
+                "wings": body_plan.get("wings"),
+                "tail": body_plan.get("tail"),
+            },
+            "hair_allowed": bool(body_plan.get("hair_allowed", True)),
+            "facial_hair_allowed": bool(body_plan.get("facial_hair_allowed", True)),
         },
         "signature": hashlib.sha256(seed_material.encode("utf-8")).hexdigest(),
     }
