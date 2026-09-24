@@ -798,6 +798,61 @@ class TestGen3DNA(unittest.TestCase):
         self.assertTrue(genome["species_traits"]["horn_type"])
         self.assertTrue(genome["species_traits"]["tail_type"])
 
+    def test_gen3_no_beard_ignores_beard_colour_and_blocks_facial_hair(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["gender"] = "Male"
+        values["age"] = "Mid Adult"
+        values["beard_style"] = "No Beard"
+        values["beard_colour"] = "Ash Blonde"
+        values["dna_seed"] = 2468
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertIn("clean-shaven face", positive)
+        self.assertIn("no facial hair", positive)
+        self.assertNotIn("Ash Blonde Colored", positive)
+        self.assertIn("beard", negative.lower())
+        self.assertIn("moustache", negative.lower())
+        self.assertNotIn("beard", positive.lower())
+
+    def test_gen3_tiefling_uses_human_proportions(self):
+        lineage = get_lineage("Tiefling")
+        self.assertEqual(
+            lineage["body_plan"]["body"],
+            "human-proportioned infernal humanoid",
+        )
+        self.assertEqual(
+            lineage["body_plan"]["build"],
+            "human-proportioned medium build",
+        )
+        self.assertNotIn("dwarf", lineage["negative_prompt"])
+
+    def test_gen3_researched_lineage_aliases_do_not_fall_back_to_human(self):
+        for race, expected in (
+            ("High Elf", "Elf"),
+            ("Wood Elf", "Elf"),
+            ("Dark Elf (Drow)", "Elf"),
+            ("Hill Dwarf", "Dwarf"),
+            ("Mountain Dwarf", "Dwarf"),
+            ("Stout Halfling", "Halfling"),
+            ("Rock Gnome", "Gnome"),
+        ):
+            self.assertEqual(
+                get_lineage(race)["body_type"],
+                get_lineage(expected)["body_type"],
+            )
+
+    def test_gen3_elf_disallows_facial_hair(self):
+        self.assertFalse(get_lineage("Elf")["body_plan"]["facial_hair_allowed"])
+        self.assertFalse(get_lineage("High Elf")["body_plan"]["facial_hair_allowed"])
+
     def test_gen3_incompatible_heritage_is_cultural_only(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
