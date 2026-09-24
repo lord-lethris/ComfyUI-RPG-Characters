@@ -62,8 +62,12 @@ class RPGCharacterDNAPromptBuilder:
             if value:
                 anatomy.append(str(value))
 
+        build = body_plan.get("build")
         if anatomy:
-            positive.append(", ".join(anatomy) + " anatomy")
+            phrase = ", ".join(anatomy)
+            if build:
+                phrase += f", {build}"
+            positive.append(phrase)
 
         # Species-specific traits are rendered as modifiers of the body plan,
         # not as a disconnected list of boolean facts.
