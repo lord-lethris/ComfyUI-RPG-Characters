@@ -105,6 +105,9 @@ class TestGen3DNA(unittest.TestCase):
 
         self.assertEqual(dna["type"], "RPG_CHARACTER_DNA")
         self.assertEqual(dna["seed"], 1234)
+        self.assertIsInstance(dna["genome"], dict)
+        self.assertEqual(dna["genome"]["identity"]["lineage"], values["race"])
+        self.assertEqual(dna["genome"]["identity"]["heritage"], values["ethnicity"])
 
         for section_id in ("identity", "anatomy", "hair", "facial_hair", "clothing", "equipment", "expression", "scene"):
             self.assertTrue(dna["sections"][section_id]["loci"], section_id)
