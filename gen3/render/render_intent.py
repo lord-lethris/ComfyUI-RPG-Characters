@@ -5,7 +5,7 @@ this character?"; render intent answers "what should the generator show?".
 Model-specific prompt adapters can consume this semantic contract later.
 """
 
-RENDER_INTENT_VERSION = 1
+RENDER_INTENT_VERSION = 2
 
 CHARACTER_PORTRAIT_INTENT = {
     "id": "character_portrait",
@@ -13,20 +13,35 @@ CHARACTER_PORTRAIT_INTENT = {
     "description": (
         "A character-sheet portrait focused on the head, face and upper torso."
     ),
-    "framing": "head and shoulders with upper torso visible",
-    "camera": "front-facing or slight three-quarter view",
-    "subject": "single character",
-    "face_visibility": "face clearly visible",
-    "background": "simple neutral background",
-    "positive_prompt": (
-        "character portrait, head and shoulders, upper torso visible, "
-        "single character, centered subject, face clearly visible, "
-        "front-facing or slight three-quarter view, simple neutral background"
-    ),
-    "negative_prompt": (
-        "full body, full-length character, head-to-toe framing, multiple "
-        "characters, cropped face, obscured face"
-    ),
+    "composition": {
+        "framing": "head_and_shoulders",
+        "crop": "upper_chest",
+        "subject_scale": "large_in_frame",
+        "camera": "front_or_three_quarter",
+        "subject_count": 1,
+        "primary_subject": "face",
+    },
+    "visibility": {
+        "face": "clear",
+        "required_regions": [
+            "head",
+            "face",
+            "neck",
+            "shoulders",
+            "upper_chest",
+        ],
+        "excluded_regions": [
+            "lower_body",
+            "legs",
+            "knees",
+            "feet",
+            "full_body",
+        ],
+    },
+    "background": "simple_neutral",
+    "character_constraints": {
+        "facial_hair": "none",
+    },
 }
 
 RENDER_INTENTS = {
