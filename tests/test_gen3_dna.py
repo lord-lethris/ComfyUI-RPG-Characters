@@ -736,6 +736,11 @@ class TestGen3DNA(unittest.TestCase):
         self.assertTrue(genome_a["species_traits"]["tail"]["present"])
         self.assertTrue(genome_a["species_traits"]["wings"]["present"])
         self.assertTrue(genome_a["species_traits"]["scales"]["present"])
+        self.assertEqual(genome_a["phenotype"]["body_plan"]["posture"], "bipedal")
+        self.assertEqual(genome_a["phenotype"]["body_plan"]["body"], "fully draconic humanoid")
+        self.assertEqual(genome_a["phenotype"]["body_plan"]["head"], "fully draconic head")
+        self.assertFalse(genome_a["phenotype"]["hair_allowed"])
+        self.assertFalse(genome_a["phenotype"]["facial_hair_allowed"])
 
     def test_gen3_dragon_prompt_does_not_inherit_human_heritage_morphology(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
@@ -753,15 +758,25 @@ class TestGen3DNA(unittest.TestCase):
         dna = RPGCharacterGen3().create_character(**values)[0]
         positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
 
-        self.assertIn("sapient dragon", positive)
-        self.assertIn("with horns", positive)
-        self.assertIn("with tail", positive)
-        self.assertIn("with wings", positive)
-        self.assertIn("with scales", positive)
+        self.assertIn("anthropomorphic dragon character", positive)
+        self.assertIn("bipedal", positive)
+        self.assertIn("fully draconic humanoid", positive)
+        self.assertIn("fully draconic head", positive)
+        self.assertIn("clawed draconic hands", positive)
+        self.assertIn("digitigrade clawed feet", positive)
+        self.assertIn("long muscular tail", positive)
+        self.assertIn("ridged horns", positive)
+        self.assertIn("fine scales", positive)
         self.assertNotIn("light to medium skin tone", positive)
         self.assertNotIn("varied features", positive)
         self.assertNotIn("heart-shaped face", positive)
         self.assertNotIn("Pure Human/Fantasy Form", positive)
+        self.assertNotIn("bald head", positive)
+        self.assertNotIn("No hair", positive)
+        self.assertNotIn("No Beard", positive)
+        self.assertNotIn("neutral mouth", positive)
+        self.assertNotIn("mouth closed", positive)
+        self.assertNotIn("has no defined class", positive)
         self.assertIn("human face", negative)
 
     def test_gen3_tiefling_genome_requires_horns_and_tail(self):
