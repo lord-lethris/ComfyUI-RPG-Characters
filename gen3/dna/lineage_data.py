@@ -212,6 +212,11 @@ DEFAULT_LINEAGE = {
     "negative_prompt": "incompatible non-humanoid anatomy",
     "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
     "face_model": "humanoid", "face_allowed": True,
+    "body_plan": {
+        "posture": "bipedal", "body": "fantasy humanoid", "head": "humanoid",
+        "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+        "hair_allowed": True, "facial_hair_allowed": True,
+    },
     "traits": {"ears": "humanoid ears", "eyes": "humanoid", "nose": "humanoid", "mouth": "humanoid", "skin": "skin"},
 }
 
