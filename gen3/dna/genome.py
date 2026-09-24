@@ -31,6 +31,13 @@ def _range(seed_material, key, minimum=0.0, maximum=1.0):
 
 def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_data):
     """Create a stable genome and derived phenotype state."""
+    heritage = (
+        None
+        if heritage is None
+        or not str(heritage).strip()
+        or str(heritage).strip().lower() == "none"
+        else str(heritage).strip()
+    )
     seed_material = json.dumps({
         "version": GENOME_VERSION,
         "seed": seed,
