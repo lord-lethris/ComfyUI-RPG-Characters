@@ -46,7 +46,7 @@ def make_empty_section(section_id):
 
 
 def make_character_dna(*, selections=None, seed=None, source="RPG Character Gen 3",
-                       sections=None):
+                       sections=None, genome=None):
     """Build a complete Character DNA document with every stable section."""
     selections = deepcopy(selections or {})
     supplied_sections = deepcopy(sections or {})
@@ -57,6 +57,7 @@ def make_character_dna(*, selections=None, seed=None, source="RPG Character Gen 
         "seed": seed,
         "source": source,
         "selections": selections,
+        "genome": deepcopy(genome) if isinstance(genome, dict) else None,
         "sections": {},
     }
 
