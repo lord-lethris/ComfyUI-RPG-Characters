@@ -142,6 +142,11 @@ class RPGCharacterGen3:
         dna_seed=-1,
     ):
         seed = None if int(dna_seed) < 0 else int(dna_seed)
+        # Beard colour is subordinate to beard style. "No Beard" means there
+        # is no facial-hair colour state to render or persist.
+        effective_beard_colour = (
+            "No Beard" if beard_style == "No Beard" else beard_colour
+        )
         lineage_data = get_lineage(race)
         heritage_data = get_heritage(ethnicity)
         genome = make_genome(
@@ -178,7 +183,7 @@ class RPGCharacterGen3:
             "hair_style": hair_style,
             "hair_colour": hair_colour,
             "beard_style": beard_style,
-            "beard_colour": beard_colour,
+            "beard_colour": effective_beard_colour,
             "clothing": clothes_style,
             "augmentations": augmentations,
             "emotion": emotion,
@@ -201,7 +206,7 @@ class RPGCharacterGen3:
             "hair:style": ("Hair Style", hair_style, HAIR_STYLE_DATA[hair_style]),
             "hair:colour": ("Hair Colour", hair_colour, HAIR_COLOUR_DATA[hair_colour]),
             "facial_hair:style": ("Beard Style", beard_style, BEARD_STYLE_DATA[beard_style]),
-            "facial_hair:colour": ("Beard Colour", beard_colour, BEARD_COLOUR_DATA[beard_colour]),
+            "facial_hair:colour": ("Beard Colour", effective_beard_colour, BEARD_COLOUR_DATA[effective_beard_colour]),
             "clothing:style": ("Clothing Style", clothes_style, CLOTHES_STYLE_DATA[clothes_style]),
             "equipment:augmentations": ("Augmentations", augmentations, AUGMENT_DATA[augmentations]),
             "expression:emotion": ("Emotion", emotion, EMOTION_DATA[emotion]),
@@ -305,8 +310,8 @@ class RPGCharacterGen3:
                 "loci": loci["hair"],
             },
             "facial_hair": {
-                "values": {"style": beard_style, "colour": beard_colour},
-                "traits": [beard_style, beard_colour],
+                "values": {"style": beard_style, "colour": effective_beard_colour},
+                "traits": [beard_style, effective_beard_colour],
                 "source": "rpg_character_data",
                 "loci": loci["facial_hair"],
             },
@@ -355,7 +360,7 @@ class RPGCharacterGen3:
             "identity": {"lineage": race, "heritage": ethnicity, "class": character_class},
             "anatomy": {"gender": gender, "age": age},
             "hair": {"hair_style": hair_style, "hair_colour": hair_colour},
-            "facial_hair": {"beard_style": beard_style, "beard_colour": beard_colour},
+            "facial_hair": {"beard_style": beard_style, "beard_colour": effective_beard_colour},
             "clothing": {"clothes_style": clothes_style},
             "equipment": {"augmentations": augmentations},
             "expression": {"emotion": emotion},
