@@ -8,7 +8,12 @@ the legacy prompt strings.
 LINEAGE_DATA = {
     "Human": {
         "category": "humanoid", "body_type": "human", "heritage_compatible": True,
-        "prompt": "a human",
+        "prompt": "a human character",
+        "body_plan": {
+            "posture": "bipedal", "body": "human humanoid", "head": "human",
+            "limbs": "human", "hands": "human hands", "feet": "human feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "non-human anatomy, horns, tail, wings, scales, muzzle, reptilian face",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid",
@@ -17,15 +22,30 @@ LINEAGE_DATA = {
     },
     "Elf": {
         "category": "humanoid", "body_type": "elven humanoid", "heritage_compatible": True,
-        "prompt": "an elven humanoid with subtly pointed ears and an elegant elven appearance",
+        "prompt": "an elven character",
+        "body_plan": {
+            "posture": "bipedal", "body": "elven humanoid", "head": "elven",
+            "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "human-only anatomy, animal muzzle, scales",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
+    "body_plan": {
+        "posture": "bipedal", "body": "fantasy humanoid", "head": "humanoid",
+        "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+        "hair_allowed": True, "facial_hair_allowed": True,
+    },
         "traits": {"ears": "pointed elven ears", "eyes": "humanoid", "nose": "humanoid", "mouth": "humanoid", "skin": "skin"},
     },
     "Tiefling": {
         "category": "humanoid", "body_type": "infernal humanoid", "heritage_compatible": True,
-        "prompt": "a tiefling humanoid with infernal features",
+        "prompt": "a tiefling character",
+        "body_plan": {
+            "posture": "bipedal", "body": "infernal humanoid", "head": "humanoid with infernal features",
+            "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "ordinary human, missing horns, missing tail",
         "features": {"horns": True, "tail": True, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -34,7 +54,13 @@ LINEAGE_DATA = {
     },
     "Dragon": {
         "category": "draconic", "body_type": "dragon", "heritage_compatible": False,
-        "prompt": "a sapient dragon with a fully draconic head, scaled body, reptilian eyes, horns, powerful wings, a long tail and clawed limbs",
+        "prompt": "an anthropomorphic dragon character",
+        "body_plan": {
+            "posture": "bipedal", "body": "fully draconic humanoid", "head": "fully draconic head",
+            "limbs": "bipedal draconic limbs", "hands": "clawed draconic hands", "feet": "digitigrade clawed feet",
+            "wings": "large bat-like wings", "tail": "long muscular tail",
+            "hair_allowed": False, "facial_hair_allowed": False,
+        },
         "negative_prompt": "human face, human skin, human ears, human nose, human lips, human body, humanoid head, human anatomy",
         "features": {"horns": True, "tail": True, "wings": True, "scales": True, "claws": True},
         "face_model": "draconic", "face_allowed": False,
@@ -43,7 +69,12 @@ LINEAGE_DATA = {
     },
     "Dragonkin": {
         "category": "draconic", "body_type": "draconic humanoid", "heritage_compatible": False,
-        "prompt": "a dragonkin humanoid with a distinctly draconic head, scales, reptilian eyes, horns, a tail and clawed hands",
+        "prompt": "a dragonkin character",
+        "body_plan": {
+            "posture": "bipedal", "body": "draconic humanoid", "head": "fully draconic head",
+            "limbs": "humanoid-draconic limbs", "hands": "clawed hands", "feet": "clawed humanoid feet",
+            "tail": "long reptilian tail", "hair_allowed": False, "facial_hair_allowed": False,
+        },
         "negative_prompt": "human face, human skin, human ears, ordinary human head",
         "features": {"horns": True, "tail": True, "wings": False, "scales": True, "claws": True},
         "face_model": "draconic_humanoid", "face_allowed": False,
@@ -52,7 +83,12 @@ LINEAGE_DATA = {
     },
     "Half-Elf": {
         "category": "hybrid", "body_type": "humanoid", "heritage_compatible": True,
-        "prompt": "a half-elf humanoid with subtly elven features and slightly pointed ears",
+        "prompt": "a half-elf character",
+        "body_plan": {
+            "posture": "bipedal", "body": "humanoid", "head": "human-elven hybrid",
+            "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "non-humanoid anatomy, animal muzzle, scales",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -60,7 +96,12 @@ LINEAGE_DATA = {
     },
     "Half-Orc": {
         "category": "hybrid", "body_type": "orcish humanoid", "heritage_compatible": True,
-        "prompt": "a half-orc humanoid with pronounced tusks, strong jaw and orcish features",
+        "prompt": "a half-orc character",
+        "body_plan": {
+            "posture": "bipedal", "body": "orcish humanoid", "head": "orcish humanoid",
+            "limbs": "humanoid", "hands": "strong humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "delicate human-only features, animal muzzle",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -68,7 +109,12 @@ LINEAGE_DATA = {
     },
     "Dwarf": {
         "category": "humanoid", "body_type": "dwarven humanoid", "heritage_compatible": True,
-        "prompt": "a dwarven humanoid with a sturdy compact build and broad facial structure",
+        "prompt": "a dwarf character",
+        "body_plan": {
+            "posture": "bipedal", "body": "compact dwarven humanoid", "head": "dwarven",
+            "limbs": "humanoid", "hands": "dwarven hands", "feet": "dwarven feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "non-humanoid anatomy, animal muzzle, scales",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -76,7 +122,12 @@ LINEAGE_DATA = {
     },
     "Orc": {
         "category": "humanoid", "body_type": "orcish humanoid", "heritage_compatible": True,
-        "prompt": "an orc humanoid with prominent lower tusks and strong orcish facial features",
+        "prompt": "an orc character",
+        "body_plan": {
+            "posture": "bipedal", "body": "orcish humanoid", "head": "orcish",
+            "limbs": "humanoid", "hands": "strong humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "delicate human-only features, animal muzzle",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -84,7 +135,12 @@ LINEAGE_DATA = {
     },
     "Aasimar": {
         "category": "humanoid", "body_type": "celestial humanoid", "heritage_compatible": True,
-        "prompt": "an aasimar humanoid with an otherworldly celestial appearance",
+        "prompt": "an aasimar character",
+        "body_plan": {
+            "posture": "bipedal", "body": "celestial humanoid", "head": "humanoid with celestial features",
+            "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
+            "hair_allowed": True, "facial_hair_allowed": True,
+        },
         "negative_prompt": "animal muzzle, scales",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "humanoid", "face_allowed": True,
@@ -92,7 +148,12 @@ LINEAGE_DATA = {
     },
     "Goblin": {
         "category": "humanoid", "body_type": "goblinoid humanoid", "heritage_compatible": False,
-        "prompt": "a goblin humanoid with large pointed ears, a small nose and wiry goblin features",
+        "prompt": "a goblin character",
+        "body_plan": {
+            "posture": "bipedal", "body": "goblinoid humanoid", "head": "goblinoid",
+            "limbs": "humanoid", "hands": "goblin hands", "feet": "goblin feet",
+            "hair_allowed": True, "facial_hair_allowed": False,
+        },
         "negative_prompt": "ordinary human face",
         "features": {"horns": False, "tail": False, "wings": False, "scales": False, "claws": False},
         "face_model": "goblinoid", "face_allowed": False,
@@ -100,7 +161,12 @@ LINEAGE_DATA = {
     },
     "Kobold": {
         "category": "reptilian", "body_type": "reptilian humanoid", "heritage_compatible": False,
-        "prompt": "a kobold humanoid with a distinctly reptilian head, scales, pointed snout, tail and claws",
+        "prompt": "a kobold character",
+        "body_plan": {
+            "posture": "bipedal", "body": "small reptilian humanoid", "head": "fully reptilian head",
+            "limbs": "reptilian humanoid limbs", "hands": "clawed hands", "feet": "clawed feet",
+            "tail": "reptilian tail", "hair_allowed": False, "facial_hair_allowed": False,
+        },
         "negative_prompt": "human face, human skin, human ears",
         "features": {"horns": False, "tail": True, "wings": False, "scales": True, "claws": True},
         "face_model": "reptilian", "face_allowed": False,
@@ -109,7 +175,12 @@ LINEAGE_DATA = {
     },
     "Lizardfolk": {
         "category": "reptilian", "body_type": "reptilian humanoid", "heritage_compatible": False,
-        "prompt": "a lizardfolk humanoid with a reptilian head, scales, long snout, tail and clawed hands",
+        "prompt": "a lizardfolk character",
+        "body_plan": {
+            "posture": "bipedal", "body": "reptilian humanoid", "head": "fully reptilian head",
+            "limbs": "reptilian humanoid limbs", "hands": "clawed hands", "feet": "clawed feet",
+            "tail": "long reptilian tail", "hair_allowed": False, "facial_hair_allowed": False,
+        },
         "negative_prompt": "human face, human skin, human ears",
         "features": {"horns": False, "tail": True, "wings": False, "scales": True, "claws": True},
         "face_model": "reptilian", "face_allowed": False,
@@ -118,7 +189,12 @@ LINEAGE_DATA = {
     },
     "Aarakocra": {
         "category": "avian", "body_type": "avian humanoid", "heritage_compatible": False,
-        "prompt": "an aarakocra avian humanoid with a feathered head, hooked beak, wings and taloned feet",
+        "prompt": "an aarakocra character",
+        "body_plan": {
+            "posture": "bipedal", "body": "avian humanoid", "head": "avian head",
+            "limbs": "avian humanoid limbs", "hands": "taloned hands", "feet": "taloned feet",
+            "wings": "feathered wings", "hair_allowed": False, "facial_hair_allowed": False,
+        },
         "negative_prompt": "human face, human skin, human nose, human ears",
         "features": {"horns": False, "tail": False, "wings": True, "scales": False, "claws": True},
         "face_model": "avian", "face_allowed": False,
