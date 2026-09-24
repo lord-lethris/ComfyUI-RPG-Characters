@@ -35,6 +35,8 @@ from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
 from _rpg_characters_test.gen3.nodes.dna_assembler import RPGCharacterDNAAssembler
 from _rpg_characters_test.gen3.nodes.dna_prompt_builder import RPGCharacterDNAPromptBuilder
 from _rpg_characters_test.gen3.dna.face_data import FACE_LOCUS_DATA
+from _rpg_characters_test.gen3.dna.lineage_data import get_lineage
+from _rpg_characters_test.gen3.dna.genome import make_genome
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -702,6 +704,98 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(result["id"], "hair")
         self.assertEqual(result["loci"][0]["selected"], "White")
         self.assertEqual(result["loci"][0]["weights"]["1"], 0.75)
+
+    def test_gen3_genome_is_deterministic_and_persistent(self):
+        lineage = get_lineage("Dragon")
+        genome_a = make_genome(
+            seed=1234,
+            lineage="Dragon",
+            heritage="British",
+            gender="Male",
+            age="Elder",
+            lineage_data=lineage,
+            heritage_data={"phenotype_prompt": "human features"},
+        )
+        genome_b = make_genome(
+            seed=1234,
+            lineage="Dragon",
+            heritage="British",
+            gender="Male",
+            age="Elder",
+            lineage_data=lineage,
+            heritage_data={"phenotype_prompt": "human features"},
+        )
+
+        self.assertEqual(genome_a, genome_b)
+        self.assertEqual(genome_a["identity"]["lineage"], "Dragon")
+        self.assertFalse(genome_a["identity"]["heritage_compatible"])
+        self.assertTrue(genome_a["species_traits"]["horns"]["present"])
+        self.assertTrue(genome_a["species_traits"]["tail"]["present"])
+        self.assertTrue(genome_a["species_traits"]["wings"]["present"])
+        self.assertTrue(genome_a["species_traits"]["scales"]["present"])
+
+    def test_gen3_dragon_prompt_does_not_inherit_human_heritage_morphology(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Dragon"
+        values["ethnicity"] = "British"
+        values["gender"] = "Male"
+        values["age"] = "Elder"
+        values["dna_seed"] = 1234
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+        self.assertIn("sapient dragon", positive)
+        self.assertIn("with horns", positive)
+        self.assertIn("with tail", positive)
+        self.assertIn("with wings", positive)
+        self.assertIn("with scales", positive)
+        self.assertNotIn("light to medium skin tone", positive)
+        self.assertNotIn("varied features", positive)
+        self.assertNotIn("heart-shaped face", positive)
+        self.assertNotIn("Pure Human/Fantasy Form", positive)
+        self.assertIn("human face", negative)
+
+    def test_gen3_tiefling_genome_requires_horns_and_tail(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["dna_seed"] = 9876
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        genome = dna["genome"]
+
+        self.assertEqual(genome["identity"]["lineage"], "Tiefling")
+        self.assertTrue(genome["species_traits"]["horns"]["present"])
+        self.assertTrue(genome["species_traits"]["tail"]["present"])
+        self.assertTrue(genome["species_traits"]["horn_type"])
+        self.assertTrue(genome["species_traits"]["tail_type"])
+
+    def test_gen3_incompatible_heritage_is_cultural_only(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Dragon"
+        values["ethnicity"] = "Japanese"
+        values["dna_seed"] = 2222
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        genome = dna["genome"]
+
+        self.assertFalse(genome["identity"]["heritage_compatible"])
+        self.assertEqual(genome["phenotype"]["heritage"], "")
 
 if __name__ == "__main__":
     unittest.main()
