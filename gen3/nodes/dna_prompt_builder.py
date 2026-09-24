@@ -184,15 +184,107 @@ class RPGCharacterDNAPromptBuilder:
             self._join_parts(negative_parts),
         )
 
-    @staticmethod
-    def _render_intent(render_intent):
-        """Render a semantic presentation intent without changing Character DNA."""
+    @classmethod
+    def _render_intent(cls, render_intent):
+        """Translate semantic render intent into generic presentation prompts.
+
+        Render Intent remains model-independent data. This method is only a
+        generic textual adapter; model-specific adapters can consume the same
+        semantic contract later without changing Character DNA.
+        """
         if not isinstance(render_intent, dict):
             return "", ""
 
-        positive = str(render_intent.get("positive_prompt", "") or "").strip()
-        negative = str(render_intent.get("negative_prompt", "") or "").strip()
-        return positive, negative
+        composition = render_intent.get("composition", {})
+        visibility = render_intent.get("visibility", {})
+        background = render_intent.get("background")
+        constraints = render_intent.get("character_constraints", {})
+
+        if not any(
+            isinstance(value, dict)
+            for value in (composition, visibility, constraints)
+        ):
+            # Backward compatibility with v1 intent documents.
+            positive = str(render_intent.get("positive_prompt", "") or "").strip()
+            negative = str(render_intent.get("negative_prompt", "") or "").strip()
+            return positive, negative
+
+        positive = []
+        negative = []
+
+        framing = composition.get("framing")
+        if framing == "head_and_shoulders":
+            positive.append("close-up head-and-shoulders character portrait")
+            negative.extend([
+                "full body",
+                "full figure",
+                "full-length character",
+                "head-to-toe framing",
+                "standing full-body character",
+            ])
+
+        crop = composition.get("crop")
+        if crop == "upper_chest":
+            positive.append(
+                "framed from the upper chest upward, with only the head, "
+                "neck, shoulders and upper chest visible"
+            )
+            negative.extend([
+                "lower body",
+                "waist-down",
+                "legs",
+                "knees",
+                "feet",
+                "boots",
+            ])
+
+        if composition.get("subject_scale") == "large_in_frame":
+            positive.append("face and head large in frame")
+
+        if composition.get("primary_subject") == "face":
+            positive.append("face is the primary subject")
+
+        if composition.get("camera") == "front_or_three_quarter":
+            positive.append("front-facing or slight three-quarter facial view")
+
+        if composition.get("subject_count") == 1:
+            positive.append("single character")
+
+        if visibility.get("face") == "clear":
+            positive.append("face clearly visible")
+            negative.extend(["cropped face", "obscured face"])
+
+        required_regions = visibility.get("required_regions", [])
+        if isinstance(required_regions, list) and required_regions:
+            visible = ", ".join(
+                str(region).replace("_", " ")
+                for region in required_regions
+            )
+            positive.append(f"clearly visible {visible}")
+
+        excluded_regions = visibility.get("excluded_regions", [])
+        if isinstance(excluded_regions, list):
+            negative.extend(
+                str(region).replace("_", " ")
+                for region in excluded_regions
+            )
+
+        if background == "simple_neutral":
+            positive.append("simple neutral background")
+
+        if constraints.get("facial_hair") == "none":
+            positive.append("completely clean-shaven face, no facial hair")
+            negative.extend([
+                "beard",
+                "moustache",
+                "mustache",
+                "goatee",
+                "sideburns",
+                "stubble",
+                "facial hair",
+            ])
+
+        return cls._join_parts(positive), cls._join_parts(negative)
 
     @classmethod
     def _resolve_locus_prompt(cls, locus, selected):
