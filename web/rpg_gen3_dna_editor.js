@@ -748,28 +748,6 @@ function renderEditor(node) {
     refreshEditorHeight(node);
 }
 
-function setEditorHeight(node, height) {
-    const safeHeight = Math.max(50, Number(height) || 50);
-    node.__gen3EditorHeight = safeHeight;
-
-    const container = node.__gen3EditorContainer;
-    if (container) {
-        container.style.minHeight = safeHeight + "px";
-    }
-
-    // DOM widgets use this value as their current layout height. Keeping it
-    // in sync with the min/max callbacks lets LiteGraph shrink immediately
-    // after a temporary Sculpt expansion.
-    if (node.__gen3EditorWidget) {
-        node.__gen3EditorWidget.computedHeight = safeHeight;
-    }
-
-    const width = Math.max(node.size[0], 320);
-    const headerHeight = node.__gen3EditorHeaderHeight || 120;
-    node.setSize?.([width, headerHeight + safeHeight]);
-    node.setDirtyCanvas?.(true, true);
-}
-
 function refreshEditorHeight(node) {
     const container = node.__gen3EditorContainer;
     if (!container) return;
@@ -789,14 +767,6 @@ function refreshEditorHeight(node) {
     // even after the DOM has returned to its compact content.
     if (node.__gen3EditorWidget) {
         node.__gen3EditorWidget.computedHeight = height;
-    }
-
-    // While Sculpt is open, keep the original compact height separately.
-    // __gen3EditorHeight is deliberately allowed to track the current
-    // expanded DOM height; __gen3SculptCompactHeight is the immutable
-    // restore target until the last Sculpt editor closes.
-    if ((node.__gen3SculptOpenCount || 0) === 0) {
-        node.__gen3SculptCompactHeight = null;
     }
 
     // The DOM widget owns this part of the node's height. Don't use the
@@ -885,7 +855,6 @@ app.registerExtension({
 
             node.__gen3EditorContainer = container;
             node.__gen3EditorWidget = editorWidget;
-            node.__gen3SculptOpenCount = 0;
 
             // The restored workflow can finish laying out the DOM after
             // onConfigure/onAfterGraphConfigured have already run. Observe
