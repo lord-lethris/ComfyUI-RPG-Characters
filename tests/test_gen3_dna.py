@@ -34,6 +34,7 @@ from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
 from _rpg_characters_test.gen3.nodes.dna_pipe import RPGCharacterDNAPipe
 from _rpg_characters_test.gen3.nodes.dna_assembler import RPGCharacterDNAAssembler
 from _rpg_characters_test.gen3.nodes.dna_prompt_builder import RPGCharacterDNAPromptBuilder
+from _rpg_characters_test.gen3.dna.face_data import FACE_LOCUS_DATA
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -128,6 +129,53 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(mouth["type"], "expression_2d")
         self.assertEqual(mouth["x_value"], 0.0)
         self.assertEqual(mouth["y_value"], 0.0)
+
+    def test_gen3_face_section_is_structured_and_deterministic(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+
+        first = RPGCharacterGen3().create_character(**values)[0]
+        second = RPGCharacterGen3().create_character(**values)[0]
+
+        face = first["sections"]["face"]
+        self.assertEqual(face, second["sections"]["face"])
+        self.assertEqual(len(face["loci"]), len(FACE_LOCUS_DATA))
+        self.assertEqual(set(face["values"]), set(FACE_LOCUS_DATA))
+
+        for locus in face["loci"]:
+            locus_id = locus["id"].split(":", 1)[1]
+            self.assertIn(locus_id, FACE_LOCUS_DATA)
+            self.assertIn(locus["selected"], locus["options"])
+            self.assertTrue(locus["option_prompts"][locus["selected"]])
+            self.assertEqual(locus["variant_sets"], [])
+            self.assertTrue(all(key in locus for key in DNA_LOCUS_KEYS))
+
+    def test_gen3_face_source_changes_with_identity_context(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["dna_seed"] = 1234
+
+        first = RPGCharacterGen3().create_character(**values)[0]
+        values["gender"] = inputs["gender"][0][1]
+        second = RPGCharacterGen3().create_character(**values)[0]
+
+        self.assertEqual(
+            first["sections"]["hair"]["source_signature"],
+            second["sections"]["hair"]["source_signature"],
+        )
+        self.assertNotEqual(
+            first["sections"]["face"]["source_signature"],
+            second["sections"]["face"]["source_signature"],
+        )
 
     def test_gen3_variant_labels_describe_prompt_context(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
