@@ -886,6 +886,28 @@ class TestGen3DNA(unittest.TestCase):
         self.assertFalse(get_lineage("Elf")["body_plan"]["facial_hair_allowed"])
         self.assertFalse(get_lineage("High Elf")["body_plan"]["facial_hair_allowed"])
 
+    def test_gen3_empty_heritage_does_not_render_as_none(self):
+        heritage = get_heritage(None)
+        self.assertEqual(heritage["label"], "")
+        self.assertEqual(heritage["prompt"], "")
+        self.assertEqual(heritage["components"], {})
+
+        lineage = get_lineage("Tiefling")
+        genome = make_genome(
+            seed=4321,
+            lineage="Tiefling",
+            heritage=None,
+            gender="Male",
+            age="Elder",
+            lineage_data=lineage,
+            heritage_data=heritage,
+        )
+
+        positive, negative = RPGCharacterDNAPromptBuilder()._render_genome(genome)
+        self.assertNotIn("None heritage", positive)
+        self.assertNotIn("None heritage", negative)
+
+
     def test_gen3_incompatible_heritage_is_cultural_only(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
@@ -909,9 +931,14 @@ class TestGen3DNA(unittest.TestCase):
         intent = make_render_intent("character_portrait")
 
         self.assertEqual(intent["type"], "RPG_CHARACTER_RENDER_INTENT")
+        self.assertEqual(intent["render_intent_version"], 2)
         self.assertEqual(intent["id"], "character_portrait")
-        self.assertEqual(intent["framing"], "head and shoulders with upper torso visible")
-        self.assertEqual(intent["subject"], "single character")
+        self.assertEqual(intent["composition"]["framing"], "head_and_shoulders")
+        self.assertEqual(intent["composition"]["crop"], "upper_chest")
+        self.assertEqual(intent["composition"]["subject_count"], 1)
+        self.assertEqual(intent["visibility"]["face"], "clear")
+        self.assertIn("lower_body", intent["visibility"]["excluded_regions"])
+        self.assertEqual(intent["character_constraints"]["facial_hair"], "none")
         self.assertNotIn("render_intent", dna)
         self.assertNotIn("positive_prompt", dna)
         self.assertNotIn("negative_prompt", dna)
@@ -923,9 +950,12 @@ class TestGen3DNA(unittest.TestCase):
         result = RPGCharacterRenderIntent().create("Character Portrait")[0]
 
         self.assertEqual(result["type"], "RPG_CHARACTER_RENDER_INTENT")
+        self.assertEqual(result["render_intent_version"], 2)
         self.assertEqual(result["id"], "character_portrait")
-        self.assertIn("head and shoulders", result["positive_prompt"])
-        self.assertIn("full body", result["negative_prompt"])
+        self.assertEqual(result["composition"]["framing"], "head_and_shoulders")
+        self.assertEqual(result["character_constraints"]["facial_hair"], "none")
+        self.assertNotIn("positive_prompt", result)
+        self.assertNotIn("negative_prompt", result)
 
     def test_gen3_prompt_builder_applies_render_intent_without_mutating_dna(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
@@ -951,16 +981,20 @@ class TestGen3DNA(unittest.TestCase):
         )
 
         self.assertEqual(dna, original_dna)
-        self.assertNotIn("head and shoulders", positive_without)
-        self.assertIn("head and shoulders", positive_with)
-        self.assertIn("upper torso visible", positive_with)
+        self.assertNotIn("head-and-shoulders", positive_without)
+        self.assertIn("close-up head-and-shoulders", positive_with)
+        self.assertIn("upper chest upward", positive_with)
+        self.assertIn("only the head, neck, shoulders and upper chest visible", positive_with)
+        self.assertIn("face and head large in frame", positive_with)
+        self.assertIn("face is the primary subject", positive_with)
         self.assertIn("full body", negative_with)
+        self.assertIn("lower body", negative_with)
+        self.assertIn("legs", negative_with)
+        self.assertIn("feet", negative_with)
         self.assertIn("beard", negative_with.lower())
+        self.assertIn("moustache", negative_with.lower())
         self.assertIn("clean-shaven face", positive_with)
-        self.assertEqual(
-            positive_with.count("head and shoulders"),
-            1,
-        )
+        self.assertEqual(positive_with.count("head-and-shoulders"), 1)
 
 if __name__ == "__main__":
     unittest.main()
