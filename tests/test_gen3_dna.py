@@ -832,7 +832,32 @@ class TestGen3DNA(unittest.TestCase):
             lineage["body_plan"]["build"],
             "human-proportioned medium build",
         )
+        self.assertEqual(lineage["body_plan"]["tail"], "thick infernal tail")
         self.assertNotIn("dwarf", lineage["negative_prompt"])
+
+    def test_gen3_tiefling_heritage_cannot_override_infernal_eyes(self):
+        lineage = get_lineage("Tiefling")
+        heritage = get_heritage("British")
+        genome = make_genome(
+            seed=1357,
+            lineage="Tiefling",
+            heritage="British",
+            gender="Male",
+            age="Mid Adult",
+            lineage_data=lineage,
+            heritage_data=heritage,
+        )
+
+        components = genome["phenotype"]["heritage_components"]
+        self.assertIn("light to medium skin tone", components["skin"])
+        self.assertIn("varied humanoid features", components["facial_features"])
+        self.assertEqual(
+            components["eyes"],
+            "solid infernal eyes with no visible sclera or pupil",
+        )
+        self.assertNotIn("blue", genome["phenotype"]["heritage"])
+        self.assertNotIn("green", genome["phenotype"]["heritage"])
+        self.assertNotIn("brown eyes", genome["phenotype"]["heritage"])
 
     def test_gen3_researched_lineage_aliases_do_not_fall_back_to_human(self):
         for race, expected in (
