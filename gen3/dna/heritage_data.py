@@ -21,6 +21,17 @@ HERITAGE_DATA = {
 }
 
 def get_heritage(name):
+    """Return heritage data without turning an empty selection into prose."""
+    if name is None or not str(name).strip():
+        return {
+            "label": "",
+            "prompt": "",
+            "phenotype_prompt": "",
+            "components": {},
+            "humanoid_only": True,
+        }
+
+    name = str(name).strip()
     return HERITAGE_DATA.get(
         name,
         {
