@@ -5,6 +5,9 @@ import re
 from ..dna.character_dna import make_character_dna, make_source_signature
 from ..dna.dna_schema import DNA_SECTIONS
 from ..dna.face_data import FACE_LOCUS_DATA
+from ..dna.lineage_data import get_lineage
+from ..dna.heritage_data import get_heritage
+from ..dna.genome import make_genome
 
 from ...rpg_character_data.rpg_race_data import RACE_DATA
 from ...rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
@@ -49,8 +52,8 @@ def _variant_label(prompt, match, index):
     return f"Variant {index + 1}"
 
 
-def _select_face_options(seed, context):
-    """Choose a stable default face from the character seed/context."""
+def _select_face_options(genome, context):
+    """Choose a stable humanoid face phenotype from the persistent genome."""
     selected = {}
     for locus_id, definition in FACE_LOCUS_DATA.items():
         options = list(definition["options"].keys())
@@ -59,7 +62,7 @@ def _select_face_options(seed, context):
         signature = make_source_signature(
             f"face:{locus_id}",
             {
-                "seed": seed,
+                "genome_signature": genome.get("signature"),
                 **context,
             },
         )
@@ -138,20 +141,37 @@ class RPGCharacterGen3:
         scene,
         dna_seed=-1,
     ):
+        seed = None if int(dna_seed) < 0 else int(dna_seed)
+        lineage_data = get_lineage(race)
+        heritage_data = get_heritage(ethnicity)
+        genome = make_genome(
+            seed=seed,
+            lineage=race,
+            heritage=ethnicity,
+            gender=gender,
+            age=age,
+            lineage_data=lineage_data,
+            heritage_data=heritage_data,
+        )
+
         face_context = {
             "race": race,
-            "ethnicity": ethnicity,
+            "heritage": ethnicity,
             "gender": gender,
             "age": age,
+            "face_model": lineage_data.get("face_model"),
         }
-        face_selections = _select_face_options(
-            None if int(dna_seed) < 0 else int(dna_seed),
-            face_context,
+        face_selections = (
+            _select_face_options(genome, face_context)
+            if lineage_data.get("face_allowed", False)
+            else {}
         )
 
         selections = {
             "race": race,
             "ethnicity": ethnicity,
+            "heritage": ethnicity,
+            "lineage": race,
             "gender": gender,
             "age": age,
             "class": character_class,
@@ -174,7 +194,7 @@ class RPGCharacterGen3:
         # stores the user's blend independently of prompt rendering.
         selected_entries = {
             "identity:race": ("Race", race, RACE_DATA[race]),
-            "identity:ethnicity": ("Ethnicity", ethnicity, ETHNICITY_DATA[ethnicity]),
+            "identity:ethnicity": ("Heritage", ethnicity, ETHNICITY_DATA[ethnicity]),
             "identity:class": ("Class", character_class, CLASS_DATA[character_class]),
             "anatomy:gender": ("Gender", gender, GENDER_DATA[gender]),
             "anatomy:age": ("Age", age, AGE_DATA[age]),
@@ -317,7 +337,7 @@ class RPGCharacterGen3:
         sections["face"] = {
             "values": dict(face_selections),
             "traits": list(face_selections.values()),
-            "source": "gen3_face_data",
+            "source": "gen3_face_data" if face_selections else "gen3_lineage_phenotype",
             "loci": face_loci,
         }
 
@@ -339,7 +359,7 @@ class RPGCharacterGen3:
             "expression": {"emotion": emotion},
             "scene": {"scene": scene},
             "face": {
-                "seed": None if int(dna_seed) < 0 else int(dna_seed),
+                "genome_signature": genome.get("signature"),
                 **face_context,
             },
             "skin": {},
@@ -353,12 +373,12 @@ class RPGCharacterGen3:
             sections[section_id]["source_inputs"] = dict(inputs)
             sections[section_id]["source_signature"] = make_source_signature(section_id, inputs)
 
-        seed = None if int(dna_seed) < 0 else int(dna_seed)
         return (make_character_dna(
             selections=selections,
             seed=seed,
             source="RPG Character Gen 3",
             sections=sections,
+            genome=genome,
         ),)
 
 
