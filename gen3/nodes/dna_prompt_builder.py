@@ -39,6 +39,44 @@ class RPGCharacterDNAPromptBuilder:
         "Supports selected variants, sculpted weights and expression controls."
     )
 
+    @classmethod
+    def _render_genome(cls, genome):
+        if not isinstance(genome, dict):
+            return "", ""
+
+        identity = genome.get("identity", {})
+        species_traits = genome.get("species_traits", {})
+        phenotype = genome.get("phenotype", {})
+        lineage_data = cls._lineage_snapshot(genome)
+
+        positive = []
+        negative = []
+
+        if lineage_data.get("prompt"):
+            positive.append(lineage_data["prompt"])
+
+        heritage = identity.get("heritage")
+        if heritage and identity.get("heritage_compatible") and phenotype.get("heritage"):
+            positive.append(f"{heritage} heritage")
+            positive.append(phenotype["heritage"])
+
+        for key, value in species_traits.items():
+            if isinstance(value, dict):
+                if value.get("present"):
+                    positive.append(f"{key.replace('_', ' ')} present")
+            elif value:
+                positive.append(f"{key.replace('_', ' ')}: {value}")
+
+        if lineage_data.get("negative_prompt"):
+            negative.append(lineage_data["negative_prompt"])
+
+        return cls._join_parts(positive), cls._join_parts(negative)
+
+    @staticmethod
+    def _lineage_snapshot(genome):
+        snapshot = genome.get("lineage", {})
+        return snapshot if isinstance(snapshot, dict) else {}
+
     def build(self, CHARACTER_INFO):
         if not isinstance(CHARACTER_INFO, dict):
             return ("", "")
@@ -50,12 +88,24 @@ class RPGCharacterDNAPromptBuilder:
         positive_parts = []
         negative_parts = []
 
+        # Gen 3 lineage/genome is authoritative for biological identity.
+        # Legacy Race/Ethnicity prompt strings are retained for compatibility
+        # but deliberately not rendered.
+        genome = CHARACTER_INFO.get("genome")
+        genome_positive, genome_negative = self._render_genome(genome)
+        if genome_positive:
+            positive_parts.append(genome_positive)
+        if genome_negative:
+            negative_parts.append(genome_negative)
+
         for section_id in DNA_SECTIONS:
             section = sections.get(section_id)
             if not isinstance(section, dict):
                 continue
 
             for locus in section.get("loci", []):
+                if locus.get("id") in {"identity:race", "identity:ethnicity"}:
+                    continue
                 if not isinstance(locus, dict):
                     continue
 
