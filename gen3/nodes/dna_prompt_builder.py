@@ -134,9 +134,25 @@ class RPGCharacterDNAPromptBuilder:
                     continue
                 if locus_id.startswith("facial_hair:") and not phenotype.get("facial_hair_allowed", True):
                     continue
+
                 selected = locus.get("selected")
                 if not selected:
                     continue
+
+                # Facial-hair colour has no meaning when the style is
+                # explicitly "No Beard".  Do not let a stale/default colour
+                # selection re-introduce facial hair through its colour prompt.
+                if locus_id == "facial_hair:colour":
+                    facial_hair_section = sections.get("facial_hair", {})
+                    style_locus = next(
+                        (
+                            item for item in facial_hair_section.get("loci", [])
+                            if isinstance(item, dict) and item.get("id") == "facial_hair:style"
+                        ),
+                        None,
+                    )
+                    if isinstance(style_locus, dict) and style_locus.get("selected") == "No Beard":
+                        continue
                 if locus_id == "identity:class" and str(selected).strip().lower() == "no class":
                     continue
 
@@ -163,6 +179,12 @@ class RPGCharacterDNAPromptBuilder:
             if isinstance(option_prompts, dict)
             else ""
         )
+
+        # "No Beard" is a state, not a piece of positive visual prose.
+        # Explicitly describe the absence so image models do not infer a beard
+        # from age/gender while simultaneously receiving a colour selection.
+        if locus.get("id") == "facial_hair:style" and selected == "No Beard":
+            return "clean-shaven face, no facial hair"
 
         if not prompt:
             prompt = str(selected)
