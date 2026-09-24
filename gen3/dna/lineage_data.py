@@ -37,7 +37,7 @@ LINEAGE_DATA = {
         "category": "humanoid", "body_type": "infernal humanoid", "heritage_compatible": True,
         "prompt": "a tiefling character",
         "body_plan": {
-            "posture": "bipedal", "body": "human-proportioned infernal humanoid", "head": "humanoid with infernal features",
+            "posture": "bipedal", "body": "human-proportioned infernal humanoid", "head": "infernal humanoid head",
             "limbs": "humanoid", "hands": "humanoid hands", "feet": "humanoid feet",
             "build": "human-proportioned medium build",
             "hair_allowed": True, "facial_hair_allowed": True,
