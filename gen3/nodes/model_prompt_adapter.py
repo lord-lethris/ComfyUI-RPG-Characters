@@ -137,21 +137,19 @@ class RPGCharacterModelPromptAdapter:
     @staticmethod
     def _flux(character, character_negative, render, render_negative, style, style_negative):
         # FLUX is natural-language-first and does not use a traditional
-        # negative-prompt channel.  Convert exclusions into explicit positive
-        # constraints rather than returning them as a separate negative prompt.
-        constraints = []
-        for value in (character_negative, render_negative, style_negative):
-            if value:
-                constraints.append(f"The image must avoid {value}.")
-
-        positive = RPGCharacterModelPromptAdapter._join(
-            character,
-            render,
-            style,
-            "The character's defining facial and anatomical features remain clear and unobstructed.",
-            *constraints,
+        # negative-prompt channel.  Do not fold negative vocabulary into the
+        # positive prompt: words such as "beard" or "boots" can become visual
+        # concepts instead of exclusions.  The positive DNA/Render Intent
+        # already contains the desired anatomical and presentation states.
+        return (
+            RPGCharacterModelPromptAdapter._join(
+                character,
+                render,
+                style,
+                "The character's defining facial and anatomical features remain clear and unobstructed.",
+            ),
+            "",
         )
-        return positive, ""
 
     @staticmethod
     def _sdxl(character, character_negative, render, render_negative, style, style_negative):
@@ -202,20 +200,18 @@ class RPGCharacterModelPromptAdapter:
 
     @staticmethod
     def _krea2(character, character_negative, render, render_negative, style, style_negative):
-        # Krea 2 is natural-language-first.  Keep the semantic ordering
-        # subject -> composition -> style and preserve a negative channel for
-        # ComfyUI pipelines that expose one.
+        # Krea 2 here targets the everyday Turbo workflow.  Treat it as
+        # positive-prompt-only rather than preserving a negative channel.
+        # As with FLUX, do not inject negative vocabulary into the positive
+        # prompt; the semantic positive character/render descriptions already
+        # express the intended result.
         return (
             RPGCharacterModelPromptAdapter._join(
                 character,
                 render,
                 style,
             ),
-            RPGCharacterModelPromptAdapter._join(
-                character_negative,
-                render_negative,
-                style_negative,
-            ),
+            "",
         )
 
     @staticmethod
