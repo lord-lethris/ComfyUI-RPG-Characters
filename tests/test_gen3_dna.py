@@ -36,6 +36,7 @@ from _rpg_characters_test.gen3.nodes.dna_assembler import RPGCharacterDNAAssembl
 from _rpg_characters_test.gen3.nodes.dna_prompt_builder import RPGCharacterDNAPromptBuilder
 from _rpg_characters_test.gen3.dna.face_data import FACE_LOCUS_DATA
 from _rpg_characters_test.gen3.dna.lineage_data import get_lineage
+from _rpg_characters_test.gen3.dna.heritage_data import get_heritage
 from _rpg_characters_test.gen3.dna.genome import make_genome
 
 
