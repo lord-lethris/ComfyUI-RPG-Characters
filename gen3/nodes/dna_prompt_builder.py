@@ -121,6 +121,9 @@ class RPGCharacterDNAPromptBuilder:
                 continue
 
             for locus in section.get("loci", []):
+                if not isinstance(locus, dict):
+                    continue
+
                 locus_id = locus.get("id")
                 if locus_id in {"identity:race", "identity:ethnicity"}:
                     continue
@@ -131,9 +134,6 @@ class RPGCharacterDNAPromptBuilder:
                     continue
                 if locus_id.startswith("facial_hair:") and not phenotype.get("facial_hair_allowed", True):
                     continue
-                if not isinstance(locus, dict):
-                    continue
-
                 selected = locus.get("selected")
                 if not selected:
                     continue
