@@ -22,7 +22,11 @@ HERITAGE_DATA = {
 
 def get_heritage(name):
     """Return heritage data without turning an empty selection into prose."""
-    if name is None or not str(name).strip():
+    if (
+        name is None
+        or not str(name).strip()
+        or str(name).strip().lower() == "none"
+    ):
         return {
             "label": "",
             "prompt": "",
