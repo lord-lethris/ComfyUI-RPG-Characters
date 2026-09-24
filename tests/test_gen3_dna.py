@@ -911,6 +911,57 @@ class TestGen3DNA(unittest.TestCase):
         self.assertNotIn("None heritage", negative)
 
 
+    def test_gen3_string_none_heritage_is_canonical_empty(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["ethnicity"] = "None"
+        values["age"] = "Mid Adult"
+        values["dna_seed"] = 4321
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        self.assertIsNone(dna["genome"]["identity"]["heritage"])
+
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+        self.assertNotIn("None heritage", positive)
+        self.assertNotIn("None heritage", negative)
+        self.assertEqual(get_heritage("None")["label"], "")
+
+
+    def test_gen3_elder_and_ancient_use_non_contradictory_age_semantics(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+
+        for age, expected_positive in (
+            ("Elder", "as an elderly adult"),
+            ("Ancient", "as an ancient adult"),
+        ):
+            values = {
+                name: options[0][0]
+                for name, options in inputs.items()
+                if isinstance(options, tuple) and isinstance(options[0], list)
+            }
+            values["race"] = "Tiefling"
+            values["ethnicity"] = "None"
+            values["gender"] = "Male"
+            values["age"] = age
+            values["beard_style"] = "No Beard"
+            values["dna_seed"] = 24680
+
+            dna = RPGCharacterGen3().create_character(**values)[0]
+            positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+
+            self.assertIn(expected_positive, positive)
+            self.assertIn("age lines", positive)
+            self.assertNotIn("as an Elder", positive)
+            self.assertNotIn("as an Ancient being", positive)
+            self.assertNotIn("adult", negative.lower())
+            self.assertIn("youthful appearance", negative.lower())
+
+
     def test_gen3_incompatible_heritage_is_cultural_only(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
