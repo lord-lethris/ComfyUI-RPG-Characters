@@ -39,7 +39,10 @@ from _rpg_characters_test.gen3.dna.lineage_data import get_lineage
 from _rpg_characters_test.gen3.dna.heritage_data import get_heritage
 from _rpg_characters_test.gen3.dna.genome import make_genome
 from _rpg_characters_test.gen3.nodes.render_intent import RPGCharacterRenderIntent
+from _rpg_characters_test.gen3.nodes.art_style import RPGCharacterArtStyle
+from _rpg_characters_test.gen3.nodes.model_prompt_adapter import RPGCharacterModelPromptAdapter
 from _rpg_characters_test.gen3.render.render_intent import make_render_intent
+from _rpg_characters_test.gen3.style.art_style import make_art_style
 
 
 class TestGen3DNA(unittest.TestCase):
@@ -925,6 +928,97 @@ class TestGen3DNA(unittest.TestCase):
         self.assertFalse(genome["identity"]["heritage_compatible"])
         self.assertEqual(genome["phenotype"]["heritage"], "")
 
+
+    def test_gen3_art_style_preset_is_separate_from_dna(self):
+        dna = make_character_dna(seed=1234)
+        style = make_art_style("Fantasy Illustration")
+
+        self.assertEqual(style["type"], "RPG_ART_STYLE")
+        self.assertEqual(style["source"], "preset")
+        self.assertEqual(style["label"], "Fantasy Illustration")
+        self.assertIn("fantasy art", style["positive_prompt"])
+        self.assertNotIn("art_style", dna)
+
+    def test_gen3_art_style_supports_custom_prompt(self):
+        style = make_art_style(
+            "Custom",
+            custom_positive="watercolour fantasy concept art, ink outlines",
+            custom_negative="photorealistic, 3D render",
+        )
+
+        self.assertEqual(style["type"], "RPG_ART_STYLE")
+        self.assertEqual(style["source"], "custom")
+        self.assertEqual(style["id"], "custom")
+        self.assertEqual(
+            style["positive_prompt"],
+            "watercolour fantasy concept art, ink outlines",
+        )
+        self.assertEqual(
+            style["negative_prompt"],
+            "photorealistic, 3D render",
+        )
+
+    def test_gen3_art_style_node_supports_custom(self):
+        options = RPGCharacterArtStyle.INPUT_TYPES()["required"]["art_style"][0]
+        self.assertIn("Fantasy Illustration", options)
+        self.assertIn("Custom", options)
+
+        style = RPGCharacterArtStyle().create(
+            "Custom",
+            "storybook gouache fantasy illustration",
+            "photorealistic",
+        )[0]
+
+        self.assertEqual(style["source"], "custom")
+        self.assertIn("storybook gouache", style["positive_prompt"])
+
+    def test_gen3_model_prompt_adapter_translates_for_each_model(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["gender"] = "Male"
+        values["age"] = "Elder"
+        values["beard_style"] = "No Beard"
+        values["dna_seed"] = 24680
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        render_intent = make_render_intent("character_portrait")
+        style = make_art_style("Fantasy Illustration")
+        adapter = RPGCharacterModelPromptAdapter()
+
+        flux_positive, flux_negative = adapter.build(
+            dna, render_intent, style, "FLUX"
+        )
+        sdxl_positive, sdxl_negative = adapter.build(
+            dna, render_intent, style, "SDXL"
+        )
+        z_positive, z_negative = adapter.build(
+            dna, render_intent, style, "Z-Image Turbo"
+        )
+        krea_positive, krea_negative = adapter.build(
+            dna, render_intent, style, "Krea 2"
+        )
+
+        self.assertEqual(flux_negative, "")
+        self.assertIn("clean-shaven face", flux_positive)
+        self.assertIn("head-and-shoulders", flux_positive)
+        self.assertIn("fantasy art", flux_positive)
+
+        self.assertIn("(close-up head-and-shoulders:1.25)", sdxl_positive)
+        self.assertIn("(completely clean-shaven face:1.30)", sdxl_positive)
+        self.assertTrue(sdxl_negative)
+        self.assertIn("beard", sdxl_negative.lower())
+
+        self.assertEqual(z_negative, "")
+        self.assertIn("clean-shaven face", z_positive)
+        self.assertIn("must not contain", z_positive.lower())
+
+        self.assertIn("clean-shaven face", krea_positive)
+        self.assertTrue(krea_negative)
 
     def test_gen3_character_portrait_render_intent_is_separate_from_dna(self):
         dna = make_character_dna(seed=1234)
