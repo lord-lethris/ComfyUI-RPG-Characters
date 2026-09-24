@@ -816,6 +816,11 @@ class TestGen3DNA(unittest.TestCase):
         dna = RPGCharacterGen3().create_character(**values)[0]
         positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
 
+        beard_colour_locus = next(
+            item for item in dna["sections"]["facial_hair"]["loci"]
+            if item["id"] == "facial_hair:colour"
+        )
+        self.assertEqual(beard_colour_locus["selected"], "No Beard")
         self.assertIn("clean-shaven face", positive)
         self.assertIn("no facial hair", positive)
         self.assertNotIn("Ash Blonde Colored", positive)
