@@ -113,7 +113,11 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(dna["seed"], 1234)
         self.assertIsInstance(dna["genome"], dict)
         self.assertEqual(dna["genome"]["identity"]["lineage"], values["race"])
-        self.assertEqual(dna["genome"]["identity"]["heritage"], values["ethnicity"])
+        expected_heritage = (
+            None if str(values["ethnicity"]).strip().lower() == "none"
+            else values["ethnicity"]
+        )
+        self.assertEqual(dna["genome"]["identity"]["heritage"], expected_heritage)
 
         for section_id in ("identity", "anatomy", "hair", "facial_hair", "clothing", "equipment", "expression", "scene"):
             self.assertTrue(dna["sections"][section_id]["loci"], section_id)
