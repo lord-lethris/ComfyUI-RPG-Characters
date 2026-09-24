@@ -763,8 +763,6 @@ function refreshEditorHeight(node) {
     node.__gen3EditorHeight = height;
 
     // Keep the DOM widget's live height in sync with the measured editor.
-    // Without this, ComfyUI can retain the previous expanded Sculpt height
-    // even after the DOM has returned to its compact content.
     if (node.__gen3EditorWidget) {
         node.__gen3EditorWidget.computedHeight = height;
     }
@@ -838,11 +836,9 @@ app.registerExtension({
                 getMaxHeight() { return node.__gen3EditorHeight || 50; },
             });
 
-            // ComfyUI frontend versions have used both the legacy
-            // widget.computeSize() path and the newer computeLayoutSize()
-            // path when calculating a node's minimum size. Keep both paths
-            // tied to the same live editor height so a temporary Sculpt
-            // expansion cannot become a permanent node minimum.
+            // Keep both sizing paths tied to the measured editor height
+            // because different ComfyUI frontend versions consult different
+            // widget sizing APIs.
             editorWidget.computeSize = () => [
                 Math.max(300, node.size?.[0] || 300),
                 node.__gen3EditorHeight || 50,
