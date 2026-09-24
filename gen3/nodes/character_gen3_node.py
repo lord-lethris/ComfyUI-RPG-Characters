@@ -282,9 +282,11 @@ class RPGCharacterGen3:
         sections = {
             "identity": {
                 "values": {
+                    "lineage": race,
+                    "heritage": ethnicity,
+                    "class": character_class,
                     "race": race,
                     "ethnicity": ethnicity,
-                    "class": character_class,
                 },
                 "traits": [race, ethnicity, character_class],
                 "source": "rpg_character_data",
@@ -350,7 +352,7 @@ class RPGCharacterGen3:
         # that actually define it. DNA Editors use this to distinguish a
         # genuine source change from an ordinary graph execution.
         source_inputs = {
-            "identity": {"race": race, "ethnicity": ethnicity, "class": character_class},
+            "identity": {"lineage": race, "heritage": ethnicity, "class": character_class},
             "anatomy": {"gender": gender, "age": age},
             "hair": {"hair_style": hair_style, "hair_colour": hair_colour},
             "facial_hair": {"beard_style": beard_style, "beard_colour": beard_colour},
