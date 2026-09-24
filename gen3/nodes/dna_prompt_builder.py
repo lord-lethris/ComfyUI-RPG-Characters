@@ -28,6 +28,9 @@ class RPGCharacterDNAPromptBuilder:
             "required": {
                 "CHARACTER_INFO": ("CHARACTER_INFO",),
             },
+            "optional": {
+                "RENDER_INTENT": ("RENDER_INTENT",),
+            },
         }
 
     RETURN_TYPES = ("STRING", "STRING")
@@ -98,7 +101,7 @@ class RPGCharacterDNAPromptBuilder:
         snapshot = genome.get("lineage", {})
         return snapshot if isinstance(snapshot, dict) else {}
 
-    def build(self, CHARACTER_INFO):
+    def build(self, CHARACTER_INFO, RENDER_INTENT=None):
         if not isinstance(CHARACTER_INFO, dict):
             return ("", "")
 
@@ -118,6 +121,12 @@ class RPGCharacterDNAPromptBuilder:
             positive_parts.append(genome_positive)
         if genome_negative:
             negative_parts.append(genome_negative)
+
+        intent_positive, intent_negative = self._render_intent(RENDER_INTENT)
+        if intent_positive:
+            positive_parts.append(intent_positive)
+        if intent_negative:
+            negative_parts.append(intent_negative)
 
         for section_id in DNA_SECTIONS:
             section = sections.get(section_id)
@@ -174,6 +183,16 @@ class RPGCharacterDNAPromptBuilder:
             self._join_parts(positive_parts),
             self._join_parts(negative_parts),
         )
+
+    @staticmethod
+    def _render_intent(render_intent):
+        """Render a semantic presentation intent without changing Character DNA."""
+        if not isinstance(render_intent, dict):
+            return "", ""
+
+        positive = str(render_intent.get("positive_prompt", "") or "").strip()
+        negative = str(render_intent.get("negative_prompt", "") or "").strip()
+        return positive, negative
 
     @classmethod
     def _resolve_locus_prompt(cls, locus, selected):
