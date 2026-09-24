@@ -47,6 +47,8 @@ LINEAGE_DATA = {
         "face_model": "humanoid", "face_allowed": True,
         "traits": {"ears": "humanoid ears", "eyes": "infernal eyes", "nose": "humanoid", "mouth": "humanoid", "skin": "infernal skin"},
         "feature_loci": {"horn_type": ["swept back", "curved", "ram", "crown"], "tail_type": ["whip", "forked", "spaded"]},
+        "heritage_protected_components": ["eyes"],
+        "heritage_component_overrides": {"eyes": "solid infernal eyes with no visible sclera or pupil"},
     },
     "Dragon": {
         "category": "draconic", "body_type": "dragon", "heritage_compatible": False,
