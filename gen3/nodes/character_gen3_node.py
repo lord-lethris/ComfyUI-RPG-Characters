@@ -8,6 +8,7 @@ from ..dna.face_data import FACE_LOCUS_DATA
 from ..dna.lineage_data import get_lineage
 from ..dna.heritage_data import get_heritage
 from ..dna.genome import make_genome
+from ..dna.age_data import get_age_override
 
 from ...rpg_character_data.rpg_race_data import RACE_DATA
 from ...rpg_character_data.rpg_ethnicity_data import ETHNICITY_DATA
@@ -148,11 +149,20 @@ class RPGCharacterGen3:
             "No Beard" if beard_style == "No Beard" else beard_colour
         )
         lineage_data = get_lineage(race)
-        heritage_data = get_heritage(ethnicity)
+        # The UI uses the literal "None" for its no-heritage selection.
+        # Canonicalise that value before it reaches the genome so it cannot
+        # become the literal phrase "None heritage" downstream.
+        heritage = (
+            None
+            if ethnicity is None or not str(ethnicity).strip()
+            or str(ethnicity).strip().lower() == "none"
+            else str(ethnicity).strip()
+        )
+        heritage_data = get_heritage(heritage)
         genome = make_genome(
             seed=seed,
             lineage=race,
-            heritage=ethnicity,
+            heritage=heritage,
             gender=gender,
             age=age,
             lineage_data=lineage_data,
@@ -161,7 +171,7 @@ class RPGCharacterGen3:
 
         face_context = {
             "race": race,
-            "heritage": ethnicity,
+            "heritage": heritage,
             "gender": gender,
             "age": age,
             "face_model": lineage_data.get("face_model"),
@@ -175,7 +185,7 @@ class RPGCharacterGen3:
         selections = {
             "race": race,
             "ethnicity": ethnicity,
-            "heritage": ethnicity,
+            "heritage": heritage,
             "lineage": race,
             "gender": gender,
             "age": age,
@@ -231,22 +241,35 @@ class RPGCharacterGen3:
                 "expression:emotion": EMOTION_DATA,
                 "scene:scene": SCENE_DATA,
             }[locus_id]
+            option_prompts = {
+                key: str(value.get("prompt", ""))
+                for key, value in option_data.items()
+                if isinstance(value, dict)
+            }
+            option_negative_prompts = {
+                key: str(value.get("negative_prompt", ""))
+                for key, value in option_data.items()
+                if isinstance(value, dict) and value.get("negative_prompt")
+            }
+
+            # Gen 3 uses clearer semantic age wording for the two legacy
+            # states whose V2 negative prompts contradict their positives.
+            if locus_id == "anatomy:age":
+                for age_name in ("Elder", "Ancient"):
+                    override = get_age_override(age_name)
+                    if override.get("prompt"):
+                        option_prompts[age_name] = override["prompt"]
+                    if override.get("negative_prompt"):
+                        option_negative_prompts[age_name] = override["negative_prompt"]
+
             locus = {
                 "id": locus_id,
                 "label": label,
                 "options": list(option_data.keys()),
                 "selected": selected,
                 "variant_sets": _extract_variant_sets(entry, locus_id),
-                "option_prompts": {
-                    key: str(value.get("prompt", ""))
-                    for key, value in option_data.items()
-                    if isinstance(value, dict)
-                },
-                "option_negative_prompts": {
-                    key: str(value.get("negative_prompt", ""))
-                    for key, value in option_data.items()
-                    if isinstance(value, dict) and value.get("negative_prompt")
-                },
+                "option_prompts": option_prompts,
+                "option_negative_prompts": option_negative_prompts,
             }
             if locus_id == "expression:emotion":
                 locus["controls"] = {
@@ -357,7 +380,7 @@ class RPGCharacterGen3:
         # that actually define it. DNA Editors use this to distinguish a
         # genuine source change from an ordinary graph execution.
         source_inputs = {
-            "identity": {"lineage": race, "heritage": ethnicity, "class": character_class},
+            "identity": {"lineage": race, "heritage": heritage, "class": character_class},
             "anatomy": {"gender": gender, "age": age},
             "hair": {"hair_style": hair_style, "hair_colour": hair_colour},
             "facial_hair": {"beard_style": beard_style, "beard_colour": effective_beard_colour},
