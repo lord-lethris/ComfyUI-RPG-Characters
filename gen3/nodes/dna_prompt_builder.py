@@ -63,7 +63,7 @@ class RPGCharacterDNAPromptBuilder:
         for key, value in species_traits.items():
             if isinstance(value, dict):
                 if value.get("present"):
-                    positive.append(f"{key.replace('_', ' ')} present")
+                    positive.append(f"with {key.replace('_', ' ')}")
             elif value:
                 positive.append(f"{key.replace('_', ' ')}: {value}")
 
@@ -140,6 +140,7 @@ class RPGCharacterDNAPromptBuilder:
         if not prompt:
             prompt = str(selected)
 
+        prompt = prompt.replace("(Natural Body, No Implants, No Cybernetic Enhancements, No Magical Enhancements, Pure Human/Fantasy Form)", "")
         return cls._resolve_variants(prompt, locus.get("variant_sets", []))
 
     @classmethod
