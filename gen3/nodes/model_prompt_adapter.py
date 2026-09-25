@@ -171,6 +171,7 @@ class RPGCharacterModelPromptAdapter:
         race_positive, race_negative = RPGCharacterModelPromptAdapter._sdxl_race_anchors(
             character
         )
+        skin_positive = RPGCharacterModelPromptAdapter._sdxl_skin_anchor(character)
 
         negative = RPGCharacterModelPromptAdapter._join(
             character_negative,
@@ -195,9 +196,32 @@ class RPGCharacterModelPromptAdapter:
                 style,
                 character,
                 race_positive,
+                skin_positive,
                 render,
             ),
             negative,
+        )
+
+    @staticmethod
+    def _sdxl_skin_anchor(character):
+        """Strengthen an explicit skin phenotype without hard-coding a race colour.
+
+        Gen 3 skin DNA supplies the actual colour/phenotype. SDXL gets a
+        restrained visibility cue so it is less likely to relocate that colour
+        onto hair, clothing, horns, eyes or background.
+        """
+        lowered = str(character or "").lower()
+        marker = " infernal skin pigmentation"
+        index = lowered.find(marker)
+        if index < 0:
+            return ""
+
+        colour = str(character)[max(0, index - 80):index].split(",")[-1].strip()
+        if not colour:
+            return ""
+
+        return (
+            f"({colour} skin clearly visible across the face, neck and upper chest:1.20)"
         )
 
     @staticmethod
