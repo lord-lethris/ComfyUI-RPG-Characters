@@ -808,6 +808,33 @@ class TestGen3DNA(unittest.TestCase):
         self.assertTrue(genome["species_traits"]["horn_type"])
         self.assertTrue(genome["species_traits"]["tail_type"])
 
+    def test_gen3_tiefling_skin_is_first_class_dna(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["ethnicity"] = "None"
+        values["dna_seed"] = 24680
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        skin_section = dna["sections"]["skin"]
+        skin_locus = next(item for item in skin_section["loci"] if item["id"] == "skin:colour")
+
+        self.assertEqual(skin_locus["selected"], "Brick Red")
+        self.assertEqual(
+            skin_locus["option_prompts"]["Brick Red"],
+            "brick-red infernal skin pigmentation",
+        )
+        self.assertIn("Dark Blue (Variant)", skin_locus["options"])
+        self.assertEqual(skin_section["values"]["colour"], "Brick Red")
+
+        positive, negative = RPGCharacterDNAPromptBuilder().build(dna)
+        self.assertIn("brick-red infernal skin pigmentation", positive)
+        self.assertNotIn("brick-red infernal skin pigmentation", negative)
+
     def test_gen3_no_beard_ignores_beard_colour_and_blocks_facial_hair(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
@@ -1101,6 +1128,7 @@ class TestGen3DNA(unittest.TestCase):
         )
 
         self.assertIn("(large curved infernal horns clearly visible:1.35)", positive)
+        self.assertIn("brick-red infernal skin pigmentation", positive)
         self.assertIn("(clearly infernal facial features:1.20)", positive)
         self.assertIn(
             "(solid-color infernal eyes with no visible sclera or pupil:1.20)",
