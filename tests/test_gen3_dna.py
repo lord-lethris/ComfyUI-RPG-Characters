@@ -1129,10 +1129,13 @@ class TestGen3DNA(unittest.TestCase):
 
         self.assertIn("(large curved infernal horns clearly visible:1.35)", positive)
         self.assertIn(
-            "(brick-red skin clearly visible across the face, neck and upper chest:1.20)",
+            "(brick-red skin covering the entire visible face, ears, neck and upper chest:1.30)",
             positive,
         )
         self.assertIn("brick-red infernal skin pigmentation", positive)
+        self.assertIn("(pale skin:1.20)", negative)
+        self.assertIn("(pink skin:1.20)", negative)
+        self.assertIn("(human-colored skin:1.20)", negative)
         self.assertIn("(clearly infernal facial features:1.20)", positive)
         self.assertIn(
             "(solid-color infernal eyes with no visible sclera or pupil:1.20)",
