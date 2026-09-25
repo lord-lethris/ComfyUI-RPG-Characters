@@ -1157,6 +1157,11 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("(elven appearance:1.20)", negative)
         self.assertIn("(beard:1.35)", negative)
         self.assertIn("(facial hair:1.30)", negative)
+        self.assertIn(
+            "(the character is in the foreground, with the busy medieval fantasy marketplace, wooden stalls, merchants, colorful fabrics and market goods clearly visible behind the character as the background environment:1.25)",
+            positive,
+        )
+
 
     def test_gen3_character_portrait_render_intent_is_separate_from_dna(self):
         dna = make_character_dna(seed=1234)
