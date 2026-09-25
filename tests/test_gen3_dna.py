@@ -1022,6 +1022,16 @@ class TestGen3DNA(unittest.TestCase):
         self.assertEqual(genome["phenotype"]["heritage"], "")
 
 
+    def test_gen3_kpop_demon_hunters_art_style_preset(self):
+        style = make_art_style("K-Pop Demon Hunters")
+
+        self.assertEqual(style["type"], "RPG_ART_STYLE")
+        self.assertEqual(style["source"], "preset")
+        self.assertEqual(style["label"], "K-Pop Demon Hunters")
+        self.assertIn("K-pop-inspired fantasy design", style["positive_prompt"])
+        self.assertIn("Korean folklore-inspired supernatural fantasy", style["positive_prompt"])
+        self.assertIn("photorealistic", style["negative_prompt"])
+
     def test_gen3_art_style_preset_is_separate_from_dna(self):
         dna = make_character_dna(seed=1234)
         style = make_art_style("Fantasy Illustration")
@@ -1116,6 +1126,28 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("clean-shaven face", krea_positive)
         self.assertNotIn("beard", krea_positive.lower())
         self.assertNotIn("moustache", krea_positive.lower())
+
+    def test_gen3_sdxl_compacts_redundant_character_prompt(self):
+        character = (
+            "a tiefling character, bipedal, human-proportioned infernal humanoid, "
+            "infernal humanoid head, humanoid, humanoid hands, humanoid feet, "
+            "deep crimson infernal skin pigmentation, clean-shaven face, no facial hair, "
+            "secondary background environment, busy medieval fantasy marketplace, "
+            "wooden stalls, merchants, colorful fabrics and market goods, "
+            "(distinctive Tiefling appearance:1.25)"
+        )
+
+        compact = RPGCharacterModelPromptAdapter._sdxl_compact_character(
+            character,
+            remove_infernal_skin=True,
+        )
+
+        self.assertNotIn("humanoid, humanoid hands, humanoid feet", compact)
+        self.assertNotIn("clean-shaven face, no facial hair", compact)
+        self.assertNotIn("secondary background environment", compact)
+        self.assertNotIn("deep crimson infernal skin pigmentation", compact)
+        self.assertIn("a tiefling character", compact)
+        self.assertIn("(distinctive Tiefling appearance:1.25)", compact)
 
     def test_gen3_sdxl_tiefling_keeps_race_defining_features(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
