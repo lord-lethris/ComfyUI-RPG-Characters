@@ -244,6 +244,10 @@ class RPGCharacterModelPromptAdapter:
             character
         )
         scene_positive = RPGCharacterModelPromptAdapter._sdxl_scene_anchor(character)
+        style_positive, style_negative = RPGCharacterModelPromptAdapter._sdxl_style_anchor(
+            style,
+            style_negative,
+        )
         character = RPGCharacterModelPromptAdapter._sdxl_compact_character(
             character,
             remove_infernal_skin=bool(skin_positive),
@@ -279,6 +283,36 @@ class RPGCharacterModelPromptAdapter:
             ),
             negative,
         )
+
+    @staticmethod
+    def _sdxl_style_anchor(style, style_negative):
+        """Strengthen high-level SDXL rendering style without changing Art Style DNA.
+
+        The model-independent Fantasy Illustration preset is intentionally concise.
+        SDXL needs a stronger medium/rendering cue so detailed character DNA does not
+        pull the result toward photographic or CGI character rendering.
+        """
+        lowered = str(style or "").lower()
+        if "fantasy art" not in lowered or "painterly strokes" not in lowered:
+            return style, style_negative
+
+        positive = RPGCharacterModelPromptAdapter._join(
+            style,
+            "(fantasy illustration:1.25)",
+            "(painterly fantasy artwork:1.25)",
+            "(visible painterly brushstrokes:1.20)",
+            "(hand-painted character illustration:1.20)",
+            "(illustrated fantasy concept art:1.15)",
+        )
+        negative = RPGCharacterModelPromptAdapter._join(
+            style_negative,
+            "(photorealistic:1.25)",
+            "(realistic photograph:1.25)",
+            "(3d render:1.20)",
+            "(CGI:1.20)",
+            "(photographic skin:1.20)",
+        )
+        return positive, negative
 
     @staticmethod
     def _sdxl_compact_character(character, remove_infernal_skin=False):
