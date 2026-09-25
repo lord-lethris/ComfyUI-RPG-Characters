@@ -118,6 +118,7 @@ class RPGGen3SDXLTwoStageSampler:
     ):
         import comfy.model_management
         import comfy.sample
+        import comfy.utils
 
         stage1_end, stage2_start = self.resolve_stage_bounds(
             steps,
@@ -139,7 +140,7 @@ class RPGGen3SDXLTwoStageSampler:
         )
 
         noise_mask = latent.get("noise_mask")
-        disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED if hasattr(comfy, "utils") else False
+        disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
 
         # Stage 1: establish character identity and composition, then hand the
         # partially denoised latent to Stage 2 with its remaining noise intact.
