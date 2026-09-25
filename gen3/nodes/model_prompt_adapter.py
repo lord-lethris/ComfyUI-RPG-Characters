@@ -153,9 +153,8 @@ class RPGCharacterModelPromptAdapter:
 
     @staticmethod
     def _sdxl(character, character_negative, render, render_negative, style, style_negative):
-        # SDXL workflows commonly use explicit positive/negative prompt
-        # channels, so preserve that separation.  Apply restrained emphasis
-        # only to hard presentation constraints rather than every token.
+        # SDXL workflows commonly use explicit positive/negative prompt channels, so preserve that separation.
+        # Apply restrained emphasis only to hard presentation constraints rather than every token.
         render = RPGCharacterModelPromptAdapter._emphasize_sdxl(
             render,
             (
@@ -164,14 +163,78 @@ class RPGCharacterModelPromptAdapter:
                 ("completely clean-shaven face", 1.30),
             ),
         )
-        return (
-            RPGCharacterModelPromptAdapter._join(style, character, render),
-            RPGCharacterModelPromptAdapter._join(
-                character_negative,
-                render_negative,
-                style_negative,
+
+        # SDXL can collapse a fantasy humanoid into a familiar human/elf
+        # visual cluster when age, hair and facial DNA are also present.
+        # Re-assert only the race-defining features that must survive that
+        # competition. Character DNA itself remains model-independent.
+        race_positive, race_negative = RPGCharacterModelPromptAdapter._sdxl_race_anchors(
+            character
+        )
+
+        negative = RPGCharacterModelPromptAdapter._join(
+            character_negative,
+            render_negative,
+            style_negative,
+            race_negative,
+        )
+        negative = RPGCharacterModelPromptAdapter._emphasize_sdxl_negative(
+            negative,
+            (
+                ("beard", 1.35),
+                ("moustache", 1.30),
+                ("mustache", 1.30),
+                ("goatee", 1.25),
+                ("stubble", 1.25),
+                ("facial hair", 1.30),
             ),
         )
+
+        return (
+            RPGCharacterModelPromptAdapter._join(
+                style,
+                character,
+                race_positive,
+                render,
+            ),
+            negative,
+        )
+
+    @staticmethod
+    def _sdxl_race_anchors(character):
+        """Return SDXL-only anchors for the selected lineage.
+
+        The lineage is already encoded in Character DNA. The current prompt
+        builder exposes the lineage as a stable phrase, so this deliberately
+        anchors only the race-specific concepts that SDXL was observed to
+        drop. Future races can add entries here without changing DNA.
+        """
+        lowered = str(character or "").lower()
+
+        if "a tiefling character" in lowered:
+            return (
+                "(distinctive Tiefling appearance:1.25), "
+                "(large curved infernal horns clearly visible:1.35), "
+                "(clearly infernal facial features:1.20), "
+                "(solid-color infernal eyes with no visible sclera or pupil:1.20)",
+                "(ordinary human appearance:1.20), (elven appearance:1.20), "
+                "(missing horns:1.35), (visible sclera and pupils:1.20)",
+            )
+
+        return "", ""
+
+    @staticmethod
+    def _emphasize_sdxl_negative(text, replacements):
+        value = text
+        for phrase, weight in replacements:
+            marker = phrase.lower()
+            lowered = value.lower()
+            index = lowered.find(marker)
+            if index < 0:
+                continue
+            end = index + len(phrase)
+            value = value[:index] + f"({value[index:end]}:{weight:.2f})" + value[end:]
+        return value
 
     @staticmethod
     def _z_image(character, character_negative, render, render_negative, style, style_negative):
