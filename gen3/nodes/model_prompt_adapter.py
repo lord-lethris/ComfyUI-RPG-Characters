@@ -46,8 +46,26 @@ class RPGCharacterModelPromptAdapter:
         character_positive, character_negative = (
             RPGCharacterDNAPromptBuilder().build(CHARACTER_INFO)
         )
+
+        # The model adapter currently renders Render Intent separately from
+        # Character DNA. Apply the same semantic relationship here so an
+        # explicit Scene is treated as portrait background context rather than
+        # being allowed to compete with the portrait subject.
+        portrait_with_scene = (
+            self._is_head_and_shoulders(RENDER_INTENT)
+            and self._has_explicit_scene(CHARACTER_INFO)
+        )
+        if portrait_with_scene:
+            character_positive = self._qualify_scene_prompt(
+                character_positive,
+                CHARACTER_INFO,
+            )
+
         render_positive, render_negative = (
-            RPGCharacterDNAPromptBuilder._render_intent(RENDER_INTENT)
+            RPGCharacterDNAPromptBuilder._render_intent(
+                RENDER_INTENT,
+                suppress_neutral_background=portrait_with_scene,
+            )
         )
 
         style_positive = ""
@@ -66,6 +84,57 @@ class RPGCharacterModelPromptAdapter:
             style_negative,
         )
         return positive, negative
+
+    @staticmethod
+    def _is_head_and_shoulders(render_intent):
+        if not isinstance(render_intent, dict):
+            return False
+        composition = render_intent.get("composition", {})
+        return (
+            isinstance(composition, dict)
+            and composition.get("framing") == "head_and_shoulders"
+        )
+
+    @staticmethod
+    def _has_explicit_scene(character_info):
+        if not isinstance(character_info, dict):
+            return False
+        sections = character_info.get("sections", {})
+        scene = sections.get("scene", {}) if isinstance(sections, dict) else {}
+        if not isinstance(scene, dict):
+            return False
+        return any(
+            isinstance(locus, dict)
+            and locus.get("id") == "scene:scene"
+            and locus.get("selected")
+            for locus in scene.get("loci", [])
+        )
+
+    @staticmethod
+    def _qualify_scene_prompt(character_positive, character_info):
+        sections = character_info.get("sections", {})
+        scene = sections.get("scene", {}) if isinstance(sections, dict) else {}
+        if not isinstance(scene, dict):
+            return character_positive
+
+        for locus in scene.get("loci", []):
+            if not isinstance(locus, dict) or locus.get("id") != "scene:scene":
+                continue
+            selected = locus.get("selected")
+            prompts = locus.get("option_prompts", {})
+            scene_prompt = (
+                prompts.get(selected, "")
+                if isinstance(prompts, dict)
+                else ""
+            )
+            scene_prompt = str(scene_prompt or "").strip()
+            if scene_prompt and scene_prompt in character_positive:
+                return character_positive.replace(
+                    scene_prompt,
+                    f"secondary background environment, {scene_prompt}",
+                    1,
+                )
+        return character_positive
 
     @classmethod
     def _adapt(
