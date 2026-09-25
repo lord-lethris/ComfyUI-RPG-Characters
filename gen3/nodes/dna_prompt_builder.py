@@ -123,6 +123,19 @@ class RPGCharacterDNAPromptBuilder:
                 and composition.get("framing") == "head_and_shoulders"
             )
 
+        # An explicit Scene DNA selection overrides the Render Intent's
+        # default neutral background. Render Intent defines the default
+        # presentation; Scene DNA supplies the requested environment.
+        has_scene_selection = False
+        scene_section = sections.get("scene", {})
+        if isinstance(scene_section, dict):
+            has_scene_selection = any(
+                isinstance(locus, dict)
+                and locus.get("id") == "scene:scene"
+                and locus.get("selected")
+                for locus in scene_section.get("loci", [])
+            )
+
         # Gen 3 lineage/genome is authoritative for biological identity.
         # Legacy Race/Ethnicity prompt strings are retained for compatibility
         # but deliberately not rendered.
@@ -133,7 +146,10 @@ class RPGCharacterDNAPromptBuilder:
         if genome_negative:
             negative_parts.append(genome_negative)
 
-        intent_positive, intent_negative = self._render_intent(RENDER_INTENT)
+        intent_positive, intent_negative = self._render_intent(
+            RENDER_INTENT,
+            suppress_neutral_background=has_scene_selection,
+        )
         if intent_positive:
             positive_parts.append(intent_positive)
         if intent_negative:
@@ -202,7 +218,7 @@ class RPGCharacterDNAPromptBuilder:
         )
 
     @classmethod
-    def _render_intent(cls, render_intent):
+    def _render_intent(cls, render_intent, suppress_neutral_background=False):
         """Translate semantic render intent into generic presentation prompts.
 
         Render Intent remains model-independent data. This method is only a
@@ -286,7 +302,7 @@ class RPGCharacterDNAPromptBuilder:
                 for region in excluded_regions
             )
 
-        if background == "simple_neutral":
+        if background == "simple_neutral" and not suppress_neutral_background:
             positive.append("simple neutral background")
 
         if constraints.get("facial_hair") == "none":
