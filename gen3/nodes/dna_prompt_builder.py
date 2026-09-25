@@ -112,6 +112,17 @@ class RPGCharacterDNAPromptBuilder:
         positive_parts = []
         negative_parts = []
 
+        # A character portrait uses Scene DNA as environmental context rather
+        # than as a competing subject. Keep the underlying Scene selection
+        # unchanged; only qualify how it is expressed for this render intent.
+        portrait_scene_context = False
+        if isinstance(RENDER_INTENT, dict):
+            composition = RENDER_INTENT.get("composition", {})
+            portrait_scene_context = (
+                isinstance(composition, dict)
+                and composition.get("framing") == "head_and_shoulders"
+            )
+
         # Gen 3 lineage/genome is authoritative for biological identity.
         # Legacy Race/Ethnicity prompt strings are retained for compatibility
         # but deliberately not rendered.
@@ -172,6 +183,12 @@ class RPGCharacterDNAPromptBuilder:
                 positive = self._resolve_locus_prompt(locus, selected)
                 positive_controls = self._resolve_locus_controls(locus)
                 negative = self._resolve_locus_negative_prompt(locus, selected)
+
+                if positive and locus_id == "scene:scene" and portrait_scene_context:
+                    positive = (
+                        "secondary background environment, "
+                        f"{positive}"
+                    )
 
                 if positive:
                     positive_parts.append(positive)
