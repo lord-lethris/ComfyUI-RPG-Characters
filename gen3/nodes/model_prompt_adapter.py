@@ -324,14 +324,13 @@ class RPGCharacterModelPromptAdapter:
         """
         value = str(character or "")
 
-        # Scene is translated separately into a spatial background cue.
+        # Scene is the final Gen 3 DNA section, so once its qualified
+        # marker is found the remainder belongs to Scene DNA. Remove it from
+        # the character-establishment prompt; Stage 2 will translate it into
+        # explicit background composition.
         scene_start = value.find("secondary background environment, ")
         if scene_start >= 0:
-            scene_end = value.find(", (distinctive Tiefling appearance", scene_start)
-            if scene_end < 0:
-                scene_end = value.find(", (close-up head-and-shoulders", scene_start)
-            if scene_end >= 0:
-                value = value[:scene_start] + value[scene_end + 2:]
+            value = value[:scene_start].rstrip(" ,")
 
         for phrase in (
             "humanoid, humanoid hands, humanoid feet, ",
@@ -370,13 +369,9 @@ class RPGCharacterModelPromptAdapter:
             return ""
 
         scene_start = start + len(marker)
-        scene_end = text.find(", (distinctive Tiefling appearance", scene_start)
-        if scene_end < 0:
-            scene_end = text.find(", (close-up head-and-shoulders", scene_start)
-        if scene_end < 0:
-            return ""
-
-        scene = text[scene_start:scene_end].strip(" ,")
+        # Scene is the final DNA section emitted by the prompt builder, so
+        # everything after the marker is the selected scene description.
+        scene = text[scene_start:].strip(" ,")
         if not scene:
             return ""
 
