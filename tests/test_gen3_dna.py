@@ -1201,7 +1201,9 @@ class TestGen3DNA(unittest.TestCase):
         self.assertNotIn(
             "secondary background environment, secondary background environment",
             positive,
-        )
+        )        self.assertNotIn("simple neutral background", positive)
+
+
 
     def test_gen3_prompt_builder_applies_render_intent_without_mutating_dna(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
