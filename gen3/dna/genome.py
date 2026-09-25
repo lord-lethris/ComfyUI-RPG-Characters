@@ -80,6 +80,24 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
         else ""
     )
 
+    # Skin is a first-class phenotype. Compatible heritage can provide the
+    # concrete skin description; otherwise a lineage may provide its own
+    # phenotype palette. This keeps skin in the model-independent genome
+    # instead of relying on image-model priors to invent it.
+    skin_options = lineage_data.get("skin_options", {})
+    if "skin" in heritage_components:
+        skin_selection = "Heritage"
+        skin_prompt = str(heritage_components["skin"])
+        skin_source = "heritage"
+    elif isinstance(skin_options, dict) and skin_options:
+        skin_selection = next(iter(skin_options))
+        skin_prompt = str(skin_options[skin_selection])
+        skin_source = "lineage"
+    else:
+        skin_selection = "Lineage"
+        skin_prompt = str(lineage_data.get("traits", {}).get("skin", ""))
+        skin_source = "lineage"
+
     genome = {
         "version": GENOME_VERSION,
         "lineage": {
@@ -107,6 +125,11 @@ def make_genome(*, seed, lineage, heritage, gender, age, lineage_data, heritage_
         "phenotype": {
             "heritage": heritage_phenotype,
             "heritage_components": heritage_components,
+            "skin": {
+                "selected": skin_selection,
+                "prompt": skin_prompt,
+                "source": skin_source,
+            },
             "body_plan": body_plan,
             "anatomy": {
                 "head": body_plan.get("head"),
