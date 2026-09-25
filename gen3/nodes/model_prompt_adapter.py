@@ -243,6 +243,7 @@ class RPGCharacterModelPromptAdapter:
         skin_positive, skin_negative = RPGCharacterModelPromptAdapter._sdxl_skin_anchor(
             character
         )
+        scene_positive = RPGCharacterModelPromptAdapter._sdxl_scene_anchor(character)
 
         negative = RPGCharacterModelPromptAdapter._join(
             character_negative,
@@ -270,8 +271,39 @@ class RPGCharacterModelPromptAdapter:
                 race_positive,
                 skin_positive,
                 render,
+                scene_positive,
             ),
             negative,
+        )
+
+    @staticmethod
+    def _sdxl_scene_anchor(character):
+        """Turn Scene DNA into an explicit SDXL background composition cue.
+
+        SDXL can treat a scene description as an optional concept instead of
+        placing it behind the character. The DNA remains model-independent;
+        this is only a model-specific spatial translation.
+        """
+        text = str(character or "")
+        marker = "secondary background environment, "
+        start = text.find(marker)
+        if start < 0:
+            return ""
+
+        scene_start = start + len(marker)
+        scene_end = text.find(", (distinctive Tiefling appearance", scene_start)
+        if scene_end < 0:
+            scene_end = text.find(", (close-up head-and-shoulders", scene_start)
+        if scene_end < 0:
+            return ""
+
+        scene = text[scene_start:scene_end].strip(" ,")
+        if not scene:
+            return ""
+
+        return (
+            "(the character is in the foreground, with the "
+            f"{scene} clearly visible behind the character as the background environment:1.25)"
         )
 
     @staticmethod
