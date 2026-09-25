@@ -46,6 +46,17 @@ from _rpg_characters_test.gen3.style.art_style import make_art_style
 
 
 class TestGen3DNA(unittest.TestCase):
+    def test_gen3_includes_kender_merfolk_and_fairy_folk_lineages(self):
+        races = RPGCharacterGen3.INPUT_TYPES()["required"]["race"][0]
+        for race in ("Kender", "Merfolk", "Fairy Folk"):
+            self.assertIn(race, races)
+
+        self.assertEqual(get_lineage("Kender")["category"], "fey")
+        self.assertEqual(get_lineage("Merfolk")["category"], "aquatic")
+        self.assertTrue(get_lineage("Merfolk")["features"]["tail"])
+        self.assertEqual(get_lineage("Fairy Folk")["category"], "fey")
+        self.assertTrue(get_lineage("Fairy Folk")["features"]["wings"])
+
     def test_character_dna_has_stable_sections(self):
         dna = make_character_dna(seed=1234)
 
