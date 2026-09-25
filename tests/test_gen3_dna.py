@@ -1178,6 +1178,31 @@ class TestGen3DNA(unittest.TestCase):
         self.assertNotIn("positive_prompt", result)
         self.assertNotIn("negative_prompt", result)
 
+    def test_gen3_character_portrait_qualifies_scene_as_background_context(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["scene"] = "Medieval Market"
+        values["dna_seed"] = 27182
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        intent = make_render_intent("character_portrait")
+
+        positive, _ = RPGCharacterDNAPromptBuilder().build(dna, intent)
+
+        self.assertIn(
+            "secondary background environment, busy medieval fantasy marketplace",
+            positive,
+        )
+        self.assertNotIn(
+            "secondary background environment, secondary background environment",
+            positive,
+        )
+
     def test_gen3_prompt_builder_applies_render_intent_without_mutating_dna(self):
         inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
         values = {
