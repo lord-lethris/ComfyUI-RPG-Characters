@@ -171,13 +171,16 @@ class RPGCharacterModelPromptAdapter:
         race_positive, race_negative = RPGCharacterModelPromptAdapter._sdxl_race_anchors(
             character
         )
-        skin_positive = RPGCharacterModelPromptAdapter._sdxl_skin_anchor(character)
+        skin_positive, skin_negative = RPGCharacterModelPromptAdapter._sdxl_skin_anchor(
+            character
+        )
 
         negative = RPGCharacterModelPromptAdapter._join(
             character_negative,
             render_negative,
             style_negative,
             race_negative,
+            skin_negative,
         )
         negative = RPGCharacterModelPromptAdapter._emphasize_sdxl_negative(
             negative,
@@ -204,25 +207,34 @@ class RPGCharacterModelPromptAdapter:
 
     @staticmethod
     def _sdxl_skin_anchor(character):
-        """Strengthen an explicit skin phenotype without hard-coding a race colour.
+        """Strengthen an explicit infernal skin phenotype for SDXL.
 
         Gen 3 skin DNA supplies the actual colour/phenotype. SDXL gets a
-        restrained visibility cue so it is less likely to relocate that colour
-        onto hair, clothing, horns, eyes or background.
+        restrained anatomical visibility cue plus narrowly scoped negatives
+        for the specific infernal phenotype case that has been observed to
+        collapse back to a human complexion. This must not become a generic
+        "Tieflings cannot have human-range skin" rule because Human Range is
+        a valid Gen 3 phenotype.
         """
         lowered = str(character or "").lower()
         marker = " infernal skin pigmentation"
         index = lowered.find(marker)
         if index < 0:
-            return ""
+            return "", ""
 
         colour = str(character)[max(0, index - 80):index].split(",")[-1].strip()
         if not colour:
-            return ""
+            return "", ""
 
-        return (
-            f"({colour} skin clearly visible across the face, neck and upper chest:1.20)"
+        positive = (
+            f"({colour} skin covering the entire visible face, ears, neck and "
+            f"upper chest:1.30)"
         )
+        negative = (
+            "(pale skin:1.20), (pink skin:1.20), "
+            "(human-colored skin:1.20)"
+        )
+        return positive, negative
 
     @staticmethod
     def _sdxl_race_anchors(character):
