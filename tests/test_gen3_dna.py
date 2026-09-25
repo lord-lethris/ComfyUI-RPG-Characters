@@ -41,6 +41,7 @@ from _rpg_characters_test.gen3.dna.genome import make_genome
 from _rpg_characters_test.gen3.nodes.render_intent import RPGCharacterRenderIntent
 from _rpg_characters_test.gen3.nodes.art_style import RPGCharacterArtStyle
 from _rpg_characters_test.gen3.nodes.model_prompt_adapter import RPGCharacterModelPromptAdapter
+from _rpg_characters_test.gen3.nodes.sdxl_two_stage_sampler import RPGGen3SDXLTwoStageSampler
 from _rpg_characters_test.gen3.render.render_intent import make_render_intent
 from _rpg_characters_test.gen3.style.art_style import make_art_style
 
@@ -1291,6 +1292,32 @@ class TestGen3DNA(unittest.TestCase):
         self.assertIn("moustache", negative_with.lower())
         self.assertIn("clean-shaven face", positive_with)
         self.assertEqual(positive_with.count("head-and-shoulders"), 1)
+
+
+    def test_gen3_sdxl_two_stage_sampler_defaults_match_prototype(self):
+        sampler = RPGGen3SDXLTwoStageSampler
+
+        self.assertEqual(sampler.DEFAULT_STEPS, 20)
+        self.assertEqual(sampler.DEFAULT_STAGE1_END, 15)
+        self.assertEqual(sampler.DEFAULT_OVERLAP, 3)
+        self.assertEqual(sampler.DEFAULT_CFG, 5.5)
+        self.assertEqual(sampler.DEFAULT_SAMPLER, "dpmpp_2m_sde")
+        self.assertEqual(sampler.DEFAULT_SCHEDULER, "beta")
+
+        stage1_end, stage2_start = sampler.resolve_stage_bounds(20, 15, 3)
+        self.assertEqual(stage1_end, 15)
+        self.assertEqual(stage2_start, 12)
+
+    def test_gen3_sdxl_two_stage_sampler_bounds_are_safe(self):
+        sampler = RPGGen3SDXLTwoStageSampler
+
+        stage1_end, stage2_start = sampler.resolve_stage_bounds(20, 30, 50)
+        self.assertEqual(stage1_end, 20)
+        self.assertEqual(stage2_start, 0)
+
+        stage1_end, stage2_start = sampler.resolve_stage_bounds(20, 12, 0)
+        self.assertEqual(stage1_end, 12)
+        self.assertEqual(stage2_start, 12)
 
 if __name__ == "__main__":
     unittest.main()
