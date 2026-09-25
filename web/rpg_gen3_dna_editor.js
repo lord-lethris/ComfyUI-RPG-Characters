@@ -732,8 +732,43 @@ function renderEditor(node) {
                 card.appendChild(variantCard);
             }
         } else {
-            // A top-level categorical choice is re-rollable, but only an
-            // internal {A|B|C} DNA variant is meaningfully sculptable.
+            // Top-level categorical loci are directly selectable. Re-roll is
+            // still useful for exploration, but the DNA Editor should never
+            // force the user to keep re-rolling until the desired phenotype
+            // happens to appear.
+            const selectorRow = document.createElement("div");
+            selectorRow.style.cssText = "display:flex;gap:6px;align-items:center;margin:4px 0 7px";
+
+            const selectorLabel = document.createElement("div");
+            selectorLabel.textContent = "Choose";
+            selectorLabel.style.cssText = "font-size:9px;opacity:.55;min-width:42px";
+            selectorRow.appendChild(selectorLabel);
+
+            const selector = document.createElement("select");
+            selector.style.cssText = "flex:1;min-width:0";
+            for (const option of (Array.isArray(locus.options) ? locus.options : [])) {
+                const item = document.createElement("option");
+                item.value = option;
+                item.textContent = option;
+                item.selected = option === locus.selected;
+                selector.appendChild(item);
+            }
+            selector.value = locus.selected || "";
+            selector.onchange = event => {
+                event.stopPropagation();
+                const index = Array.isArray(locus.options)
+                    ? locus.options.indexOf(selector.value)
+                    : -1;
+                if (index < 0) return;
+                setLocusSelection(section, locus, index);
+                applySection(node, section);
+                renderEditor(node);
+            };
+            selectorRow.appendChild(selector);
+            card.appendChild(selectorRow);
+
+            // A top-level categorical choice remains re-rollable, but the
+            // explicit selector above is the deterministic control.
             makeActions(locus, card, false);
         }
 
