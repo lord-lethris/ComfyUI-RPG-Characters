@@ -29,7 +29,7 @@ RACE_DATA = {
     "Aasimar": {"prompt": "(Solo) 1Aasimar, celestial humanoid, divine heritage, ({Pale|Pale Brown|dark brown|tanned|emerald|gold|silver} Skin tone:1.15), with luminous {pale white|gold|gray|topaz} eyes:1.15, subtle celestial features", "negative_prompt": "giant eyes, oversized eyes, single giant eye, cyclops, malformed eyes, distorted eyes"},
     "Kender": {"prompt": "(Solo) 1Kender, small fey-like humanoid, curious and nimble, distinctive pointed ears", "negative_prompt": "giant proportions, dwarf body, animal muzzle"},
     "Merfolk": {"prompt": "(Solo) 1Merfolk, aquatic humanoid with a fish-like lower body and long flowing tail", "negative_prompt": "human legs, human feet, ordinary terrestrial humanoid lower body"},
-    "Fairy Folk": {"prompt": "(Solo) 1Fairy Folk, small winged fey humanoid, delicate pointed ears and translucent wings", "negative_prompt": "giant proportions, ordinary human anatomy, no wings"}
+    "Fairy Folk": {"prompt": "(Solo) 1Fairy Folk, small winged fey humanoid, delicate pointed ears and translucent wings", "negative_prompt": "giant proportions, ordinary human anatomy, no wings"},
     "Goblin": {"prompt": "(Solo) 1Goblin, ({Deep Red|Orange|Yellow|Green} Skin tone:1.3)", "negative_prompt": ""},
     "Kobold": {"prompt": "(Solo) 1Kobold, ({Reddish Brown|Rusty Black|Blue|White|Green} Squamous Skin tone:1.3) with Burnt {Orange|Red} eyes", "negative_prompt": ""},
     "Lizardfolk": {"prompt": "(Solo) 1Lizardfolk, Reptilian like", "negative_prompt": ""},
