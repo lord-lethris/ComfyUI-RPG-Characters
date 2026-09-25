@@ -1079,6 +1079,39 @@ class TestGen3DNA(unittest.TestCase):
         self.assertNotIn("beard", krea_positive.lower())
         self.assertNotIn("moustache", krea_positive.lower())
 
+    def test_gen3_sdxl_tiefling_keeps_race_defining_features(self):
+        inputs = RPGCharacterGen3.INPUT_TYPES()["required"]
+        values = {
+            name: options[0][0]
+            for name, options in inputs.items()
+            if isinstance(options, tuple) and isinstance(options[0], list)
+        }
+        values["race"] = "Tiefling"
+        values["gender"] = "Male"
+        values["age"] = "Elder"
+        values["beard_style"] = "No Beard"
+        values["dna_seed"] = 24680
+
+        dna = RPGCharacterGen3().create_character(**values)[0]
+        render_intent = make_render_intent("character_portrait")
+        style = make_art_style("Fantasy Illustration")
+
+        positive, negative = RPGCharacterModelPromptAdapter().build(
+            dna, render_intent, style, "SDXL"
+        )
+
+        self.assertIn("(large curved infernal horns clearly visible:1.35)", positive)
+        self.assertIn("(clearly infernal facial features:1.20)", positive)
+        self.assertIn(
+            "(solid-color infernal eyes with no visible sclera or pupil:1.20)",
+            positive,
+        )
+        self.assertIn("(missing horns:1.35)", negative)
+        self.assertIn("(ordinary human appearance:1.20)", negative)
+        self.assertIn("(elven appearance:1.20)", negative)
+        self.assertIn("(beard:1.35)", negative)
+        self.assertIn("(facial hair:1.30)", negative)
+
     def test_gen3_character_portrait_render_intent_is_separate_from_dna(self):
         dna = make_character_dna(seed=1234)
         intent = make_render_intent("character_portrait")
