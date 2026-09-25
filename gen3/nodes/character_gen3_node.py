@@ -371,6 +371,41 @@ class RPGCharacterGen3:
             "loci": face_loci,
         }
 
+        # Skin is an explicit DNA section so the selected phenotype survives
+        # into downstream prompt builders and can be edited independently.
+        skin_state = genome.get("phenotype", {}).get("skin", {})
+        skin_options = lineage_data.get("skin_options", {})
+        skin_option_prompts = {}
+        if isinstance(skin_options, dict):
+            skin_option_prompts.update({
+                str(key): str(value)
+                for key, value in skin_options.items()
+            })
+        if skin_state.get("selected") == "Heritage":
+            skin_option_prompts["Heritage"] = str(skin_state.get("prompt", ""))
+        elif skin_state.get("selected") == "Lineage":
+            skin_option_prompts["Lineage"] = str(skin_state.get("prompt", ""))
+
+        skin_selected = str(skin_state.get("selected", "") or "")
+        if skin_selected and skin_selected not in skin_option_prompts:
+            skin_option_prompts[skin_selected] = str(skin_state.get("prompt", ""))
+        skin_locus = {
+            "id": "skin:colour",
+            "label": "Skin Colour",
+            "options": list(skin_option_prompts.keys()),
+            "selected": skin_selected,
+            "variant_sets": [],
+            "controls": {},
+            "option_prompts": skin_option_prompts,
+            "option_negative_prompts": {},
+        }
+        sections["skin"] = {
+            "values": {"colour": skin_selected},
+            "traits": [skin_state.get("prompt", "")] if skin_state.get("prompt") else [],
+            "source": "gen3_lineage_phenotype",
+            "loci": [skin_locus] if skin_selected else [],
+        }
+
         # Explicitly retain stable empty sections for downstream editors.
         for section_id in DNA_SECTIONS:
             sections.setdefault(section_id, {})
@@ -392,7 +427,11 @@ class RPGCharacterGen3:
                 "genome_signature": genome.get("signature"),
                 **face_context,
             },
-            "skin": {},
+            "skin": {
+                "lineage": race,
+                "heritage": heritage,
+                "skin": genome.get("phenotype", {}).get("skin", {}).get("selected"),
+            },
             "armour": {},
             "pose": {},
             "style": {},
