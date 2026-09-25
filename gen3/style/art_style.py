@@ -63,6 +63,29 @@ STYLE_PRESETS = {
             "blurry, noisy"
         ),
     },
+    "K-Pop Demon Hunters": {
+        "id": "kpop_demon_hunters",
+        "label": "K-Pop Demon Hunters",
+        "description": "Polished Korean animated supernatural fantasy with high-fashion K-pop idol styling and demon-hunter energy.",
+        "positive_prompt": (
+            "stylized Korean animated fantasy character art, polished modern animation aesthetic, "
+            "dramatic K-pop-inspired fantasy design, expressive character design, large luminous eyes, "
+            "clean elegant facial features, sharp confident poses, beautifully rendered hair with flowing individual strands, "
+            "elaborate fashionable stage outfit, supernatural demon-hunter elements, ornate accessories, "
+            "vibrant jewel-toned colors, strong cel shading, soft painterly rendering, crisp clean linework, "
+            "subtle anime influence, cinematic lighting, dramatic rim light, glowing magical energy, dynamic composition, "
+            "highly polished feature-animation quality, rich color separation, detailed costume design, atmospheric background, "
+            "high-fashion idol styling fused with Korean folklore-inspired supernatural fantasy, sleek contemporary silhouettes, "
+            "glamorous stage-fashion details, dramatic black and vivid accent colors, mystical Korean-inspired motifs, "
+            "supernatural glamour, theatrical action-hero presentation"
+        ),
+        "negative_prompt": (
+            "photorealistic, realistic photograph, 3d render, CGI, plastic skin, western comic book, manga panel, "
+            "chibi, childish, low detail, crude linework, messy outlines, flat colors, washed out colors, dull lighting, "
+            "oversaturated skin, deformed face, asymmetrical eyes, malformed hands, extra fingers, missing fingers, "
+            "extra limbs, duplicate character, bad anatomy, blurry, noisy, grainy, low resolution, text, watermark, logo"
+        ),
+    },
     "Sci-Fi / Cyberpunk": {
         "id": "sci_fi_cyberpunk",
         "label": "Sci-Fi / Cyberpunk",
