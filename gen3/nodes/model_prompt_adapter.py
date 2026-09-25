@@ -244,6 +244,10 @@ class RPGCharacterModelPromptAdapter:
             character
         )
         scene_positive = RPGCharacterModelPromptAdapter._sdxl_scene_anchor(character)
+        character = RPGCharacterModelPromptAdapter._sdxl_compact_character(
+            character,
+            remove_infernal_skin=bool(skin_positive),
+        )
 
         negative = RPGCharacterModelPromptAdapter._join(
             character_negative,
@@ -275,6 +279,47 @@ class RPGCharacterModelPromptAdapter:
             ),
             negative,
         )
+
+    @staticmethod
+    def _sdxl_compact_character(character, remove_infernal_skin=False):
+        """Trim repeated low-value prose before sending Character DNA to SDXL.
+
+        Gen 3 retains the full structured DNA. This is only a prompt-budget
+        optimisation for SDXL, where repeated generic anatomy and duplicated
+        scene/skin descriptions can compete with clothing and environment.
+        """
+        value = str(character or "")
+
+        # Scene is translated separately into a spatial background cue.
+        scene_start = value.find("secondary background environment, ")
+        if scene_start >= 0:
+            scene_end = value.find(", (distinctive Tiefling appearance", scene_start)
+            if scene_end < 0:
+                scene_end = value.find(", (close-up head-and-shoulders", scene_start)
+            if scene_end >= 0:
+                value = value[:scene_start] + value[scene_end + 2:]
+
+        for phrase in (
+            "humanoid, humanoid hands, humanoid feet, ",
+            "clean-shaven face, no facial hair, ",
+            "no facial hair",
+        ):
+            value = value.replace(phrase, "")
+
+        if remove_infernal_skin:
+            marker = " infernal skin pigmentation"
+            lowered = value.lower()
+            index = lowered.find(marker)
+            if index >= 0:
+                start = index
+                while start > 0 and value[start - 1] not in ",":
+                    start -= 1
+                end = index + len(marker)
+                if end < len(value) and value[end] == ",":
+                    end += 1
+                value = (value[:start] + value[end:]).strip(" ,")
+
+        return value
 
     @staticmethod
     def _sdxl_scene_anchor(character):
