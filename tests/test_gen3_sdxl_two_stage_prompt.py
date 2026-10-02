@@ -1,4 +1,4 @@
-"""Tests for the Gen 3 SDXL two-stage prompt adapter."""
+"""Tests for the Gen 3 SDXL one-prompt/two-step workflow."""
 
 import sys
 import types
@@ -16,6 +16,9 @@ from _rpg_characters_test.gen3.nodes.character_gen3_node import RPGCharacterGen3
 from _rpg_characters_test.gen3.nodes.render_intent import RPGCharacterRenderIntent
 from _rpg_characters_test.gen3.nodes.sdxl_two_stage_prompt_adapter import (
     RPGCharacterSDXLTwoStagePromptAdapter,
+)
+from _rpg_characters_test.gen3.nodes.sdxl_two_stage_sampler import (
+    RPGGen3SDXLTwoStageSampler,
 )
 
 
@@ -35,54 +38,68 @@ class TestGen3SDXLTwoStagePromptAdapter(unittest.TestCase):
         values["dna_seed"] = 24680
         return values
 
-    def test_sdxl_two_stage_prompt_separates_scene_from_character_establishment(self):
+    def test_sdxl_adapter_builds_one_complete_prompt(self):
         dna = RPGCharacterGen3().create_character(**self._make_inputs())[0]
         render_intent = RPGCharacterRenderIntent().create("Character Portrait")[0]
         style = RPGCharacterArtStyle().create("Fantasy Illustration")[0]
 
-        result = RPGCharacterSDXLTwoStagePromptAdapter().build(
+        positive, negative = RPGCharacterSDXLTwoStagePromptAdapter().build(
             dna,
             render_intent,
             style,
         )
 
-        self.assertEqual(len(result), 4)
-        stage1_positive, stage1_negative, stage2_positive, stage2_negative = result
+        self.assertIsInstance(positive, str)
+        self.assertIsInstance(negative, str)
+        self.assertTrue(positive)
+        self.assertTrue(negative)
 
-        # Stage 1 establishes the character and must not receive Scene DNA.
-        self.assertNotIn("medieval fantasy marketplace", stage1_positive.lower())
-        self.assertNotIn("secondary background environment", stage1_positive.lower())
-        self.assertIn("tiefling", stage1_positive.lower())
-        self.assertIn("clean-shaven", stage1_positive.lower())
-        self.assertIn("horn", stage1_positive.lower())
+        prompt = positive.lower()
 
-        # Stage 2 reinterprets the established character through style + scene.
-        self.assertIn("fantasy art", stage2_positive.lower())
-        self.assertIn("medieval fantasy marketplace", stage2_positive.lower())
-        self.assertIn("secondary background environment", stage2_positive.lower())
-        self.assertIn("same character remains the primary subject", stage2_positive.lower())
+        # Character identity remains in the SAME prompt as the scene.
+        self.assertIn("tiefling", prompt)
+        self.assertIn("horn", prompt)
+        self.assertIn("fantasy art", prompt)
+        self.assertIn("medieval fantasy marketplace", prompt)
 
-        # Both stages retain the important anti-collapse constraints.
-        self.assertIn("beard", stage1_negative.lower())
-        self.assertIn("beard", stage2_negative.lower())
-        self.assertIn("missing horns", stage1_negative.lower())
-        self.assertIn("missing horns", stage2_negative.lower())
+        # Scene is explicitly environmental context rather than a second subject.
+        self.assertIn("secondary background environment", prompt)
+        self.assertIn("background environment", prompt)
 
-    def test_sdxl_two_stage_prompt_keeps_art_style_out_of_stage1(self):
-        dna = RPGCharacterGen3().create_character(**self._make_inputs())[0]
-        render_intent = RPGCharacterRenderIntent().create("Character Portrait")[0]
-        style = RPGCharacterArtStyle().create("K-Pop Demon Hunters")[0]
+        # The SDXL race anchors remain part of the single prompt.
+        self.assertIn("distinctive tiefling appearance", prompt)
+        self.assertIn("large curved infernal horns clearly visible", prompt)
 
-        stage1_positive, _, stage2_positive, _ = (
-            RPGCharacterSDXLTwoStagePromptAdapter().build(
-                dna,
-                render_intent,
-                style,
-            )
+        # The hard anti-collapse constraints remain in the negative prompt.
+        self.assertIn("missing horns", negative.lower())
+        self.assertIn("beard", negative.lower())
+
+    def test_sdxl_two_step_uses_one_conditioning_pair(self):
+        inputs = RPGGen3SDXLTwoStageSampler.INPUT_TYPES
+
+        # INPUT_TYPES imports ComfyUI's sampler lists, so skip this structural
+        # assertion when ComfyUI is not available in the test environment.
+        try:
+            required = inputs()["required"]
+        except ModuleNotFoundError:
+            self.skipTest("ComfyUI is not installed in the unit-test environment.")
+
+        self.assertIn("positive", required)
+        self.assertIn("negative", required)
+        self.assertNotIn("positive_stage1", required)
+        self.assertNotIn("negative_stage1", required)
+        self.assertNotIn("positive_stage2", required)
+        self.assertNotIn("negative_stage2", required)
+
+    def test_stage_bounds_preserve_v2_style_overlap(self):
+        self.assertEqual(
+            RPGGen3SDXLTwoStageSampler.resolve_stage_bounds(20, 15, 3),
+            (15, 12),
         )
-
-        self.assertNotIn("k-pop-inspired fantasy design", stage1_positive.lower())
-        self.assertIn("k-pop-inspired fantasy design", stage2_positive.lower())
+        self.assertEqual(
+            RPGGen3SDXLTwoStageSampler.resolve_stage_bounds(8, 4, 2),
+            (4, 2),
+        )
 
 
 if __name__ == "__main__":
