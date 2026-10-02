@@ -9,17 +9,6 @@ class TestGen3SDXLTwoStageSampler(unittest.TestCase):
     def _conditioning(self, label, metadata=None):
         return [[label, dict(metadata or {})]]
 
-    def _schedule(self, conditioning, steps=20, stage1_end=15, overlap=3):
-        return RPGGen3SDXLTwoStageSampler.build_conditioning_schedule(
-            conditioning,
-            self._conditioning("character-negative"),
-            self._conditioning("scene"),
-            self._conditioning("scene-negative"),
-            steps,
-            stage1_end,
-            overlap,
-        )[0]
-
     def test_resolve_stage_bounds_preserves_nominal_end_and_calculates_overlap_start(self):
         stage1_end, stage2_start = RPGGen3SDXLTwoStageSampler.resolve_stage_bounds(
             20, 15, 3
@@ -96,10 +85,10 @@ class TestGen3SDXLTwoStageSampler(unittest.TestCase):
             3,
         )
 
-        overlap = positive[1:7]
-        pairs = list(zip(overlap[1:4], overlap[4:7]))
+        character_overlap = [item for item in positive if item[0] == "character"][1:]
+        scene_overlap = [item for item in positive if item[0] == "scene"][:3]
 
-        for character_entry, scene_entry in pairs:
+        for character_entry, scene_entry in zip(character_overlap, scene_overlap):
             self.assertAlmostEqual(
                 character_entry[1]["strength"] + scene_entry[1]["strength"],
                 1.0,
