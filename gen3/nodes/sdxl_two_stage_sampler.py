@@ -193,7 +193,7 @@ class RPGGen3SDXLTwoStageSampler:
             for offset in range(overlap):
                 start_step = stage2_start + offset
                 end_step = start_step + 1
-                strength = (overlap - offset) / overlap
+                strength = (overlap - offset) / (overlap + 1)
                 scheduled.extend(
                     cls.schedule_conditioning(
                         conditioning,
@@ -207,7 +207,7 @@ class RPGGen3SDXLTwoStageSampler:
             for offset in range(overlap):
                 start_step = stage2_start + offset
                 end_step = start_step + 1
-                strength = (offset + 1) / overlap
+                strength = (offset + 1) / (overlap + 1)
                 scheduled.extend(
                     cls.schedule_conditioning(
                         conditioning,
@@ -337,11 +337,11 @@ class RPGGen3SDXLTwoStageSampler:
         # 0 -> stage1_end; Stage 2 is active from stage2_start -> 1.
         # During the overlap their strength changes linearly from:
         #
-        #   Stage 1 100% / Stage 2   0%
-        #   Stage 1  75% / Stage 2  25%
-        #   Stage 1  50% / Stage 2  50%
-        #   Stage 1  25% / Stage 2  75%
-        #   Stage 1   0% / Stage 2 100%
+        #   Stage 1 100% / Stage 2   0%  (before overlap)
+        #   Stage 1  75% / Stage 2  25%  (overlap step 1)
+        #   Stage 1  50% / Stage 2  50%  (overlap step 2)
+        #   Stage 1  25% / Stage 2  75%  (overlap step 3)
+        #   Stage 1   0% / Stage 2 100%  (after overlap)
         #
         # for a 3-step overlap. ComfyUI's conditioning aggregator applies the
         # strength values while normalising the combined prediction.
