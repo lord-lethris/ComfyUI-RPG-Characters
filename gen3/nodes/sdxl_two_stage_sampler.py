@@ -169,6 +169,17 @@ class RPGGen3SDXLTwoStageSampler:
         scheduled = []
 
         if phase == 1:
+            if overlap == 0:
+                scheduled.extend(
+                    cls.schedule_conditioning(
+                        conditioning,
+                        0.0,
+                        stage1_end / steps,
+                        strength=1.0,
+                    )
+                )
+                return scheduled
+
             if stage2_start > 0:
                 scheduled.extend(
                     cls.schedule_conditioning(
@@ -192,16 +203,6 @@ class RPGGen3SDXLTwoStageSampler:
                     )
                 )
 
-            if stage2_start == stage1_end:
-                # Zero-overlap case: Stage 1 still owns the complete first phase.
-                scheduled.extend(
-                    cls.schedule_conditioning(
-                        conditioning,
-                        0.0,
-                        stage1_end / steps,
-                        strength=1.0,
-                    )
-                )
         elif phase == 2:
             for offset in range(overlap):
                 start_step = stage2_start + offset
@@ -226,15 +227,6 @@ class RPGGen3SDXLTwoStageSampler:
                     )
                 )
 
-            if overlap == 0:
-                scheduled.extend(
-                    cls.schedule_conditioning(
-                        conditioning,
-                        stage1_end / steps,
-                        1.0,
-                        strength=1.0,
-                    )
-                )
         else:
             raise ValueError("phase must be 1 or 2")
 
