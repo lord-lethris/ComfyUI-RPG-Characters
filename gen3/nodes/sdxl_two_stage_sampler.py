@@ -1,15 +1,18 @@
 """Gen 3 SDXL two-stage sampler.
 
-Runs one ComfyUI sampling schedule in two conditioning phases:
+Runs one SDXL sampling schedule with two conditioning phases:
 1. Character establishment.
 2. Style/scene reinterpretation.
 
-The implementation mirrors KSampler Advanced semantics: Stage 1 keeps
-leftover noise, Stage 2 continues from that latent without adding fresh noise.
+The phases are scheduled on the same denoising trajectory. When overlap is
+enabled, both conditioning phases are active during the overlap window, so
+ComfyUI blends their predictions instead of attempting to resume a latent at
+an earlier sigma than the latent actually represents.
 """
 
+
 class RPGGen3SDXLTwoStageSampler:
-    """Run the experimentally validated Gen 3 SDXL two-stage render strategy."""
+    """Run the Gen 3 SDXL two-stage render strategy."""
 
     DEFAULT_STEPS = 20
     DEFAULT_STAGE1_END = 15
@@ -88,17 +91,106 @@ class RPGGen3SDXLTwoStageSampler:
     CATEGORY = "RPG/Gen 3/Sampling"
     DESCRIPTION = (
         "SDXL two-stage Gen 3 sampler: establish the character first, then "
-        "reinterpret it through a separate style/scene conditioning pass."
+        "reinterpret it through a separate style/scene conditioning pass. "
+        "The overlap window blends both conditioning phases on one denoising schedule."
     )
 
     @classmethod
     def resolve_stage_bounds(cls, steps, stage1_end_step, stage2_overlap):
-        """Return validated (stage1_end, stage2_start) schedule bounds."""
+        """Return validated (stage1_end, stage2_start) schedule bounds.
+
+        These are expressed as sampler-step positions. The actual implementation
+        uses the corresponding percentages as conditioning ranges on one sampler
+        trajectory, allowing a real overlap without rewinding a latent.
+        """
         steps = max(1, int(steps))
         stage1_end = max(1, min(int(stage1_end_step), steps))
-        overlap = max(0, int(stage2_overlap))
+        overlap = max(0, min(int(stage2_overlap), stage1_end))
         stage2_start = max(0, stage1_end - overlap)
         return stage1_end, stage2_start
+
+    @classmethod
+    def schedule_conditioning(cls, conditioning, start_percent, end_percent):
+        """Apply a sampler timestep range to every conditioning entry.
+
+        Existing conditioning ranges are intersected rather than overwritten.
+        This keeps the node composable with conditioning that is already
+        scheduled by another node.
+        """
+        start_percent = max(0.0, min(float(start_percent), 1.0))
+        end_percent = max(0.0, min(float(end_percent), 1.0))
+
+        if start_percent > end_percent:
+            raise ValueError("conditioning start_percent must not exceed end_percent")
+
+        scheduled = []
+        for entry in conditioning:
+            cond, metadata = entry
+            metadata = metadata.copy()
+
+            existing_start = float(metadata.get("start_percent", 0.0))
+            existing_end = float(metadata.get("end_percent", 1.0))
+
+            intersection_start = max(start_percent, existing_start)
+            intersection_end = min(end_percent, existing_end)
+
+            if intersection_start >= intersection_end:
+                continue
+
+            metadata["start_percent"] = intersection_start
+            metadata["end_percent"] = intersection_end
+            scheduled.append([cond, metadata])
+
+        return scheduled
+
+    @classmethod
+    def build_conditioning_schedule(
+        cls,
+        positive_stage1,
+        negative_stage1,
+        positive_stage2,
+        negative_stage2,
+        steps,
+        stage1_end_step,
+        stage2_overlap,
+    ):
+        """Build positive/negative conditioning schedules for both phases."""
+        stage1_end, stage2_start = cls.resolve_stage_bounds(
+            steps,
+            stage1_end_step,
+            stage2_overlap,
+        )
+
+        stage1_end_percent = stage1_end / max(1, int(steps))
+        stage2_start_percent = stage2_start / max(1, int(steps))
+
+        positive = cls.schedule_conditioning(
+            positive_stage1,
+            0.0,
+            stage1_end_percent,
+        )
+        positive.extend(
+            cls.schedule_conditioning(
+                positive_stage2,
+                stage2_start_percent,
+                1.0,
+            )
+        )
+
+        negative = cls.schedule_conditioning(
+            negative_stage1,
+            0.0,
+            stage1_end_percent,
+        )
+        negative.extend(
+            cls.schedule_conditioning(
+                negative_stage2,
+                stage2_start_percent,
+                1.0,
+            )
+        )
+
+        return positive, negative, stage1_end, stage2_start
 
     def sample(
         self,
@@ -116,14 +208,19 @@ class RPGGen3SDXLTwoStageSampler:
         stage1_end_step,
         stage2_overlap,
     ):
-        import comfy.model_management
         import comfy.sample
         import comfy.utils
 
-        stage1_end, stage2_start = self.resolve_stage_bounds(
-            steps,
-            stage1_end_step,
-            stage2_overlap,
+        positive, negative, stage1_end, stage2_start = (
+            self.build_conditioning_schedule(
+                positive_stage1,
+                negative_stage1,
+                positive_stage2,
+                negative_stage2,
+                steps,
+                stage1_end_step,
+                stage2_overlap,
+            )
         )
 
         latent = dict(latent_image)
@@ -142,44 +239,24 @@ class RPGGen3SDXLTwoStageSampler:
         noise_mask = latent.get("noise_mask")
         disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
 
-        # Stage 1: establish character identity and composition, then hand the
-        # partially denoised latent to Stage 2 with its remaining noise intact.
-        stage1_samples = comfy.sample.sample(
+        # Both phases run on one sampler trajectory. Stage 1 is active from
+        # 0 -> stage1_end; Stage 2 is active from stage2_start -> 1. During
+        # the overlap window both are evaluated by ComfyUI and their outputs
+        # are combined. This avoids the invalid operation of asking a sampler
+        # to start at an earlier sigma than the supplied latent represents.
+        samples = comfy.sample.sample(
             model,
             noise,
             steps,
             cfg,
             sampler_name,
             scheduler,
-            positive_stage1,
-            negative_stage1,
+            positive,
+            negative,
             latent_samples,
             denoise=1.0,
             disable_noise=False,
             start_step=0,
-            last_step=stage1_end,
-            force_full_denoise=False,
-            noise_mask=noise_mask,
-            callback=None,
-            disable_pbar=disable_pbar,
-            seed=noise_seed,
-        )
-
-        # Stage 2: continue from exactly the Stage 1 latent. No fresh noise is
-        # added; only the conditioning changes to style/scene refinement.
-        stage2_samples = comfy.sample.sample(
-            model,
-            noise,
-            steps,
-            cfg,
-            sampler_name,
-            scheduler,
-            positive_stage2,
-            negative_stage2,
-            stage1_samples,
-            denoise=1.0,
-            disable_noise=True,
-            start_step=stage2_start,
             last_step=steps,
             force_full_denoise=True,
             noise_mask=noise_mask,
@@ -188,7 +265,7 @@ class RPGGen3SDXLTwoStageSampler:
             seed=noise_seed,
         )
 
-        result = {"samples": stage2_samples}
+        result = {"samples": samples}
         if "batch_index" in latent:
             result["batch_index"] = latent["batch_index"]
         return (result,)
