@@ -1,15 +1,22 @@
-"""Gen 3 SDXL two-stage sampler.
+"""Gen 3 SDXL two-step sampler.
 
-Runs one ComfyUI sampling schedule in two conditioning phases:
-1. Character establishment.
-2. Style/scene reinterpretation.
+Runs one ComfyUI sampling schedule in two refinement passes using the SAME
+positive and negative conditioning for both passes.
 
-The implementation mirrors KSampler Advanced semantics: Stage 1 keeps
-leftover noise, Stage 2 continues from that latent without adding fresh noise.
+The first pass establishes the character and broad composition. The second
+pass continues from the partially denoised latent with the same prompt,
+allowing the model to refine and integrate the established character and
+scene rather than asking it to reinterpret the character through a second,
+different prompt.
+
+This deliberately returns to the V2 architecture: one prompt, two sampling
+passes. The prompt itself contains the character plus any requested scene
+context. Model-specific prompt adaptation remains outside the sampler.
 """
 
+
 class RPGGen3SDXLTwoStageSampler:
-    """Run the experimentally validated Gen 3 SDXL two-stage render strategy."""
+    """Run the Gen 3 two-step render strategy with one prompt."""
 
     DEFAULT_STEPS = 20
     DEFAULT_STAGE1_END = 15
@@ -25,10 +32,8 @@ class RPGGen3SDXLTwoStageSampler:
         return {
             "required": {
                 "model": ("MODEL",),
-                "positive_stage1": ("CONDITIONING",),
-                "negative_stage1": ("CONDITIONING",),
-                "positive_stage2": ("CONDITIONING",),
-                "negative_stage2": ("CONDITIONING",),
+                "positive": ("CONDITIONING",),
+                "negative": ("CONDITIONING",),
                 "latent_image": ("LATENT",),
                 "noise_seed": (
                     "INT",
@@ -87,8 +92,8 @@ class RPGGen3SDXLTwoStageSampler:
     FUNCTION = "sample"
     CATEGORY = "RPG/Gen 3/Sampling"
     DESCRIPTION = (
-        "SDXL two-stage Gen 3 sampler: establish the character first, then "
-        "reinterpret it through a separate style/scene conditioning pass."
+        "SDXL two-step Gen 3 sampler: use one positive/negative prompt for "
+        "both refinement passes. The prompt contains the character and scene."
     )
 
     @classmethod
@@ -103,10 +108,8 @@ class RPGGen3SDXLTwoStageSampler:
     def sample(
         self,
         model,
-        positive_stage1,
-        negative_stage1,
-        positive_stage2,
-        negative_stage2,
+        positive,
+        negative,
         latent_image,
         noise_seed,
         steps,
@@ -116,7 +119,6 @@ class RPGGen3SDXLTwoStageSampler:
         stage1_end_step,
         stage2_overlap,
     ):
-        import comfy.model_management
         import comfy.sample
         import comfy.utils
 
@@ -142,8 +144,7 @@ class RPGGen3SDXLTwoStageSampler:
         noise_mask = latent.get("noise_mask")
         disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
 
-        # Stage 1: establish character identity and composition, then hand the
-        # partially denoised latent to Stage 2 with its remaining noise intact.
+        # Pass 1: establish the character and broad composition.
         stage1_samples = comfy.sample.sample(
             model,
             noise,
@@ -151,8 +152,8 @@ class RPGGen3SDXLTwoStageSampler:
             cfg,
             sampler_name,
             scheduler,
-            positive_stage1,
-            negative_stage1,
+            positive,
+            negative,
             latent_samples,
             denoise=1.0,
             disable_noise=False,
@@ -165,8 +166,9 @@ class RPGGen3SDXLTwoStageSampler:
             seed=noise_seed,
         )
 
-        # Stage 2: continue from exactly the Stage 1 latent. No fresh noise is
-        # added; only the conditioning changes to style/scene refinement.
+        # Pass 2: continue the same latent with the EXACT SAME conditioning.
+        # No fresh noise is introduced and no second prompt reinterpretation
+        # occurs. The overlap preserves the V2-style refinement hand-off.
         stage2_samples = comfy.sample.sample(
             model,
             noise,
@@ -174,8 +176,8 @@ class RPGGen3SDXLTwoStageSampler:
             cfg,
             sampler_name,
             scheduler,
-            positive_stage2,
-            negative_stage2,
+            positive,
+            negative,
             stage1_samples,
             denoise=1.0,
             disable_noise=True,
@@ -199,5 +201,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "RPGGen3SDXLTwoStageSampler": "SDXL Two-Stage Sampler (Gen 3)",
+    "RPGGen3SDXLTwoStageSampler": "SDXL Two-Step Sampler (Gen 3)",
 }
